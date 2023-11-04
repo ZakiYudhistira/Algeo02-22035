@@ -1,4 +1,5 @@
 import numpy as np
+from numpy.linalg import norm
 import cv2 as cv
 import math as mt
 from datasets import load_dataset
@@ -28,13 +29,24 @@ def rgbtoHsv(inputImage : np.ndarray) -> np.ndarray:
     return retValue
     
 
+def getSimilarityIndeks(imgInput : np.ndarray, imgQuery : np.ndarray) :
+    condition = np.any(imgInput[:,:,:] == [0,0,0] & imgQuery[:,:,:] == [0,0,0])
+    dotMatrix = np.where(condition,1,np.sum(imgInput*imgQuery, axis=2))
+    normMatrixInput = np.sqrt(np.sum(imgInput**2, axis=2))
+    normMatrixInput = np.where(normMatrixInput == 0,1,normMatrixInput)
+    normMatrixQuery = np.where(normMatrixQuery == 0,1,normMatrixQuery)
+    normMatrixQuery = np.sqrt(np.sum(imgQuery**2, axis=2))
+    valueMatrix = dotMatrix/(normMatrixInput*normMatrixQuery)
+    return valueMatrix
+
+
 
 
 
 image = cv.imread("./TestJaki/Test.jpg")
+image2 = cv.imread("./TestJaki/Test.jpg")
+print(getSimilarityIndeks(image,image2))
 
 # cv.imshow("window",retValue)
 
 # cv.imshow("testing", image)
-cv.waitKey(0)
-cv.destroyAllWindows()
