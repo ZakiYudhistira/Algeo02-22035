@@ -30,21 +30,22 @@ def rgbtoHsv(inputImage : np.ndarray) -> np.ndarray:
     
 
 def getSimilarityIndeks(imgInput : np.ndarray, imgQuery : np.ndarray) :
-    condition = np.any(imgInput[:,:,:] == [0,0,0] & imgQuery[:,:,:] == [0,0,0])
+    condition = np.all(imgInput[:,:,:] == [0,0,0]) & np.all(imgQuery[:,:,:] == [0,0,0])
     dotMatrix = np.where(condition,1,np.sum(imgInput*imgQuery, axis=2))
     normMatrixInput = np.sqrt(np.sum(imgInput**2, axis=2))
+    normMatrixQuery = np.sqrt(np.sum(imgQuery**2, axis=2))
     normMatrixInput = np.where(normMatrixInput == 0,1,normMatrixInput)
     normMatrixQuery = np.where(normMatrixQuery == 0,1,normMatrixQuery)
-    normMatrixQuery = np.sqrt(np.sum(imgQuery**2, axis=2))
     valueMatrix = dotMatrix/(normMatrixInput*normMatrixQuery)
-    return valueMatrix
+    return np.average(valueMatrix)
 
 
 
 
 
-image = cv.imread("./TestJaki/Test.jpg")
-image2 = cv.imread("./TestJaki/Test.jpg")
+image = cv.imread("./TestJaki/ganteng.jpeg")
+image2 = cv.imread("./TestJaki/ganteng2.jpeg")
+# print(np.all(image[1,2,:] == [122,136,225]) & np.all(image[1,2,:]==[0,0,0]))
 print(getSimilarityIndeks(image,image2))
 
 # cv.imshow("window",retValue)
