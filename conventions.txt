@@ -1,0 +1,8 @@
+functions : camelCase
+variables : snake_case
+class : PascalCase
+
+nama file : PascalCase
+nama folder : PascalCase
+
+kalo sesuatu yang kurang boleh ditambahin hehe.
