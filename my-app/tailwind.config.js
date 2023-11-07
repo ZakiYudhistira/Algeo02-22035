@@ -18,8 +18,8 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        inter: ["var(--font-inter)"],
-        montserrat: ["var(--font-montserrat)"],
+        outfit: ["var(--font-outfit)"],
+        raleway: ["var(--font-raleway)"],
       },
 
       colors: {
