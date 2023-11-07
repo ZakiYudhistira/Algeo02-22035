@@ -1,5 +1,5 @@
-import React from "react";
 import Hero from "@/components/ui/hero";
+import React from "react";
 
 export default function Home() {
   return (
