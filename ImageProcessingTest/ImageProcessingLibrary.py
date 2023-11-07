@@ -1,9 +1,6 @@
 import numpy as np
-from numpy.linalg import norm
 import cv2 as cv
-import math as mt
 import time
-from matplotlib import pyplot as plt
 
 # image processing library
 
@@ -117,8 +114,3 @@ print(getSimilarityIndeks(get3X3Histograms(new_img1),get3X3Histograms(new_img2))
 
 end = time.time()
 print(end-start)
-
-# cv.imwrite(output_image_PATH+"LeaReference.jpg",new_img)
-# cv.imwrite(output_image_PATH+"LeaResult.jpg",new_img)
-# end = time.time()
-# print(end-start)
