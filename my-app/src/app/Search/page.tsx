@@ -41,7 +41,7 @@ const Search = () => {
                 Upload Dataset
               </Button>
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col gap-2">
               <div className="flex items-center justify-center gap-4">
                 <span className="font-montserrat text-[21px] font-semibold">
                   Color
