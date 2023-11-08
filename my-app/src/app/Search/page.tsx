@@ -30,13 +30,13 @@ const Search = () => {
             <div className="flex flex-row gap-4 mb-28">
               <Button
                 variant="outline"
-                className="text-white bg-custom-green-calm font-semibold"
+                className="text-white bg-custom-green-calm font-semibold rounded-xl px-5"
               >
                 Upload Image
               </Button>
               <Button
                 variant="outline"
-                className="text-white bg-custom-black font-semibold"
+                className="text-white bg-custom-black font-semibold rounded-xl px-5"
               >
                 Upload Dataset
               </Button>
@@ -53,7 +53,7 @@ const Search = () => {
               </div>
               <Button
                 variant="outline"
-                className="text-white bg-gradient-to-r from-[#DF3890] to-[150%] to-[#FF87C6] font-semibold"
+                className="text-white bg-gradient-to-r from-[#DF3890] to-[150%] to-[#FF87C6] font-semibold rounded-xl"
               >
                 Search
               </Button>
