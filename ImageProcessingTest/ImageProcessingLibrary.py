@@ -24,9 +24,9 @@ def normRGBtoHSV(input_image : np.ndarray) -> np.ndarray:
     ret_value[:,:,1] = ret_value[:,:,1]*100
     ret_value[:,:,2] = ret_value[:,:,2]*100
     ret_value[:,:,0] = ret_value[:,:,0]*60 
-    #Convert to 8 bit format
+    #Convert to standard format
 
-    ret_value = ret_value.astype(int) #Cast from float to 8-bit unsigned int
+    ret_value = ret_value.astype(int) #Cast from float to int
     
     return ret_value
 
