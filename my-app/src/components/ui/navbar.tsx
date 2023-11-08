@@ -47,7 +47,7 @@ const Navbar = ({ expandNavbar, setExpandNavbar }) => {
       {/* Logo */}
       <Image
         src="/logo.png"
-        alt="Logo Byte"
+        alt="Logo Keluarga Cemara"
         width={220}
         height={40}
         className="w-[50px] lg:w-[220px] lg-h-[40px] rounded"

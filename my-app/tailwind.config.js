@@ -18,8 +18,8 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        inter: ["var(--font-inter)"],
-        montserrat: ["var(--font-montserrat)"],
+        outfit: ["var(--font-outfit)"],
+        raleway: ["var(--font-raleway)"],
       },
 
       colors: {
@@ -27,6 +27,7 @@ module.exports = {
         "custom-green": "#93C73E",
         "custom-green-dark": "#236130",
         "custom-green-calm": "#589A43",
+        "custom-pink":"#DF3890",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

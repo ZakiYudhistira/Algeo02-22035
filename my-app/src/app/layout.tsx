@@ -1,21 +1,21 @@
 "use client";
 import "./globals.css";
-import { Inter, Montserrat } from "next/font/google";
+import { Outfit, Raleway } from "next/font/google";
 import Navbar from "@/components/ui/navbar";
 import Footer from "@/components/ui/footer";
 
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 
-const inter = Inter({
+const outfit = Outfit({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-inter",
+  variable: "--font-outfit",
 });
-const montserrat = Montserrat({
+const raleway = Raleway({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-montserrat",
+  variable: "--font-raleway",
 });
 
 export default function RootLayout({
@@ -33,7 +33,7 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={raleway.className}>
         <Navbar expandNavbar={expandNavbar} setExpandNavbar={setExpandNavbar} />
         {children}
         <Footer />
