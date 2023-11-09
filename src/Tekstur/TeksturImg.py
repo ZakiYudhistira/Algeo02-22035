@@ -4,7 +4,7 @@ import cv2 as cv
 import math as mt
 from datasets import load_dataset
 import sys
-from RetrieveImage import *
+# from RetrieveImage import *
 
 # CBIR dengan parameter tekstur
 
