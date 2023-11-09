@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 import numpy as np
 from numpy.linalg import norm
 import cv2 as cv2
@@ -49,4 +47,3 @@ data = np.array([[1, 2, 3, 0],
 # print(matrix)
 print(occurMini(matrix))
 print(getCoOccurenceMatrixmini(data,1))
->>>>>>> 78ee7833c540f14911892a2557b67a1f47160c34
