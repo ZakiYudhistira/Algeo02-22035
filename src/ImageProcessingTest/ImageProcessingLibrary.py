@@ -24,9 +24,9 @@ def normBGRtoHSV(input_image : np.ndarray) -> np.ndarray:
     ret_value[:,:,1] = ret_value[:,:,1]*100
     ret_value[:,:,2] = ret_value[:,:,2]*100
     ret_value[:,:,0] = ret_value[:,:,0]*60 
-    #Convert to 8 bit format
+    #Convert to standard format
 
-    ret_value = ret_value.astype(int) #Cast from float to 8-bit unsigned int
+    ret_value = ret_value.astype(int) #Cast from float to int
     
     return ret_value
 
@@ -102,6 +102,7 @@ input_image_PATH = "./ImageProcessingTest/Images/"
 output_image_PATH = "./ImageProcessingTest/PostProcessedImages/"
 
 image1 = cv.imread(input_image_PATH+"Lea.jpg")
+
 image2 = cv.imread(input_image_PATH+"Lea.jpg")
 new_img1 = normBGRtoHSV(image1)
 new_img2 = normBGRtoHSV(image2)
@@ -114,5 +115,5 @@ new_img2 = normBGRtoHSV(image2)
 
 print("%.2f"%getSimilarityIndeks(get3X3Histograms(new_img1),get3X3Histograms(new_img2)))
 
-end = time.time()
-print(end-start)
+# end = time.time()
+# print(end-start)
