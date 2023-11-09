@@ -49,7 +49,7 @@ def getHomogeneity(SymmetryMatrix : np.ndarray) -> float:
 
 # Matriks Entropi (pake epsilon)
 def getEntropy(SymmetryMatrix : np.ndarray) -> float:
-    e = 1e-10
+    e = 1e-1
     retValue = np.sum(SymmetryMatrix*np.log10(SymmetryMatrix + e))
     return retValue
 
@@ -79,27 +79,19 @@ def run1(image):
     h = getHomogeneity(data)
     e = getEntropy(data)
     v = getVector(c,h,e)
-    print(f"contrast :{c} homogen : {h} entrophy : {e}")
     return(v)
 
 
 # parentPath = "C:/Users/Angelica Gurning/Documents/Kuliah/ALGEO/Tubes_2/Algeo02-22035/test"
-# start = time.time()
-path = "C:/Users/Angelica Gurning/Documents/Kuliah/ALGEO/Tubes_2/Algeo02-22035/test/TestJaki/ganteng.jpeg"
+start = time.time()
+path = "C:/Users/Angelica Gurning/Documents/Kuliah/ALGEO/Tubes_2/Algeo02-22035/test/TestJaki/mark.jpeg"
 path2 = "C:/Users/Angelica Gurning/Documents/Kuliah/ALGEO/Tubes_2/Algeo02-22035/test/TestJaki/apple.jpg"
 image = cv2.imread(path)
 image2 = cv2.imread(path2)
-data1 = getCoOccurenceMatrix(getGrayScaleMatrix(image),1)
-data2 = getCoOccurenceMatrix(getGrayScaleMatrix(image2),1)
-# print256(data1)
-print("---------------------------------------------------")
-# print256(data1)
+print(getSimilarityIndeks(run1(image),run1(image2)))
 
-
-
-# print(getSimilarityIndeks(run1(image),run1(image2)))
-# end = time.time()
-# print(end-start)
+end = time.time()
+print(end-start)
 # image2 = cv.imread("./TestJaki/joko.jpg")
 # print(image)
 
