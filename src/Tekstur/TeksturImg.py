@@ -5,7 +5,7 @@ import math as mt
 import time
 # from datasets import load_dataset
 import sys
-from RetrieveImage import *
+# from RetrieveImage import *
 
 # CBIR dengan parameter tekstur
 
@@ -49,8 +49,8 @@ def getHomogeneity(SymmetryMatrix : np.ndarray) -> float:
 
 # Matriks Entropi (pake epsilon)
 def getEntropy(SymmetryMatrix : np.ndarray) -> float:
-    e = 1e-1
-    retValue = np.sum(SymmetryMatrix*np.log10(SymmetryMatrix + e))
+    valid_values = SymmetryMatrix[SymmetryMatrix > 0]
+    retValue = np.sum(-1*valid_values*np.log10(valid_values))
     return retValue
 
 
@@ -79,13 +79,16 @@ def run1(image):
     h = getHomogeneity(data)
     e = getEntropy(data)
     v = getVector(c,h,e)
+    printCHE(c,h,e)
+    
     return(v)
 
-
+def printCHE(c,h,e):
+    print(f"Contrast {c}, Homogeinity {h}, Entropy {e}")
 # parentPath = "C:/Users/Angelica Gurning/Documents/Kuliah/ALGEO/Tubes_2/Algeo02-22035/test"
 start = time.time()
-path = "C:/Users/Angelica Gurning/Documents/Kuliah/ALGEO/Tubes_2/Algeo02-22035/test/TestJaki/mark.jpeg"
-path2 = "C:/Users/Angelica Gurning/Documents/Kuliah/ALGEO/Tubes_2/Algeo02-22035/test/TestJaki/apple.jpg"
+path = "C:/Users/Angelica Gurning/Documents/Kuliah/ALGEO/Tubes_2/Algeo02-22035/test/Images/mark.jpeg"
+path2 = "C:/Users/Angelica Gurning/Documents/Kuliah/ALGEO/Tubes_2/Algeo02-22035/test/Images/apple.jpg"
 image = cv2.imread(path)
 image2 = cv2.imread(path2)
 print(getSimilarityIndeks(run1(image),run1(image2)))
