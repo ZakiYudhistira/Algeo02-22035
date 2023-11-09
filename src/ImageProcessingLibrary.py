@@ -95,15 +95,21 @@ def get3X3Segments(input_array : np.ndarray) -> tuple:
     return ret11,ret12,ret13,ret21,ret22,ret23,ret31,ret32,ret33
     #return all divided images
 
+def searchColor(image1,image2):
+        img1 = cv.imread(image1)
+        img1 = normBGRtoHSV(img1)
+        img2 = cv.imread(image2)
+        img2 = normBGRtoHSV(img2)
+        return(getSimilarityIndeks(get3X3Histograms(img1),get3X3Histograms(img2)))
 
 #Testings
-start = time.time()
-input_image_PATH = "./ImageProcessingTest/Images/"
-output_image_PATH = "./ImageProcessingTest/PostProcessedImages/"
+# start = time.time()
+# input_image_PATH = "./ImageProcessingTest/Images/"
+# output_image_PATH = "./ImageProcessingTest/PostProcessedImages/"
 
-image1 = cv.imread(input_image_PATH+"Lea.jpg")
-image2 = cv.imread(input_image_PATH+"Penguin.jpeg")
-new_img1 = normBGRtoHSV(image1)
+# image1 = cv.imread(input_image_PATH+"Lea.jpg")
+# image2 = cv.imread(input_image_PATH+"Penguin.jpeg")
+# new_img1 = normBGRtoHSV(image1)
 # print(image1)
 # new_img2 = normRGBtoHSV(image2)
 # new_img2 = cv.rotate(image1, cv.ROTATE_180)
