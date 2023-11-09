@@ -47,13 +47,13 @@ def getSimilarityIndeks(imgInput : np.ndarray, imgQuery : np.ndarray) :
 
 
 
-image = cv.imread("./TestJaki/black.png")
-image2 = cv.imread("./TestJaki/joko.jpg")
+# image = cv.imread("./TestJaki/black.png")
+# image2 = cv.imread("./TestJaki/joko.jpg")
 
-newImg = rgbtoHsv(image2)
-cv.imwrite("mas.jpg",newImg)
-newImg = cv.cvtColor(image2,cv.COLOR_RGB2HSV)
-cv.imwrite("masJoko.jpg",newImg)
+# newImg = rgbtoHsv(image2)
+# cv.imwrite("mas.jpg",newImg)
+# newImg = cv.cvtColor(image2,cv.COLOR_RGB2HSV)
+# cv.imwrite("masJoko.jpg",newImg)
 # maxValue = np.max(image, axis=2).astype(float)
 # maxValueId = np.argmax(image, axis=2)
 # minValue = np.min(image, axis=2)
@@ -62,7 +62,7 @@ cv.imwrite("masJoko.jpg",newImg)
 # retValue = np.zeros(image.shape, dtype=float)
 # mask = maxValue == 0
 # retValue[:,:,1] = retValue = np.divide(deltaValue, maxValue, where=~mask, out=np.zeros_like(deltaValue))
-print(newImg)
+# print(newImg)
 
 # print(getSimilarityIndeks(image,image2))
 # print(np.all(image[1,2,:] == [122,136,225]) & np.all(image[1,2,:]==[0,0,0]))

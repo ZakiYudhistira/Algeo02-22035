@@ -4,7 +4,7 @@ import time
 
 # image processing library
 
-def normRGBtoHSV(input_image : np.ndarray) -> np.ndarray:
+def normBGRtoHSV(input_image : np.ndarray) -> np.ndarray:
     image = input_image[:,:,[0,1,2]]/255 #Image standardization
 
     max_value = np.max(image, axis=2).astype(float)
@@ -103,14 +103,15 @@ output_image_PATH = "./ImageProcessingTest/PostProcessedImages/"
 
 image1 = cv.imread(input_image_PATH+"Lea.jpg")
 image2 = cv.imread(input_image_PATH+"Penguin.jpeg")
-new_img1 = normRGBtoHSV(image1)
+new_img1 = normBGRtoHSV(image1)
+# print(image1)
 # new_img2 = normRGBtoHSV(image2)
-new_img2 = cv.rotate(image1, cv.ROTATE_180)
+# new_img2 = cv.rotate(image1, cv.ROTATE_180)
 #Validity checking
 
-histogram_global = getHistogram(new_img2)
+# histogram_global = getHistogram(new_img2)
 
-print(getSimilarityIndeks(get3X3Histograms(new_img1),get3X3Histograms(new_img2)))
+# print(getSimilarityIndeks(get3X3Histograms(new_img1),get3X3Histograms(new_img2)))
 
-end = time.time()
-print(end-start)
+# end = time.time()
+# print(end-start)
