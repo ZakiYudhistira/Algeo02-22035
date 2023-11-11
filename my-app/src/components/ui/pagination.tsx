@@ -11,8 +11,7 @@ const Pagination = ({
 }) => {
   // Define color effects based on the primary color provided
   const colorEffect = {
-    blue: { selected: "fill-[#4F9BFD]", unselected: "fill-white" },
-    pink: { selected: "fill-[#C53998]", unselected: "fill-[#7A2F8B]" },
+    pink: { selected: "fill-[#DF3890]", unselected: "fill-[#7A2F8B]" },
   };
 
   // Create an array of numbers representing the page numbers
