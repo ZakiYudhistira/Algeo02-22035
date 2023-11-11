@@ -1,8 +1,8 @@
 "use client";
 import "./globals.css";
 import { Outfit, Raleway } from "next/font/google";
-import Navbar from "@/components/ui/navbar";
-import Footer from "@/components/ui/footer";
+import Navbar from "@/components/navbar";
+import Footer from "@/components/footer";
 
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";

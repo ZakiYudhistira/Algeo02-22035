@@ -1,5 +1,5 @@
-import ChevronIcon from "./chevron-icon";
-import DotIcon from "./dot-icon";
+import ChevronIcon from "../../components/ui/chevron-icon";
+import DotIcon from "../../components/ui/dot-icon";
 
 const Pagination = ({
   numberPage,

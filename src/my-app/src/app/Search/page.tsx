@@ -1,5 +1,6 @@
 "use client";
-import React, { Component,useState, useRef } from "react";
+import { useState, useRef } from "react";
+import React, { Component } from "react";
 import Image from "next/image";
 import Result from "./result";
 import axios from "axios";
@@ -9,38 +10,44 @@ import { Switch } from "@/components/ui/switch";
 
 const Search = () => {
   const [image, setImage] = useState<File | null>(null);
-  const inputRefImage = useRef<HTMLInputElement>(null);
+  const [imagedataset, setImagedataset] = useState<File[]>([]);
+  // const [startTime, setStartTime] = useState<number | null>(null);
+  // const [result, setResult] = useState<response[] | null>(null);
+  // const [result2, setResult2] = useState<File[] | null>(null);
+  // const [loading, setLoading] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRefFolder = useRef<HTMLInputElement>(null);
+  console.log(imagedataset);
+  const handleAPI = async () => {
+    const response = await fetch({})
+  }
+  const handlePhotoClick = () => {
+    if (inputRef.current) {
+      inputRef.current.click();
+    }
+  };
 
-  // ini nanti taro di input file
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0];
+  const handleFolderClick = () => {
+    if (inputRefFolder.current) {
+      inputRefFolder.current.click();
+    }
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files && e.target.files[0];
+
     if (selectedFile) {
       setImage(selectedFile);
     }
   };
 
-  // buat nge click input element karena input elemennya hidden
-  const handleImageClick = async () => {
-    if (inputRefImage.current) {
-      inputRefImage.current.click();
-    }
+  const handleFolderUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = e.target.files;
 
-    try {
-      const formData = new FormData();
-      formData.append('image', image as Blob);
-
-      const response = await axios.post('http://localhost:5000/api/upload', formData);
-
-      console.log('File uploaded successfully');
-      console.log('Server response:', response.data);
-    } catch (error) {
-      console.error('Error uploading file:', error);
+    if (selectedFiles) {
+      setImagedataset(Array.from(selectedFiles));
     }
   };
-
-
-
-
 
   return (
     <div className="mt-10">
@@ -53,12 +60,14 @@ const Search = () => {
       </h1>
       <div className="flex flex-wrap justify-center gap-10">
         <Image
-          src="/dummy.png"
+          // receive image from input
+          src={image ? URL.createObjectURL(image) : "/dummy.png"}
           alt="Image Input"
           width={500}
           height={500}
-          className="w-[500px] lg:w-fit -z-[1]"
+          className="w-[500px] lg:w-fit"
         ></Image>
+
         <div className="flex flex-col">
           <h2 className="text-custom-green-dark font-montserrat text-[22px] font-extrabold">
             Image Input
@@ -66,23 +75,36 @@ const Search = () => {
           <div className="flex flex-row gap-4 mb-28">
             <input
               type="file"
-              ref = {inputRefImage}
               className="hidden"
-              required
-              onChange={handleImageChange}
+              ref={inputRef}
+              onChange={handleImageUpload}
               accept="image/*"
-              name="imageupload"
+              required
+              name="fileupload"
             />
             <Button
               variant="outline"
               className="text-white bg-custom-green-calm font-semibold rounded-xl px-5"
-              onClick={handleImageClick}
+              onClick={handlePhotoClick}
             >
               Upload Image  
             </Button>
+
+            <input
+              type="file"
+              webkitdirectory=""
+              multiple
+              className="hidden"
+              ref={inputRefFolder}
+              onChange={handleFolderUpload}
+              required
+              accept="image/*"
+              name="folderupload"
+            />
             <Button
               variant="outline"
               className="text-white bg-custom-black font-semibold rounded-xl px-5"
+              onClick={handleFolderClick}
             >
               Upload Dataset
             </Button>
@@ -113,7 +135,7 @@ const Search = () => {
         height={700}
         className="lg:w-[1200px] lg:h-[80px] w-[300px] h-[500px] z-[-1] mt-10 mx-auto"
       ></Image>
-      <Result />
+      <Result imagedataset={imagedataset} />
     </div>
   );
 };
