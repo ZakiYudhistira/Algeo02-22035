@@ -12,56 +12,42 @@ const Howto = () => {
           Use
         </span>{" "}
       </h1>
-      <div className="flex flex-wrap justify-center mt-16 gap-5">
+      <div className="flex flex-wrap justify-center mt-5 gap-5">
         <div className="relative w-[600px] lg:w-fit">
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-white">
-            <p className="font-medium">
+          <Image
+            src="/how-to.svg"
+            alt="Image Input"
+            width={600}
+            height={600}
+            className="w-[600px] lg:w-fit -z-[1]"
+          ></Image>
+          <div className="absolute top-[47%] left-[14%] transform -translate-x-1/2 -translate-y-1/2 text-center text-white">
+            <p className="text-2xl font-outfit font-semibold">
               Upload image & <br />
               upload dataset
             </p>
           </div>
-          <Image
-            src="/circle-1.svg"
-            alt="Image Input"
-            width={600}
-            height={600}
-            className="w-[600px] lg:w-fit -z-[1]"
-          ></Image>
+          <div className="absolute top-[47%] left-[48%] transform -translate-x-1/2 -translate-y-1/2 text-center text-white">
+            <p className="text-2xl font-outfit font-semibold">
+              Choose color
+              <br />
+              or texture
+            </p>
+          </div>
+          <div className="absolute top-[47%] right-[4%] transform -translate-x-1/2 -translate-y-1/2 text-center text-white">
+            <p className="text-2xl font-outfit font-semibold">
+              Search and wait <br />
+              for the result
+            </p>
+          </div>
         </div>
-
-        <div className="relative">
-          <p className="absolute text-center my-9 ml-6 pt-7 text-white font-medium">
-            Choose color or
-            <br />
-            texture
-          </p>
-          <Image
-            src="/circle-1.svg"
-            alt="Image Input"
-            width={600}
-            height={600}
-            className="w-[600px] lg:w-fit -z-[1]"
-          ></Image>
-        </div>
-        <div className="relative">
-          <p className="absolute text-center my-8 ml-6 pt-7 text-white font-medium">
-            Search and wait <br />
-            for the result
-          </p>
-          <Image
-            src="/circle-1.svg"
-            alt="Image Input"
-            width={600}
-            height={600}
-            className="w-[600px] lg:w-fit -z-[1]"
-          ></Image>
-        </div>
-
+      </div>
+      <div className="relative">
         <Button
           variant="outline"
-          className="text-white bg-custom-green font-semibold font-raleway mt-5 rounded-xl px-7"
+          className="absolute left-[42%] text-xl text-white bg-custom-pink font-semibold font-raleway rounded-xl px-8 py-7"
         >
-          Use it now
+          <Link href="/Search">Use it now</Link>
         </Button>
       </div>
     </div>

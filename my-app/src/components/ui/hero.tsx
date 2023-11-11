@@ -27,7 +27,7 @@ const Hero = () => {
           yang beranggotakan Amel, Zaki, Angie. Project Reverse Image Search ini
           merupakan
           <br />
-          tugas besar mata kuliah IF2123 Aljabar Linear dan Geometri.
+          tugas besar mata kuliah IF2123 Aljabar Linear dan Geometri
         </p>
         <div className="flex justify-center">
           <Button
