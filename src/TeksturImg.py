@@ -1,6 +1,6 @@
 import numpy as np
 from numpy.linalg import norm
-import cv2 as cv2
+import cv2 as cv
 import math as mt
 import time
 # from datasets import load_dataset
@@ -64,6 +64,11 @@ def getEnergy(SymmetryMatrix : np.ndarray) -> float:
     retValue = np.sqrt(getASM(SymmetryMatrix))
     return retValue
 
+# Matriks disimmilarity
+def getDissimilarity(SymmetryMatrix : np.ndarray) -> float:
+    retValue = np.sum(SymmetryMatrix*np.abs((np.arange(SymmetryMatrix.shape[0])[:,None]-np.arange(SymmetryMatrix.shape[1]))))
+    return retValue
+
 # Mendapatkan vektor dari CHE, dissimilarity, asm, energy (6 fitur/dimensi)
 def getVector(contrast : float, homogeneity : float, entropy : float, dissimilarity : float, asm : float, energy : float) -> np.ndarray:
     vektor = np.array([contrast,homogeneity,entropy,dissimilarity,asm,energy])
@@ -83,30 +88,41 @@ def print256(image : np.ndarray):
             print(image[i, j], end=' ')  # Printing the pixel value
         print()  # Move to the next line after each row
 
-def run1(image):
+def processTexture(image):
     data = getCoOccurenceMatrix(getGrayScaleMatrix(image))
     data = getNormalizedSymmetryMatrix(getSymmetryMatrix(data))
     c = getContrast(data)
     h = getHomogeneity(data)
     e = getEntropy(data)
-    v = getVector(c,h,e)
-    print(f"Contrast: {c}, Homogeneity: {h}, Entropy: {e}")
+    asm = getASM(data)
+    d = getDissimilarity(data)
+    energy = getEnergy(data)
+    v = getVector(c,h,e,d,asm,energy)
     return(v)
+
+def  runTexture(image1,image2):
+    img1 = cv.imread(image1)
+    img2 = cv.imread(image2)
+    img1 = processTexture(img1)
+    img2 = processTexture(img2)
+    return (getSimilarityIndeks(img1,img2))
+
 
 
 # parentPath = "C:/Users/Angelica Gurning/Documents/Kuliah/ALGEO/Tubes_2/Algeo02-22035/test"
-start = time.time()
+# start = time.time()
 
-path = "D:/Main Files/File Amel/Kuliah/Akademik/Semester 3/ALGEO/apel.jpg"
-path2 = "D:/Main Files/File Amel/Kuliah/Akademik/Semester 3/ALGEO/White.png"
-
-image = cv2.imread(path)
-image2 = cv2.imread(path2)
+# path = "D:/Main Files/File Amel/Kuliah/Akademik/Semester 3/ALGEO/apel.jpg"
+# path2 = "D:/Main Files/File Amel/Kuliah/Akademik/Semester 3/ALGEO/White.png"
+# path = "C:\\Users\\Angelica Gurning\\Documents\\Kuliah\\ALGEO\\Tubes_2\\Algeo02-22035\\test\\Images\\apple.jpg"
+# path2 = "C:\\Users\\Angelica Gurning\\Documents\\Kuliah\\ALGEO\\Tubes_2\\Algeo02-22035\\test\\Images\\mark.jpeg"
+# image = cv2.imread(path)
+# image2 = cv2.imread(path2)
 # print(image2)
-print(getSimilarityIndeks(run1(image),run1(image2)))
+# print(runTexture(image,image2))
 
-end = time.time()
-print(end-start)
+# end = time.time()
+# print(end-start)
 # image2 = cv.imread("./TestJaki/joko.jpg")
 # print(image)
 

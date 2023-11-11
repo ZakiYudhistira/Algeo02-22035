@@ -95,7 +95,7 @@ def get3X3Segments(input_array : np.ndarray) -> tuple:
     return ret11,ret12,ret13,ret21,ret22,ret23,ret31,ret32,ret33
     #return all divided images
 
-def searchColor(image1,image2):
+def runColor(image1,image2):
         img1 = cv.imread(image1)
         img1 = normBGRtoHSV(img1)
         img2 = cv.imread(image2)

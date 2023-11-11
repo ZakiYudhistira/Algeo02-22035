@@ -1,5 +1,8 @@
 import os
 from ImageProcessingLibrary import *
+from TeksturImg import *
+import time
+
 base_path = os.path.dirname(os.path.dirname(__file__))
 path_parent =os.path.join(base_path,'test')
 
@@ -15,26 +18,33 @@ def getDatasetPath(folder_name):
     file_Dictionary = {filename : 0 for filename in files}
     return(file_Dictionary)
     
-def getCosineValues(dictionary,folder_name):
-    i = 0
+def searchColor(dictionary,folder_name):
     for filename in dictionary.keys():
         path_current = os.path.join(path_parent,folder_name,filename)
-        res = searchColor(getImagePath('apple.jpg'),path_current)
+        res = runColor(getImagePath('apple.jpg'),path_current)
         dictionary[filename] = res
     new_dict = dict(sorted(dictionary.items(), key=lambda item: item[1], reverse=True))
     return new_dict
 
-
-# img = cv.imread(getImagePath('apple.jpg'))
-# print(getImagePath('apple.jpg'))
-# print("C:\\Users\\Angelica Gurning\\Documents\\Kuliah\\ALGEO\\Tubes_2\\Algeo02-22035\\test\\Upload\\apple.jpg")
-# print(img)
-# folder_name = "Images"
-# pathF = os.path.join(path_parent,folder_name)
-# files = os.listdir(pathF)
-# print(pathF)
-# print("-------------------")
-# print("C:\\Users\\Angelica Gurning\\Documents\\Kuliah\\ALGEO\\Tubes_2\\Algeo02-22035\\test\\Images")
-# getImagePath('apple.jpg')
+def searchTexture(dictionary,folder_name):
+    for filename in dictionary.keys():
+        path_current = os.path.join(path_parent,folder_name,filename)
+        res = runTexture(getImagePath('apple.jpg'),path_current)
+        dictionary[filename] = res
+    new_dict = dict(sorted(dictionary.items(), key=lambda item: item[1], reverse=True))
+    return new_dict
+    
+start = time.time()
 dicti = getDatasetPath('Images')
-print(getCosineValues(dicti,'Images'))
+print(searchColor(dicti,'Images'))
+end = time.time()
+
+start1 = time.time()
+dicti2 = getDatasetPath('Images')
+print(searchTexture(dicti2,'Images'))
+end1 = time.time()
+
+print("COLOR")
+print(end-start)
+print("TEXTURE")
+print(end1-start1)
