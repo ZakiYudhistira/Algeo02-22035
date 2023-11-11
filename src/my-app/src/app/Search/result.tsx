@@ -4,47 +4,7 @@ import { useState, useRef } from "react";
 import Image from "next/image";
 import ResultClient from "./result-client";
 
-export default function Home() {
-  const dummyData = [
-    {
-      imageUrl: "/dummy-black.jpg",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/orang.jpg",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok3.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok4.jpg",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok5.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok6.jpg",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-  ];
-
-  const [imagedataset, setImagedataset] = useState<File[] | null>(null);
+export default function Home({ imagedataset }: { imagedataset: File[] }) {
   const [startTime, setStartTime] = useState<number | null>(null);
 
   const getElapsedTime = () => {
@@ -68,7 +28,7 @@ export default function Home() {
         </p>
       </div>
 
-      <ResultClient data={dummyData} />
+      <ResultClient data={imagedataset} />
     </main>
   );
 }
