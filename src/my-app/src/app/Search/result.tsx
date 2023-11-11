@@ -1,3 +1,6 @@
+"use client";
+
+import { useState, useRef } from "react";
 import Image from "next/image";
 import ResultClient from "./result-client";
 
@@ -39,332 +42,21 @@ export default function Home() {
       height: 1920,
       cosValue: "0.5",
     },
-    {
-      imageUrl: "/kelompok7.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok8.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok9.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok10.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok11.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok12.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok13.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-
-    {
-      imageUrl: "/kelompok14.jpg",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok15.jpg",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok16.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok17.jpg",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok18.jpg",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok19.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok20.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok21.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok22.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok23.jpg",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok23.jpg",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok19.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok20.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok21.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok22.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok23.jpg",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok23.jpg",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok19.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok20.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok21.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok22.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok23.jpg",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok23.jpg",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok19.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok20.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok21.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok22.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok23.jpg",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok23.jpg",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok19.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok20.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok21.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok22.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok23.jpg",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok23.jpg",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok19.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok20.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok21.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok22.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok23.jpg",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok23.jpg",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok19.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok20.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok21.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok22.png",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok23.jpg",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
-    {
-      imageUrl: "/kelompok23.jpg",
-      width: 1080,
-      height: 1920,
-      cosValue: "0.5",
-    },
   ];
+
+  const [imagedataset, setImagedataset] = useState<File[] | null>(null);
+  const [startTime, setStartTime] = useState<number | null>(null);
+
+  const getElapsedTime = () => {
+    if (startTime) {
+      const currentTime = new Date().getTime();
+      const elapsedTime = (currentTime - startTime) / 1000; // Convert to seconds
+      console.log(elapsedTime);
+      return `Time: ${elapsedTime.toFixed(2)} seconds`;
+    }
+    return "";
+  };
+
   return (
     <main className="px-8 sm:px-10 md:px-14 relative z-10 lg:px-20 xl:px-32 2xl:px-36 bg-custom-blue min-h-screen overflow-hidden">
       <div className="flex flex-row items-center justify-between">
@@ -372,7 +64,7 @@ export default function Home() {
           Search Results
         </h1>
         <p className="text-right text-black text-base font-outline">
-          54 results in 0.7 seconds
+          {imagedataset?.length} results in {getElapsedTime()} seconds
         </p>
       </div>
 

@@ -1,6 +1,6 @@
 "use client";
-import ResultCard from "@/components/ui/result-card";
-import Pagination from "@/components/ui/pagination";
+import ResultCard from "@/app/Search/result-card";
+import Pagination from "@/app/Search/pagination";
 import React from "react";
 import { useState } from "react";
 
