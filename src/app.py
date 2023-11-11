@@ -14,6 +14,10 @@ DOWNLOAD_FOLDER = os.path.join(base_path,"Download")
 def get_data():
     data = {'message': 'Hello from Flask API!'}
     return jsonify(data)
+@app.route('/api/data', methods=['GET'])
+def get_data():
+    data = {'message': 'Hello from Flask API!'}
+    return jsonify(data)
  
 if __name__ == '__main__':
     app.run(debug=True)
