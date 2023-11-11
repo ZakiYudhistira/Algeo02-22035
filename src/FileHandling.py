@@ -1,7 +1,7 @@
 import os
 from ImageProcessingLibrary import *
-from TeksturImg import *
 import time
+import cv2 as cv
 
 base_path = os.path.dirname(os.path.dirname(__file__))
 path_parent =os.path.join(base_path,'test')
@@ -14,7 +14,6 @@ def getImagePath(Image):
 def getDatasetPath(folder_name):
     path_file = os.path.join(path_parent,folder_name)
     files = os.listdir(path_file)
-    # file_path = [os.path.join(path_file,file) for file in files]
     file_Dictionary = {filename : 0 for filename in files}
     return(file_Dictionary)
     
@@ -48,3 +47,27 @@ print("COLOR")
 print(end-start)
 print("TEXTURE")
 print(end1-start1)
+
+
+# import os
+
+# # Read an image from file
+# image = cv.imread(getImagePath('mark.jpeg'))
+
+# # Check if the image was successfully loaded
+# if image is not None:
+#     # Specify the output folder
+#     output_folder = os.path.join(path_parent,'Dataset')
+
+#     # Ensure the output folder exists, create it if necessary
+#     if not os.path.exists(output_folder):
+#         os.makedirs(output_folder)
+
+#     # Construct the full path for the output image
+#     output_path = os.path.join(output_folder, 'output_image.jpg')
+#     newimg = getGrayScaleMatrix(image)
+#     # Write the image to the specified folder
+#     cv.imwrite(output_path, newimg)
+#     print(f'Image successfully written to {output_path}.')
+# else:
+#     print('Error: Could not load the image.')
