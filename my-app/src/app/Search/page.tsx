@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import Image from "next/image";
+import Result from "./result";
 
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -66,6 +67,7 @@ const Search = () => {
         height={700}
         className="lg:w-[1200px] lg:h-[80px] w-[300px] h-[500px] z-[-1] mt-10 mx-auto"
       ></Image>
+      <Result />
     </div>
   );
 };
