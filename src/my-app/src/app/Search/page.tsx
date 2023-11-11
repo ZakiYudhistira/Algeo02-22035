@@ -1,11 +1,47 @@
-import React, { Component } from "react";
+"use client";
+import React, { Component,useState, useRef } from "react";
 import Image from "next/image";
 import Result from "./result";
+import axios from "axios";
 
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 
 const Search = () => {
+  const [image, setImage] = useState<File | null>(null);
+  const inputRefImage = useRef<HTMLInputElement>(null);
+
+  // ini nanti taro di input file
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile) {
+      setImage(selectedFile);
+    }
+  };
+
+  // buat nge click input element karena input elemennya hidden
+  const handleImageClick = async () => {
+    if (inputRefImage.current) {
+      inputRefImage.current.click();
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append('image', image as Blob);
+
+      const response = await axios.post('http://localhost:5000/api/upload', formData);
+
+      console.log('File uploaded successfully');
+      console.log('Server response:', response.data);
+    } catch (error) {
+      console.error('Error uploading file:', error);
+    }
+  };
+
+
+
+
+
   return (
     <div className="mt-10">
       <h1 className="text-custom-green font-montserrat text-[30px] lg:text-7xl font-bold tracking-[0.54px] text-center mb-12">
@@ -28,11 +64,21 @@ const Search = () => {
             Image Input
           </h2>
           <div className="flex flex-row gap-4 mb-28">
+            <input
+              type="file"
+              ref = {inputRefImage}
+              className="hidden"
+              required
+              onChange={handleImageChange}
+              accept="image/*"
+              name="imageupload"
+            />
             <Button
               variant="outline"
               className="text-white bg-custom-green-calm font-semibold rounded-xl px-5"
+              onClick={handleImageClick}
             >
-              Upload Image
+              Upload Image  
             </Button>
             <Button
               variant="outline"
