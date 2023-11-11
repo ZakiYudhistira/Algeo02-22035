@@ -131,3 +131,4 @@ def  runTexture(image1,image2):
 # # print(newImg)
 # print("co-occurence")
 # print256(getSymmetryMatrix(getCoOccurenceMatrix(data1,1)))
+

@@ -2,7 +2,8 @@ import numpy as np
 import cv2 as cv
 import time
 
-# image processing library
+
+# ------- CONTENT BASED IMAGE RETRIEVAL : COLOR -------
 
 def normBGRtoHSV(input_image : np.ndarray) -> np.ndarray:
     image = input_image[:,:,[0,1,2]]/255 #Image standardization
@@ -101,6 +102,101 @@ def runColor(image1,image2):
         img2 = cv.imread(image2)
         img2 = normBGRtoHSV(img2)
         return(getSimilarityIndeks(get3X3Histograms(img1),get3X3Histograms(img2)))
+
+
+# ------- CONTENT BASED IMAGE RETRIEVAL : TEXTURE -------
+# Matriks BGR to Gray scale
+def getGrayScaleMatrix(image : np.ndarray) -> np.ndarray:
+    retValue = np.zeros((image.shape[0],image.shape[1]), dtype=int)
+    retValue = (0.29*image[:,:,2]+0.587*image[:,:,1]+0.114*image[:,:,0])
+    return retValue.astype(int)
+
+# Matriks Co-Occurence, distance = 1, angle = 0
+def getCoOccurenceMatrix(image : np.ndarray) -> np.ndarray:
+    retValue = np.zeros((256,256), dtype=int)
+
+    for i in range(image.shape[0]):
+        for j in range(image.shape[1]):
+            if (i< image.shape[0]) and (j+1 < image.shape[1]):
+                retValue[image[i,j],image[i,j+1]] += 1
+                
+    return retValue
+
+# Matriks Symmetry
+def getSymmetryMatrix(coOccurence_matrix: np.ndarray) -> np.ndarray:
+    retValue = np.add(coOccurence_matrix, np.transpose(coOccurence_matrix))
+    return retValue
+
+# Matriks Normalisasi
+def getNormalizedSymmetryMatrix(SymmetryMatrix : np.ndarray) -> np.ndarray:
+    retValue = SymmetryMatrix.astype(float)
+    retValue = retValue/np.sum(retValue)
+    return retValue
+
+# Matriks Kontras
+def getContrast(SymmetryMatrix : np.ndarray) -> float:
+    retValue = np.sum(SymmetryMatrix*(np.arange(SymmetryMatrix.shape[0])[:,None]-np.arange(SymmetryMatrix.shape[1]))**2)
+    return retValue
+
+# Matriks Homogenitas
+def getHomogeneity(SymmetryMatrix : np.ndarray) -> float:
+    retValue = np.sum(SymmetryMatrix/(1+(np.arange(SymmetryMatrix.shape[0])[:,None]-np.arange(SymmetryMatrix.shape[1]))**2))
+    return retValue
+
+# Matriks Entropi
+def getEntropy(SymmetryMatrix : np.ndarray) -> float:
+    # handling jika elemen matriks = 0
+    valid_values = SymmetryMatrix[SymmetryMatrix > 0]
+    retValue = np.sum(-1*valid_values*np.log10(valid_values))
+    return retValue
+
+# Matriks Angular Second Moment (ASM)
+def getASM(SymmetryMatrix : np.ndarray) -> float:
+    retValue = np.sum(SymmetryMatrix**2)
+    return retValue
+
+# Matriks Energy
+def getEnergy(SymmetryMatrix : np.ndarray) -> float:
+    retValue = np.sqrt(getASM(SymmetryMatrix))
+    return retValue
+
+# Matriks disimmilarity
+def getDissimilarity(SymmetryMatrix : np.ndarray) -> float:
+    retValue = np.sum(SymmetryMatrix*np.abs((np.arange(SymmetryMatrix.shape[0])[:,None]-np.arange(SymmetryMatrix.shape[1]))))
+    return retValue
+
+# Mendapatkan vektor dari CHE, dissimilarity, asm, energy (6 fitur/dimensi)
+def getVector(contrast : float, homogeneity : float, entropy : float, dissimilarity : float, asm : float, energy : float) -> np.ndarray:
+    vektor = np.array([contrast,homogeneity,entropy,dissimilarity,asm,energy])
+    return vektor
+
+# Cosine Similarity
+def getSimilarityIndeks(array_input1 : np.array, array_input2 : np.array) -> float:
+    dot_result = np.dot(array_input1,array_input2)
+    #Retrieve dot product results
+    return dot_result/(np.linalg.norm(array_input1)*np.linalg.norm(array_input2))
+
+# Function to process the image in one go
+def processTexture(image):
+    data = getCoOccurenceMatrix(getGrayScaleMatrix(image))
+    data = getNormalizedSymmetryMatrix(getSymmetryMatrix(data))
+    c = getContrast(data)
+    h = getHomogeneity(data)
+    e = getEntropy(data)
+    asm = getASM(data)
+    d = getDissimilarity(data)
+    energy = getEnergy(data)
+    v = getVector(c,h,e,d,asm,energy)
+    return(v)
+
+
+def  runTexture(image1,image2):
+    img1 = cv.imread(image1)
+    img2 = cv.imread(image2)
+    img1 = processTexture(img1)
+    img2 = processTexture(img2)
+    return (getSimilarityIndeks(img1,img2))
+
 
 #Testings
 start = time.time()
