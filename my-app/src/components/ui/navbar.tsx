@@ -21,8 +21,8 @@ const Navbar = ({ expandNavbar, setExpandNavbar }) => {
       url: "/Search",
     },
     {
-      name: "About Us",
-      url: "/comingSoon",
+      name: "Explore",
+      url: "/Explore",
     },
   ];
 
