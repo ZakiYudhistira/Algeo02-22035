@@ -1,5 +1,4 @@
-
-from flask import Flask, render_template
+from flask import Flask, render_template,jsonify
 import os
  
 app = Flask(__name__)
@@ -10,9 +9,10 @@ UPLOAD_IMAGE = os.path.join(base_path,"Upload")
 UPLOAD_DATASET = os.path.join(base_path,"Dataset")
 DOWNLOAD_FOLDER = os.path.join(base_path,"Download")
 
-@app.route('/')
-def cbir():
-    return render_template('image_render.html')
+@app.route('/api/data', methods=['GET'])
+def get_data():
+    data = {'message': 'Hello from Flask API!'}
+    return jsonify(data)
  
 if __name__ == '__main__':
-    app.run(debug=True, port=8080)
+    app.run(debug=True)
