@@ -14,50 +14,48 @@ const Search = () => {
           Image Search
         </span>{" "}
       </h1>
-      <div className="flex flex-col">
-        <div className="flex flex-wrap justify-center gap-10">
-          <Image
-            src="/dummy.png"
-            alt="Image Input"
-            width={500}
-            height={500}
-            className="w-[500px] lg:w-fit -z-[1]"
-          ></Image>
-          <div className="flex flex-col">
-            <h2 className="text-custom-green-dark font-montserrat text-[22px] font-extrabold">
-              Image Input
-            </h2>
-            <div className="flex flex-row gap-4 mb-28">
-              <Button
-                variant="outline"
-                className="text-white bg-custom-green-calm font-semibold rounded-xl px-5"
-              >
-                Upload Image
-              </Button>
-              <Button
-                variant="outline"
-                className="text-white bg-custom-black font-semibold rounded-xl px-5"
-              >
-                Upload Dataset
-              </Button>
+      <div className="flex flex-wrap justify-center gap-10">
+        <Image
+          src="/dummy.png"
+          alt="Image Input"
+          width={500}
+          height={500}
+          className="w-[500px] lg:w-fit -z-[1]"
+        ></Image>
+        <div className="flex flex-col">
+          <h2 className="text-custom-green-dark font-montserrat text-[22px] font-extrabold">
+            Image Input
+          </h2>
+          <div className="flex flex-row gap-4 mb-28">
+            <Button
+              variant="outline"
+              className="text-white bg-custom-green-calm font-semibold rounded-xl px-5"
+            >
+              Upload Image
+            </Button>
+            <Button
+              variant="outline"
+              className="text-white bg-custom-black font-semibold rounded-xl px-5"
+            >
+              Upload Dataset
+            </Button>
+          </div>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center justify-center gap-4">
+              <span className="font-montserrat text-[21px] font-semibold">
+                Color
+              </span>
+              <Switch className="bg-black" />
+              <span className="font-montserrat text-[21px] font-semibold">
+                Texture
+              </span>
             </div>
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center justify-center gap-4">
-                <span className="font-montserrat text-[21px] font-semibold">
-                  Color
-                </span>
-                <Switch className="bg-black" />
-                <span className="font-montserrat text-[21px] font-semibold">
-                  Texture
-                </span>
-              </div>
-              <Button
-                variant="outline"
-                className="text-white bg-gradient-to-r from-[#DF3890] to-[150%] to-[#FF87C6] font-semibold rounded-xl"
-              >
-                Search
-              </Button>
-            </div>
+            <Button
+              variant="outline"
+              className="text-white bg-gradient-to-r from-[#DF3890] to-[150%] to-[#FF87C6] font-semibold rounded-xl"
+            >
+              Search
+            </Button>
           </div>
         </div>
       </div>
