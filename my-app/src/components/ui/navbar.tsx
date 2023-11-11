@@ -21,8 +21,8 @@ const Navbar = ({ expandNavbar, setExpandNavbar }) => {
       url: "/Search",
     },
     {
-      name: "About Us",
-      url: "/comingSoon",
+      name: "Explore",
+      url: "/Explore",
     },
   ];
 
@@ -43,7 +43,7 @@ const Navbar = ({ expandNavbar, setExpandNavbar }) => {
   }, [setExpandNavbar]);
 
   return (
-    <nav className="sticky left-0 right-0 top-0 flex justify-between  z-20  w-full bg-custom-blue-dark py-3 px-7 lg:px-10 xl:px-16 2xl:px-24 lg:py-3">
+    <nav className="sticky left-0 right-0 top-0 flex justify-between  z-20  w-full bg-white py-3 px-7 lg:px-10 xl:px-16 2xl:px-24 lg:py-3">
       {/* Logo */}
       <Image
         src="/logo.png"
@@ -68,7 +68,7 @@ const Navbar = ({ expandNavbar, setExpandNavbar }) => {
                   pathname.toLowerCase() === item.url.toLowerCase()
                     ? "text-custom-green"
                     : "text-custom-black"
-                } hover:text-custom-yellow`}
+                } hover:text-custom-green`}
               >
                 {item.name}
               </li>
