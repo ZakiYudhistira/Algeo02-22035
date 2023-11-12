@@ -58,15 +58,16 @@ def run():
     # Return the run time (start time - end time)
     start_time = time.time()
     try:
-        if not os.path.isdir(DOWNLOAD_FOLDER):
-            os.mkdir(DOWNLOAD_FOLDER)
-        if request.form['method'] == 'color':
+        if request.method == 'POST':
+            option = request.json.get('option')
+
+        if option == 'color':
             app.logger.debug('Color method found in request')
             result = searchColor()
             end_time = time.time()
             delta_time = end_time - start_time
             return jsonify(result,  delta_time)
-        elif request.form['method'] == 'texture':
+        elif option == 'texture':
             app.logger.debug('Texture method found in request')
             result = searchTexture()
             end_time = time.time()
@@ -106,5 +107,9 @@ def download_file(filename):
 
     pass
 
+    
+        
+
+ 
 if __name__ == '__main__':
     app.run(debug=True)

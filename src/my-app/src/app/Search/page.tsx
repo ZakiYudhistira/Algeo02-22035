@@ -13,18 +13,8 @@ const Search = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [imagedataset, setImagedataset] = useState<File[]>([]);
   const inputRefFolder = useRef<HTMLInputElement>(null);
-
+  const [isChecked,setChecked] = useState(false)
   console.log(imagedataset);
-
-  const cosValue = async () => {
-    try {
-      const apiUrl = `http://127.0.0.1:5000/api/cbir`;
-      const response = await axios.get(apiUrl);
-      console.log(response.data);
-    } catch (error) {
-      console.error("Error during backend POST request", error);
-    }
-  };
 
   const submitPhoto = useCallback(
     async (e: React.FormEvent) => {
@@ -105,6 +95,21 @@ const Search = () => {
       submitDataset(new Event("submit")); // Directly call submitDataset
     }
   }, [image, imagedataset.length, submitPhoto, submitDataset]);
+  
+  const handleSwitchChange = () => {
+    setChecked(!isChecked);
+  }
+
+  const handleSearch = async () => {
+    const valueTosend = isChecked ? 'texture' : 'color';
+    try {
+      const apiUrl = `http://127.0.0.1:5000/api/cbir`;
+      const response = await axios.post(apiUrl,{ option: valueTosend});
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   return (
     <div className="mt-10">
@@ -177,7 +182,11 @@ const Search = () => {
               <span className="font-montserrat text-[21px] font-semibold">
                 Color
               </span>
-              <Switch className="bg-black" />
+              <Switch 
+                className="bg-black" 
+                checked={isChecked}  
+                onCheckedChange={handleSwitchChange} 
+                />
               <span className="font-montserrat text-[21px] font-semibold">
                 Texture
               </span>
@@ -187,7 +196,7 @@ const Search = () => {
               type="submit"
               variant="outline"
               className="text-white bg-gradient-to-r from-[#DF3890] to-[150%] to-[#FF87C6] font-semibold rounded-xl"
-              onClick={cosValue}
+              onClick={handleSearch}
             >
               Search
             </Button>
