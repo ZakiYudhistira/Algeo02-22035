@@ -9,6 +9,8 @@ import sys
 
 # CBIR dengan parameter tekstur
 
+# class ImageTexture:
+
 # Matriks BGR to Gray scale
 def getGrayScaleMatrix(image : np.ndarray) -> np.ndarray:
     retValue = np.zeros((image.shape[0],image.shape[1]), dtype=int)

@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import React, { Component } from "react";
 import Image from "next/image";
 import Result from "./result";
@@ -10,55 +10,46 @@ import { Switch } from "@/components/ui/switch";
 
 const Search = () => {
   const [image, setImage] = useState<File | null>(null);
-  const [isNewImageSelected,setIsNewImageSelected] = useState(false);
-  const [imagedataset, setImagedataset] = useState<File[]>([]);
-  // const [startTime, setStartTime] = useState<number | null>(null);
-  // const [result, setResult] = useState<response[] | null>(null);
-  // const [result2, setResult2] = useState<File[] | null>(null);
-  // const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [imagedataset, setImagedataset] = useState<File[]>([]);
   const inputRefFolder = useRef<HTMLInputElement>(null);
+
   console.log(imagedataset);
 
-  const handlePhotoClick = async () => {
-    if (inputRef.current) {
-      inputRef.current.click();
-    }
-  };  
+  const submitPhoto = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      try {
+        const formData = new FormData();
+        if (image) {
+          formData.append("image", image);
 
-  const submitPhoto = async (e:React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const formData = new FormData();
-      if (image) {
-        formData.append('image', image);
+          const apiUrl = `http://127.0.0.1:5000/api/upload`;
+          const response = await axios.post(apiUrl, formData);
+
+          console.log(response.data);
+        } else {
+          console.error("No image selected");
+        }
+      } catch (error) {
+        console.error("Error during backend POST request", error);
       }
-
-      const apiUrl = `http://127.0.0.1:5000/api/upload`;
-
-      const response = await axios.post(apiUrl, formData);
-
-      console.log(response.data);
-    } catch (error) {
-      console.error('Error during backend POST request', error);
-    }
-
-  };
-
-  const handleFolderClick = () => {
-    if (inputRefFolder.current) {
-      inputRefFolder.current.click();
-    }
-  };
+    },
+    [image]
+  );
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files && e.target.files[0];
 
     if (selectedFile) {
       setImage(selectedFile);
-      setIsNewImageSelected(true);
     }
+  };
 
+  const handlePhotoClick = () => {
+    if (inputRef.current) {
+      inputRef.current.click();
+    }
   };
 
   const handleFolderUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,15 +60,18 @@ const Search = () => {
     }
   };
 
-  const handleFormSubmit = (e:React.FormEvent) => {
-    e.preventDefault();
-    if (isNewImageSelected) {
-      submitPhoto;
-      setIsNewImageSelected(false);
-    } else {
-      console.log('No new image selected');
+  const handleFolderClick = () => {
+    if (inputRefFolder.current) {
+      inputRefFolder.current.click();
     }
-  }
+  };
+
+  useEffect(() => {
+    if (image) {
+      submitPhoto(new Event("submit"));
+    }
+  }, [image, submitPhoto]);
+
   return (
     <div className="mt-10">
       <h1 className="text-custom-green font-montserrat text-[30px] lg:text-7xl font-bold tracking-[0.54px] text-center mb-12">
@@ -102,6 +96,7 @@ const Search = () => {
             Image Input
           </h2>
           <div className="flex flex-row gap-4 mb-28">
+            {/* Form to post an uploaded image */}
             <form onSubmit={submitPhoto}>
               <input
                 type="file"
@@ -113,17 +108,17 @@ const Search = () => {
                 name="fileupload"
               />
               <Button
+                type="submit"
                 variant="outline"
                 className="text-white bg-custom-green-calm font-semibold rounded-xl px-5"
-                type="button"
                 onClick={handlePhotoClick}
               >
-                Upload Image  
+                Upload Image
               </Button>
-              <button type="submit" className="hidden">
-                Submit
-              </button>
             </form>
+
+            {/* Form to post a folder of images */}
+
             <input
               type="file"
               webkitdirectory=""

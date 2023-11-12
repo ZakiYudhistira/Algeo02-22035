@@ -7,6 +7,11 @@ import logging,os
 app = Flask(__name__)
 CORS(app)
 
+# app.middleware = [
+#     'flask_cors.CORS',
+#     {'AllowedOriginsMiddleware': ('*',)},
+# ]
+
 base_path = os.path.join(os.path.dirname(os.path.dirname(__file__)),"test")
 app.logger.setLevel(logging.DEBUG)
 
