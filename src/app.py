@@ -78,38 +78,34 @@ def run():
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
     
 # Endpoint for downloading the result
-@app.route('/api/download', methods=['POST'])
-def download():
-    app.logger.debug('Received a request to /api/download')
-    try:
-        if not os.path.isdir(DOWNLOAD_FOLDER):
-            os.mkdir(DOWNLOAD_FOLDER)
-        if request.form['method'] == 'color':
-            app.logger.debug('Color method found in request')
-            result = searchColor()
-            return jsonify(result)
-        elif request.form['method'] == 'texture':
-            app.logger.debug('Texture method found in request')
-            result = searchTexture()
-            return jsonify(result)
-        return jsonify({"error": "No method provided"}, 400)
-    except Exception as e:
-        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+# @app.route('/api/download', methods=['POST'])
+# def download():
+#     app.logger.debug('Received a request to /api/download')
+#     try:
+#         if not os.path.isdir(DOWNLOAD_FOLDER):
+#             os.mkdir(DOWNLOAD_FOLDER)
+#         if request.form['method'] == 'color':
+#             app.logger.debug('Color method found in request')
+#             result = searchColor()
+#             return jsonify(result)
+#         elif request.form['method'] == 'texture':
+#             app.logger.debug('Texture method found in request')
+#             result = searchTexture()
+#             return jsonify(result)
+#         return jsonify({"error": "No method provided"}, 400)
+#     except Exception as e:
+#         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
     
 # Endpoint for downloading the result
-@app.route('/api/download/<path:filename>', methods=['GET', 'POST'])
-def download_file(filename):
-    app.logger.debug('Received a request to /api/download/<path:filename>')
-    try:
-        return send_from_directory(DOWNLOAD_FOLDER, filename=filename, as_attachment=True)
-    except Exception as e:
-        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+# @app.route('/api/download/<path:filename>', methods=['GET', 'POST'])
+# def download_file(filename):
+#     app.logger.debug('Received a request to /api/download/<path:filename>')
+#     try:
+#         return send_from_directory(DOWNLOAD_FOLDER, filename=filename, as_attachment=True)
+#     except Exception as e:
+#         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
     pass
 
-    
-        
-
- 
 if __name__ == '__main__':
     app.run(debug=True)
