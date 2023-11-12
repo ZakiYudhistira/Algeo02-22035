@@ -2,13 +2,13 @@
 from flask import Flask, render_template,request,jsonify,send_from_directory
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
-from FileHandling import *
+from ImageProcessingLibrary import *
 import logging,os  
+import time
  
 app = Flask(__name__)
 CORS(app)
 app.logger.setLevel(logging.DEBUG)
-
 
 # Post an image to Upload folder and a folder of images to Dataset folder
 @app.route('/api/upload', methods=['POST'])
@@ -53,16 +53,59 @@ def upload():
 # Endpoint for using the CBIR functions
 @app.route('/api/cbir', methods=['POST','GET'])
 def run():
-    if request.method == 'POST':
-        option = request.json.get('option')
-        if option == 'color':
-            app.logger.debug("Selected color option")
-            return "color bang"
-        elif option == 'texture':
-            app.logger.debug("Selected texture option")
-            return "texture mas"
-        
+    app.logger.debug('Received a request to /api/cbir')
 
- 
+    # Return the run time (start time - end time)
+    start_time = time.time()
+    try:
+        if request.method == 'POST':
+            option = request.json.get('option')
+
+        if option == 'color':
+            app.logger.debug('Color method found in request')
+            result = searchColor()
+            end_time = time.time()
+            delta_time = end_time - start_time
+            return jsonify(result,  delta_time)
+        elif option == 'texture':
+            app.logger.debug('Texture method found in request')
+            result = searchTexture()
+            end_time = time.time()
+            delta_time = end_time - start_time
+            return jsonify(result, delta_time)
+        return jsonify({"error": "No method provided"}, 400)
+    except Exception as e:
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+    
+# Endpoint for downloading the result
+# @app.route('/api/download', methods=['POST'])
+# def download():
+#     app.logger.debug('Received a request to /api/download')
+#     try:
+#         if not os.path.isdir(DOWNLOAD_FOLDER):
+#             os.mkdir(DOWNLOAD_FOLDER)
+#         if request.form['method'] == 'color':
+#             app.logger.debug('Color method found in request')
+#             result = searchColor()
+#             return jsonify(result)
+#         elif request.form['method'] == 'texture':
+#             app.logger.debug('Texture method found in request')
+#             result = searchTexture()
+#             return jsonify(result)
+#         return jsonify({"error": "No method provided"}, 400)
+#     except Exception as e:
+#         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+    
+# Endpoint for downloading the result
+# @app.route('/api/download/<path:filename>', methods=['GET', 'POST'])
+# def download_file(filename):
+#     app.logger.debug('Received a request to /api/download/<path:filename>')
+#     try:
+#         return send_from_directory(DOWNLOAD_FOLDER, filename=filename, as_attachment=True)
+#     except Exception as e:
+#         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
+    pass
+
 if __name__ == '__main__':
     app.run(debug=True)

@@ -16,6 +16,8 @@ const ResultCard: React.FC<ResultCardProps> = ({
   // height = 300,
   // cosValue,
 }) => {
+  // 
+  
   return (
     <div className="cursor-pointer drop-shadow-xl animate-blink rounded-3xl bg-gradient-to-br from-[#DEF6B6] to-[#AADD56] p-1 hover:scale-105 transition duration-300 ease-in-out">
       <div className="h-full rounded-3xl">

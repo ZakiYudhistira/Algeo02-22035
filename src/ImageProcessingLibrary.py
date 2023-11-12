@@ -1,3 +1,5 @@
+import os
+import time
 import numpy as np
 import cv2 as cv
 
@@ -96,11 +98,11 @@ def get3X3Segments(input_array : np.ndarray) -> tuple:
 
 # Function to return the similarity index in on go (COLOR)
 def runColor(image1,image2):
-        img1 = cv.imread(image1)
-        img1 = normBGRtoHSV(img1)
-        img2 = cv.imread(image2)
-        img2 = normBGRtoHSV(img2)
-        return(getSimilarityIndeks(get3X3Histograms(img1),get3X3Histograms(img2)))
+    img1 = cv.imread(image1)
+    img1 = normBGRtoHSV(img1)
+    img2 = cv.imread(image2)
+    img2 = normBGRtoHSV(img2)
+    return(getSimilarityIndeks(get3X3Histograms(img1),get3X3Histograms(img2)))
 
 
 # ------- CONTENT BASED IMAGE RETRIEVAL : TEXTURE -------
@@ -191,4 +193,42 @@ def  runTexture(image1,image2):
     img2 = processTexture(img2)
     return (getSimilarityIndeks(img1,img2))
 
+# ------- FILE HANDLING -------
 
+#  Path Image, Dataset, and Download Folder
+base_path = os.path.join(os.path.dirname(os.path.dirname(__file__)),"test")
+UPLOAD_IMAGE = os.path.join(base_path,"Upload")
+UPLOAD_DATASET = os.path.join(base_path,"Dataset")
+DOWNLOAD_FOLDER = os.path.join(base_path,"Download")
+
+#  Function to get the path of the image
+def getImagePath():
+    img = os.listdir(UPLOAD_IMAGE)
+    path_img = os.path.join(UPLOAD_IMAGE,img[0])
+    return path_img
+
+#  Function to get the path of the dataset
+def getDatasetPath():
+    files = os.listdir(UPLOAD_DATASET)
+    file_Dictionary = {filename : 0 for filename in files}
+    return file_Dictionary
+    
+#  Function to return CBIR color result
+def searchColor():
+    dictionary = getDatasetPath()
+    for filename in dictionary.keys():
+        path_current = os.path.join(UPLOAD_DATASET,filename)
+        res = runColor(getImagePath(),path_current)
+        dictionary[filename] = res
+    new_dict = dict(sorted(dictionary.items(), key=lambda item: item[1], reverse=True))
+    return new_dict
+
+#  Function to return CBIR texture result
+def searchTexture():
+    dictionary = getDatasetPath()
+    for filename in dictionary.keys():
+        path_current = os.path.join(UPLOAD_DATASET,filename)
+        res = runTexture(getImagePath(),path_current)
+        dictionary[filename] = res
+    new_dict = dict(sorted(dictionary.items(), key=lambda item: item[1], reverse=True))
+    return new_dict
