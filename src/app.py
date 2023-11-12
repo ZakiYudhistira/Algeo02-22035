@@ -53,7 +53,17 @@ def upload():
 # Endpoint for using the CBIR functions
 @app.route('/api/cbir', methods=['POST','GET'])
 def run():
-    pass
+    if request.method == 'POST':
+        option = request.json.get('option')
+
+        if option == 'color':
+            app.logger.debug("Selected color option")
+            return "color bang"
+        elif option == 'texture':
+            app.logger.debug("Selected texture option")
+            return "texture mas"
+        
+
  
 if __name__ == '__main__':
     app.run(debug=True)

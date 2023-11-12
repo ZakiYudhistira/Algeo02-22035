@@ -170,12 +170,6 @@ def getVector(contrast : float, homogeneity : float, entropy : float, dissimilar
     vektor = np.array([contrast,homogeneity,entropy,dissimilarity,asm,energy])
     return vektor
 
-# Cosine Similarity
-def getSimilarityIndeks(array_input1 : np.array, array_input2 : np.array) -> float:
-    dot_result = np.dot(array_input1,array_input2)
-    #Retrieve dot product results
-    return dot_result/(np.linalg.norm(array_input1)*np.linalg.norm(array_input2))
-
 # Function to process the image in one go
 def processTexture(image):
     data = getCoOccurenceMatrix(getGrayScaleMatrix(image))
