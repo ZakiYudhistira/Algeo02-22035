@@ -49,7 +49,11 @@ def upload():
         return jsonify({"error": "No file provided"}, 400)
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
-        
+
+# Endpoint for using the CBIR functions
+@app.route('/api/cbir', methods=['POST','GET'])
+def run():
+    pass
  
 if __name__ == '__main__':
     app.run(debug=True)
