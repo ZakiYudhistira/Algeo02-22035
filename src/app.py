@@ -2,22 +2,13 @@
 from flask import Flask, render_template,request,jsonify,send_from_directory
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
+from FileHandling import *
 import logging,os  
  
 app = Flask(__name__)
 CORS(app)
-
-# app.middleware = [
-#     'flask_cors.CORS',
-#     {'AllowedOriginsMiddleware': ('*',)},
-# ]
-
-base_path = os.path.join(os.path.dirname(os.path.dirname(__file__)),"test")
 app.logger.setLevel(logging.DEBUG)
 
-UPLOAD_IMAGE = os.path.join(base_path,"Upload")
-UPLOAD_DATASET = os.path.join(base_path,"Dataset")
-DOWNLOAD_FOLDER = os.path.join(base_path,"Download")
 
 # Post an image to Upload folder and a folder of images to Dataset folder
 @app.route('/api/upload', methods=['POST'])
