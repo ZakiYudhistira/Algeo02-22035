@@ -1,6 +1,11 @@
-from flask import Flask, render_template,jsonify
+
+from flask import Flask, render_template,request,jsonify,send_from_directory
+from flask_cors import CORS
+from werkzeug.utils import secure_filename
+    
 import os
 app = Flask(__name__)
+CORS(app)
 
 # app.middleware = [
 #     'flask_cors.CORS',
@@ -13,14 +18,30 @@ UPLOAD_IMAGE = os.path.join(base_path,"Upload")
 UPLOAD_DATASET = os.path.join(base_path,"Dataset")
 DOWNLOAD_FOLDER = os.path.join(base_path,"Download")
 
-@app.route('/api/data', methods=['GET'])
-def get_data():
-    data = {'message': 'Hello from Flask API!'}
-    return jsonify(data)
+@app.route('/api/upload', methods=['POST'])
+def upload():
+    try :
+        if not os.path.isdir(base_path):
+            os.mkdir(base_path)
+        if 'image' in request.files:
+            if not os.path.isdir(UPLOAD_IMAGE):
+                os.mkdir(UPLOAD_IMAGE)
+            image = request.files['image']
+            filename = secure_filename(image.filename)
+            path = os.path.join(UPLOAD_IMAGE,filename)
+            if os.path.isfile(path):
+                os.remove(path)
+            files = os.listdir(UPLOAD_IMAGE)
+            if (files):
+                for file in files:
+                    os.remove(os.path.join(UPLOAD_IMAGE,file))
+            image.save(path)
+            return jsonify ({"message": "File uploaded successfully"})
+        return jsonify(({"error": "No file provided"}), 400)
+    except Exception as e:
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+        
 
-# @app.route('/api/cbir-color', methods=['POST'])
-# def cbir_color():
-#     return 'Hello, World!'
  
 if __name__ == '__main__':
     app.run(debug=True)

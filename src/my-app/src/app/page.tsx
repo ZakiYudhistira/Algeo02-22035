@@ -13,9 +13,6 @@ export default function Home() {
       <Hero />
       <Cbir />
       <Howto />
-      <h1>Next.js App</h1>
-      {/* <DataFetcher /> */}
-      <div></div>
     </main>
   );
 }

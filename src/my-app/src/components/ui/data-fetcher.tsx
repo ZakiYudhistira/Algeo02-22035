@@ -8,7 +8,7 @@ const DataFetcher = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/data"); // Update with your Flask server address
+        const response = await axios.get("http://127.0.0.1:5000/api/data"); // Update with your Flask server address
         setData(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);

@@ -199,21 +199,24 @@ def  runTexture(image1,image2):
 
 
 #Testings
-# start = time.time()
-# input_image_PATH = "./ImageProcessingTest/Images/"
-# output_image_PATH = "./ImageProcessingTest/PostProcessedImages/"
+start = time.time()
+input_image_PATH = "./test/Images/"
+output_image_PATH = "./ImageProcessingTest/PostProcessedImages/"
 
-# image1 = cv.imread(input_image_PATH+"Lea.jpg")
-# image2 = cv.imread(input_image_PATH+"Penguin.jpeg")
-# new_img1 = normBGRtoHSV(image1)
-# print(image1)
-# new_img2 = normRGBtoHSV(image2)
+image1 = cv.imread(input_image_PATH+"Lea.jpg")
+
+# image2 = cv.imread(input_image_PATH+"Lea.jpg")
+new_img1 = normBGRtoHSV(image1)
+# new_img2 = normBGRtoHSV(image2)
+# hue_hist[7] += hue_hist[0]
+# hue_hist = np.delete(hue_hist,0)
+
+# print(hue_bins)
 # new_img2 = cv.rotate(image1, cv.ROTATE_180)
 #Validity checking
 
-# histogram_global = getHistogram(new_img2)
-
-# print(getSimilarityIndeks(get3X3Histograms(new_img1),get3X3Histograms(new_img2)))
+print(get3X3Histograms(new_img1))
+# print("%.2f"%getSimilarityIndeks(get3X3Histograms(new_img1),get3X3Histograms(new_img2)))
 
 # end = time.time()
 # print(end-start)
