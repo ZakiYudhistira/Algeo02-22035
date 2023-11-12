@@ -60,9 +60,23 @@ const Search = () => {
     }
   };
 
-  const handleFolderClick = () => {
+  const handleFolderClick = async () => {
     if (inputRefFolder.current) {
       inputRefFolder.current.click();
+    }
+
+    try {
+      const formData = new FormData();
+      imagedataset.forEach((file) => {
+        formData.append("dataset", file);
+      });
+
+      const apiUrl = `http://127.0.0.1:5000/api/upload`;
+      const response = await axios.post(apiUrl, formData);
+
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error during backend POST request", error);
     }
   };
 
@@ -116,8 +130,6 @@ const Search = () => {
                 Upload Image
               </Button>
             </form>
-
-            {/* Form to post a folder of images */}
 
             <input
               type="file"
