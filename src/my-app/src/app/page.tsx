@@ -1,7 +1,11 @@
-import Cbir from "@/components/ui/cbir";
-import Hero from "@/components/ui/hero";
-import Howto from "@/components/ui/howto";
+// "use client";
+
+import Cbir from "@/components/cbir";
+// import DataFetcher from "@/components/ui/data-fetcher";
+import Hero from "@/components/hero";
+import Howto from "@/components/howto";
 import React from "react";
+// DataFetcher;
 
 export default function Home() {
   return (
@@ -9,7 +13,6 @@ export default function Home() {
       <Hero />
       <Cbir />
       <Howto />
-      <div></div>
     </main>
   );
 }

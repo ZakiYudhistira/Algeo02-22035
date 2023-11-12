@@ -1,3 +1,4 @@
+# NOT-USED
 import numpy as np
 from numpy.linalg import norm
 import cv2 as cv
@@ -8,6 +9,8 @@ import sys
 # from RetrieveImage import *
 
 # CBIR dengan parameter tekstur
+
+# class ImageTexture:
 
 # Matriks BGR to Gray scale
 def getGrayScaleMatrix(image : np.ndarray) -> np.ndarray:
