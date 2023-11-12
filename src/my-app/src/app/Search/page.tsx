@@ -83,9 +83,23 @@ const Search = () => {
     }
   };
 
-  const handleFolderClick = () => {
+  const handleFolderClick = async () => {
     if (inputRefFolder.current) {
       inputRefFolder.current.click();
+    }
+
+    try {
+      const formData = new FormData();
+      imagedataset.forEach((file) => {
+        formData.append("dataset", file);
+      });
+
+      const apiUrl = `http://127.0.0.1:5000/api/upload`;
+      const response = await axios.post(apiUrl, formData);
+
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error during backend POST request", error);
     }
   };
 
@@ -143,28 +157,24 @@ const Search = () => {
               </Button>
             </form>
 
-            {/* Form to post a folder of images */}
-            <form onSubmit={submitDataSet}>
-              <input
-                type="file"
-                webkitdirectory=""
-                multiple
-                className="hidden"
-                ref={inputRefFolder}
-                onChange={handleFolderUpload}
-                required
-                accept="image/*"
-                name="folderupload"
-              />
-              <Button
-                type="submit"
-                variant="outline"
-                className="text-white bg-custom-black font-semibold rounded-xl px-5"
-                onClick={handleFolderClick}
-              >
-                Upload Dataset
-              </Button>
-            </form>
+            <input
+              type="file"
+              webkitdirectory=""
+              multiple
+              className="hidden"
+              ref={inputRefFolder}
+              onChange={handleFolderUpload}
+              required
+              accept="image/*"
+              name="folderupload"
+            />
+            <Button
+              variant="outline"
+              className="text-white bg-custom-black font-semibold rounded-xl px-5"
+              onClick={handleFolderClick}
+            >
+              Upload Dataset
+            </Button>
           </div>
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-center gap-4">
