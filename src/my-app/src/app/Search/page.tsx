@@ -64,27 +64,39 @@ const Search = () => {
     if (inputRefFolder.current) {
       inputRefFolder.current.click();
     }
-
-    try {
-      const formData = new FormData();
-      imagedataset.forEach((file) => {
-        formData.append("dataset", file);
-      });
-
-      const apiUrl = `http://127.0.0.1:5000/api/upload`;
-      const response = await axios.post(apiUrl, formData);
-
-      console.log(response.data);
-    } catch (error) {
-      console.error("Error during backend POST request", error);
-    }
   };
+
+  const submitDataset = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      try {
+        const formData = new FormData();
+        imagedataset.forEach((file) => {
+          formData.append("dataset", file);
+        });
+  
+        const apiUrl = `http://127.0.0.1:5000/api/upload`;
+        const response = await axios.post(apiUrl, formData);
+  
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error during backend POST request", error);
+      }
+    },
+    [imagedataset]
+  );
+  
 
   useEffect(() => {
     if (image) {
-      submitPhoto(new Event("submit"));
+      const syntheticEventPhoto = new Event("submit");
+      submitPhoto(syntheticEventPhoto);
     }
-  }, [image, submitPhoto]);
+    if (imagedataset.length > 0) {
+      submitDataset(new Event("submit")); // Directly call submitDataset
+    }
+  }, [image, imagedataset.length, submitPhoto, submitDataset]);
+  
 
   return (
     <div className="mt-10">
@@ -130,25 +142,27 @@ const Search = () => {
                 Upload Image
               </Button>
             </form>
-
-            <input
-              type="file"
-              webkitdirectory=""
-              multiple
-              className="hidden"
-              ref={inputRefFolder}
-              onChange={handleFolderUpload}
-              required
-              accept="image/*"
-              name="folderupload"
-            />
-            <Button
-              variant="outline"
-              className="text-white bg-custom-black font-semibold rounded-xl px-5"
-              onClick={handleFolderClick}
-            >
-              Upload Dataset
-            </Button>
+            <form onSubmit={submitDataset}>
+              <input
+                type="file"
+                webkitdirectory=""
+                multiple
+                className="hidden"
+                ref={inputRefFolder}
+                onChange={handleFolderUpload}
+                required
+                accept="image/*"
+                name="folderupload"
+              />
+              <Button
+                type="submit"
+                variant="outline"
+                className="text-white bg-custom-black font-semibold rounded-xl px-5"
+                onClick={handleFolderClick}
+              >
+                Upload Dataset
+              </Button>
+            </form>
           </div>
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-center gap-4">
