@@ -97,11 +97,11 @@ def get3X3Segments(input_array : np.ndarray) -> tuple:
     #return all divided images
 
 def runColor(image1,image2):
-        img1 = cv.imread(image1)
-        img1 = normBGRtoHSV(img1)
-        img2 = cv.imread(image2)
-        img2 = normBGRtoHSV(img2)
-        return(getSimilarityIndeks(get3X3Histograms(img1),get3X3Histograms(img2)))
+    img1 = cv.imread(image1)
+    img1 = normBGRtoHSV(img1)
+    img2 = cv.imread(image2)
+    img2 = normBGRtoHSV(img2)
+    return(getSimilarityIndeks(get3X3Histograms(img1),get3X3Histograms(img2)))
 
 
 # ------- CONTENT BASED IMAGE RETRIEVAL : TEXTURE -------
@@ -199,23 +199,26 @@ def  runTexture(image1,image2):
 
 
 #Testings
-start = time.time()
-input_image_PATH = "./test/Images/"
-output_image_PATH = "./ImageProcessingTest/PostProcessedImages/"
+# start = time.time()
+# input_image_PATH = "./test/Images/"
+# output_image_PATH = "./ImageProcessingTest/PostProcessedImages/"
 
-image1 = cv.imread(input_image_PATH+"Lea.jpg")
+# image1 = cv.imread(input_image_PATH+"Lea.jpg")
+# image2 = cv.imread(input_image_PATH+"Black.jpg")
 
-# image2 = cv.imread(input_image_PATH+"Lea.jpg")
-new_img1 = normBGRtoHSV(image1)
+# print cos similarity
+# print(getSimilarityIndeks(get3X3Histograms(image1),get3X3Histograms(image2)))
+
+# new_img1 = normBGRtoHSV(image1)
 # new_img2 = normBGRtoHSV(image2)
 # hue_hist[7] += hue_hist[0]
 # hue_hist = np.delete(hue_hist,0)
 
 # print(hue_bins)
 # new_img2 = cv.rotate(image1, cv.ROTATE_180)
-#Validity checking
+# Validity checking
 
-print(get3X3Histograms(new_img1))
+# print(get3X3Histograms(new_img1))
 # print("%.2f"%getSimilarityIndeks(get3X3Histograms(new_img1),get3X3Histograms(new_img2)))
 
 # end = time.time()

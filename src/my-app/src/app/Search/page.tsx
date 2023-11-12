@@ -16,6 +16,16 @@ const Search = () => {
 
   console.log(imagedataset);
 
+  const cosValue = async () => {
+    try {
+      const apiUrl = `http://127.0.0.1:5000/api/cosine`;
+      const response = await axios.get(apiUrl);
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
   const submitPhoto = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
@@ -74,10 +84,10 @@ const Search = () => {
         imagedataset.forEach((file) => {
           formData.append("dataset", file);
         });
-  
+
         const apiUrl = `http://127.0.0.1:5000/api/upload`;
         const response = await axios.post(apiUrl, formData);
-  
+
         console.log(response.data);
       } catch (error) {
         console.error("Error during backend POST request", error);
@@ -85,7 +95,6 @@ const Search = () => {
     },
     [imagedataset]
   );
-  
 
   useEffect(() => {
     if (image) {
@@ -96,7 +105,6 @@ const Search = () => {
       submitDataset(new Event("submit")); // Directly call submitDataset
     }
   }, [image, imagedataset.length, submitPhoto, submitDataset]);
-  
 
   return (
     <div className="mt-10">
@@ -174,9 +182,12 @@ const Search = () => {
                 Texture
               </span>
             </div>
+            
             <Button
+              type="submit"
               variant="outline"
               className="text-white bg-gradient-to-r from-[#DF3890] to-[150%] to-[#FF87C6] font-semibold rounded-xl"
+              onClick={cosValue}
             >
               Search
             </Button>

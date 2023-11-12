@@ -2,8 +2,12 @@
 from flask import Flask, render_template,request,jsonify,send_from_directory
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
-import logging,os  
- 
+import logging,os
+
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__),"..","..","ImageProcessingLibrary"))
+from ImageProcessingLibrary import *
+
 app = Flask(__name__)
 CORS(app)
 
@@ -58,7 +62,23 @@ def upload():
         return jsonify({"error": "No file provided"}, 400)
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
-        
+
+# Call all functions of calculations (Warna)
+@app.route('/api/cosine', methods=['GET'])
+def runColor():
+    app.logger.debug("Received a request to /api/cosine")
+    image1 = cv.imread("D:/Main Files/File Amel/Program/Tubes Algeo 2/Algeo02-22035/test/Upload/download_5.jpeg")
+    image2 = cv.imread("D:/Main Files/File Amel/Program/Tubes Algeo 2/Algeo02-22035/test/Images/apple.jpg")
+
+    img1 = normBGRtoHSV(image1)
+    img2 = normBGRtoHSV(image2)
+
+    value = round(getSimilarityIndeks(get3X3Histograms(img1),get3X3Histograms(img2)) * 100, 2)
+
+    return(str(value))
+
+
+# Call all functions of calculations (Tekstur)
  
 if __name__ == '__main__':
     app.run(debug=True)
