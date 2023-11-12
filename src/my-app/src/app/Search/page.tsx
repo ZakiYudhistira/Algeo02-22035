@@ -18,12 +18,27 @@ const Search = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const inputRefFolder = useRef<HTMLInputElement>(null);
   console.log(imagedataset);
-  const handleAPI = async () => {
-    const response = await fetch({})
-  }
-  const handlePhotoClick = () => {
+
+  const handlePhotoClick = async () => {
     if (inputRef.current) {
       inputRef.current.click();
+
+      const selectedFile = inputRef.current.files && inputRef.current.files[0];
+
+      if (selectedFile) {
+        try {
+          const formData = new FormData();
+          formData.append('image', selectedFile);
+  
+          const apiUrl = `http://127.0.0.1:5000/api/upload?timestamp=${new Date().getTime()}`;
+  
+          const response = await axios.post(apiUrl, formData);
+  
+          console.log(response.data);
+        } catch (error) {
+          console.error('Error during backend POST request', error);
+        }
+      }
     }
   };
 

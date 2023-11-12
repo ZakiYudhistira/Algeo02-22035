@@ -1,6 +1,8 @@
 
-from flask import Flask, render_template,jsonif
+from flask import Flask, render_template,request,jsonify,send_from_directory
 from flask_cors import CORS
+from werkzeug.utils import secure_filename
+    
 import os
  
 app = Flask(__name__)
@@ -14,11 +16,27 @@ DOWNLOAD_FOLDER = os.path.join(base_path,"Download")
 
 @app.route('/api/upload', methods=['POST'])
 def upload():
-    if not os.path.isdir(base_path):
-        os.mkdir(base_path)
-    if not os.path
-    
-    
+    try :
+        if not os.path.isdir(base_path):
+            os.mkdir(base_path)
+        if 'image' in request.files:
+            if not os.path.isdir(UPLOAD_IMAGE):
+                os.mkdir(UPLOAD_IMAGE)
+            image = request.files['image']
+            filename = secure_filename(image.filename)
+            path = os.path.join(UPLOAD_IMAGE,filename)
+            if os.path.isfile(path):
+                os.remove(path)
+            files = os.listdir(UPLOAD_IMAGE)
+            if (files):
+                for file in files:
+                    os.remove(os.path.join(UPLOAD_IMAGE,file))
+            image.save(path)
+            return jsonify ({"message": "File uploaded successfully"})
+        return jsonify(({"error": "No file provided"}), 400)
+    except Exception as e:
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+        
 
  
 if __name__ == '__main__':
