@@ -1,7 +1,5 @@
 import numpy as np
 import cv2 as cv
-import time
-
 
 # ------- CONTENT BASED IMAGE RETRIEVAL : COLOR -------
 
@@ -96,6 +94,7 @@ def get3X3Segments(input_array : np.ndarray) -> tuple:
     return ret11,ret12,ret13,ret21,ret22,ret23,ret31,ret32,ret33
     #return all divided images
 
+# Function to return the similarity index in on go (COLOR)
 def runColor(image1,image2):
     img1 = cv.imread(image1)
     img1 = normBGRtoHSV(img1)
@@ -105,6 +104,7 @@ def runColor(image1,image2):
 
 
 # ------- CONTENT BASED IMAGE RETRIEVAL : TEXTURE -------
+
 # Matriks BGR to Gray scale
 def getGrayScaleMatrix(image : np.ndarray) -> np.ndarray:
     retValue = np.zeros((image.shape[0],image.shape[1]), dtype=int)
@@ -189,37 +189,10 @@ def processTexture(image):
     v = getVector(c,h,e,d,asm,energy)
     return(v)
 
-
+# Function to return the similarity index in on go (Texture)
 def  runTexture(image1,image2):
     img1 = cv.imread(image1)
     img2 = cv.imread(image2)
     img1 = processTexture(img1)
     img2 = processTexture(img2)
     return (getSimilarityIndeks(img1,img2))
-
-
-#Testings
-# start = time.time()
-# input_image_PATH = "./test/Images/"
-# output_image_PATH = "./ImageProcessingTest/PostProcessedImages/"
-
-# image1 = cv.imread(input_image_PATH+"Lea.jpg")
-# image2 = cv.imread(input_image_PATH+"Black.jpg")
-
-# print cos similarity
-# print(getSimilarityIndeks(get3X3Histograms(image1),get3X3Histograms(image2)))
-
-# new_img1 = normBGRtoHSV(image1)
-# new_img2 = normBGRtoHSV(image2)
-# hue_hist[7] += hue_hist[0]
-# hue_hist = np.delete(hue_hist,0)
-
-# print(hue_bins)
-# new_img2 = cv.rotate(image1, cv.ROTATE_180)
-# Validity checking
-
-# print(get3X3Histograms(new_img1))
-# print("%.2f"%getSimilarityIndeks(get3X3Histograms(new_img1),get3X3Histograms(new_img2)))
-
-# end = time.time()
-# print(end-start)
