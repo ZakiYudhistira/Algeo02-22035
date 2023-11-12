@@ -55,7 +55,6 @@ def upload():
 def run():
     if request.method == 'POST':
         option = request.json.get('option')
-
         if option == 'color':
             app.logger.debug("Selected color option")
             return "color bang"
