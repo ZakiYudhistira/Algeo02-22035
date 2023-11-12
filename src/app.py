@@ -29,8 +29,8 @@ def upload():
             image = request.files['image']
             filename = secure_filename(image.filename)
             path = os.path.join(UPLOAD_IMAGE,filename)
-            if os.path.isfile(path):
-                os.remove(path)
+            # if os.path.isfile(path):
+            #     os.remove(path)
             files = os.listdir(UPLOAD_IMAGE)
             if (files):
                 for file in files:
