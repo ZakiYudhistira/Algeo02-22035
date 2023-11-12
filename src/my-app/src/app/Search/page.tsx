@@ -10,6 +10,7 @@ import { Switch } from "@/components/ui/switch";
 
 const Search = () => {
   const [image, setImage] = useState<File | null>(null);
+  const [isNewImageSelected,setIsNewImageSelected] = useState(false);
   const [imagedataset, setImagedataset] = useState<File[]>([]);
   // const [startTime, setStartTime] = useState<number | null>(null);
   // const [result, setResult] = useState<response[] | null>(null);
@@ -23,6 +24,10 @@ const Search = () => {
     if (inputRef.current) {
       inputRef.current.click();
     }
+  };  
+
+  const submitPhoto = async (e:React.FormEvent) => {
+    e.preventDefault();
     try {
       const formData = new FormData();
       if (image) {
@@ -37,26 +42,8 @@ const Search = () => {
     } catch (error) {
       console.error('Error during backend POST request', error);
     }
-  };  
 
-  // const submitPhoto = async (e:React.FormEvent) => {
-  //   e.preventDefault();
-  //   try {
-  //     const formData = new FormData();
-  //     if (image) {
-  //       formData.append('image', image);
-  //     }
-
-  //     const apiUrl = `http://127.0.0.1:5000/api/upload`;
-
-  //     const response = await axios.post(apiUrl, formData);
-
-  //     console.log(response.data);
-  //   } catch (error) {
-  //     console.error('Error during backend POST request', error);
-  //   }
-
-  // };
+  };
 
   const handleFolderClick = () => {
     if (inputRefFolder.current) {
@@ -69,7 +56,9 @@ const Search = () => {
 
     if (selectedFile) {
       setImage(selectedFile);
+      setIsNewImageSelected(true);
     }
+
   };
 
   const handleFolderUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -80,6 +69,15 @@ const Search = () => {
     }
   };
 
+  const handleFormSubmit = (e:React.FormEvent) => {
+    e.preventDefault();
+    if (isNewImageSelected) {
+      submitPhoto;
+      setIsNewImageSelected(false);
+    } else {
+      console.log('No new image selected');
+    }
+  }
   return (
     <div className="mt-10">
       <h1 className="text-custom-green font-montserrat text-[30px] lg:text-7xl font-bold tracking-[0.54px] text-center mb-12">
@@ -104,22 +102,28 @@ const Search = () => {
             Image Input
           </h2>
           <div className="flex flex-row gap-4 mb-28">
-            <input
-              type="file"
-              className="hidden"
-              ref={inputRef}
-              onChange={handleImageUpload}
-              accept="image/*"
-              required
-              name="fileupload"
-            />
-            <Button
-              variant="outline"
-              className="text-white bg-custom-green-calm font-semibold rounded-xl px-5"
-              onClick={handlePhotoClick}
-            >
-              Upload Image  
-            </Button>
+            <form onSubmit={submitPhoto}>
+              <input
+                type="file"
+                className="hidden"
+                ref={inputRef}
+                onChange={handleImageUpload}
+                accept="image/*"
+                required
+                name="fileupload"
+              />
+              <Button
+                variant="outline"
+                className="text-white bg-custom-green-calm font-semibold rounded-xl px-5"
+                type="button"
+                onClick={handlePhotoClick}
+              >
+                Upload Image  
+              </Button>
+              <button type="submit" className="hidden">
+                Submit
+              </button>
+            </form>
             <input
               type="file"
               webkitdirectory=""
