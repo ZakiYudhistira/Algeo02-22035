@@ -18,11 +18,11 @@ const Search = () => {
 
   const cosValue = async () => {
     try {
-      const apiUrl = `http://127.0.0.1:5000/api/cosine`;
+      const apiUrl = `http://127.0.0.1:5000/api/cbir`;
       const response = await axios.get(apiUrl);
       console.log(response.data);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("Error during backend POST request", error);
     }
   };
 
@@ -182,7 +182,7 @@ const Search = () => {
                 Texture
               </span>
             </div>
-            
+
             <Button
               type="submit"
               variant="outline"
