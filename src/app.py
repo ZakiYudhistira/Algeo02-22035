@@ -56,19 +56,19 @@ def run():
     app.logger.debug('Received a request to /api/cbir')
 
     # Return the run time (start time - end time)
-    start_time = time.time()
     try:
         if request.method == 'POST':
             option = request.json.get('option')
-
         if option == 'color':
             app.logger.debug('Color method found in request')
+            start_time = time.time()
             result = searchColor()
             end_time = time.time()
             delta_time = end_time - start_time
             return jsonify(result,  delta_time)
         elif option == 'texture':
             app.logger.debug('Texture method found in request')
+            start_time = time.time()
             result = searchTexture()
             end_time = time.time()
             delta_time = end_time - start_time

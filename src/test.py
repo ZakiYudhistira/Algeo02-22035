@@ -74,7 +74,6 @@ import time
 
 # new_dict = dict(sorted(dictionary.items(), key=lambda item: item[1], reverse=True))
 
-# searchColor()
 # start = time.time()
 # print(searchColor())
 # end = time.time()

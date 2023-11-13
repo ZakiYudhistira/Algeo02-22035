@@ -2,6 +2,7 @@ import os
 import time
 import numpy as np
 import cv2 as cv
+from collections import OrderedDict
 
 # ------- CONTENT BASED IMAGE RETRIEVAL : COLOR -------
 
@@ -215,8 +216,7 @@ def searchColor():
         res = runColor(getImagePath(),path_current)
         if res > 0.6:
             dictionary[path_current] = res
-    new_dict = dict(sorted(dictionary.items(), key=lambda item: item[1], reverse=True))
-    return new_dict
+    return dict(sorted(dictionary.items(), key=lambda item: item[1], reverse=True))
 
 #  Function to return CBIR texture result
 def searchTexture():
@@ -226,5 +226,13 @@ def searchTexture():
         res = runTexture(getImagePath(),path_current)
         if res > 0.6:
             dictionary[path_current] = res
-    new_dict = dict(sorted(dictionary.items(), key=lambda item: item[1], reverse=True))
-    return new_dict
+    return dict(sorted(dictionary.items(), key=lambda item: item[1], reverse=True))
+
+def searchColorTuples():
+    list = []
+    for filename in os.listdir(UPLOAD_DATASET):
+        path_current = os.path.join(UPLOAD_DATASET,filename)
+        res = runColor(getImagePath(),path_current)
+        if res > 0.6:
+            list.append((path_current,res))
+    return sorted(list, key=lambda item: item[1], reverse=True)
