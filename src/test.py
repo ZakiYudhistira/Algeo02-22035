@@ -1,5 +1,6 @@
 # ---------- FILE FOR TESTINGS -----------
-from FileHandling import *
+from ImageProcessingLibrary import *
+import time
 
 #Testings
 # start = time.time()
@@ -73,4 +74,7 @@ from FileHandling import *
 
 # new_dict = dict(sorted(dictionary.items(), key=lambda item: item[1], reverse=True))
 
-# searchColor()
+# start = time.time()
+# print(searchColor())
+# end = time.time()
+# print(end-start)
