@@ -1,4 +1,3 @@
-
 from flask import Flask, render_template,request,jsonify,send_from_directory
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
@@ -54,25 +53,25 @@ def upload():
 @app.route('/api/cbir', methods=['POST','GET'])
 def run():
     app.logger.debug('Received a request to /api/cbir')
-
     # Return the run time (start time - end time)
     try:
         if request.method == 'POST':
             option = request.json.get('option')
-        if option == 'color':
-            app.logger.debug('Color method found in request')
-            start_time = time.time()
-            result = searchColor()
+            if option == 'color':
+                app.logger.debug('Color method found in request')
+                start_time = time.time()
+                result = searchColor()
+            elif option == 'texture':
+                app.logger.debug('Texture method found in request')
+                start_time = time.time()
+                result = searchTexture()
+            else:
+                return jsonify({"error": "Invalid option"}), 400
+
             end_time = time.time()
             delta_time = end_time - start_time
-            return jsonify(result,  delta_time)
-        elif option == 'texture':
-            app.logger.debug('Texture method found in request')
-            start_time = time.time()
-            result = searchTexture()
-            end_time = time.time()
-            delta_time = end_time - start_time
-            return jsonify(result, delta_time)
+            return jsonify({"result": result, "delta_time": delta_time})
+
         return jsonify({"error": "No method provided"}, 400)
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
