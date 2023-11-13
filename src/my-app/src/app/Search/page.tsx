@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import React, { Component } from "react";
 import Image from "next/image";
 import Result from "./result";
+import ResultClient from "./result-client";
 import axios from "axios";
 
 import { Button } from "@/components/ui/button";
@@ -13,7 +14,9 @@ const Search = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [imagedataset, setImagedataset] = useState<File[]>([]);
   const inputRefFolder = useRef<HTMLInputElement>(null);
-  const [isChecked,setChecked] = useState(false)
+  const [isChecked, setChecked] = useState(false);
+  const [deltaTime, setDeltaTime] = useState<number | null>(null);
+
   console.log(imagedataset);
 
   const submitPhoto = useCallback(
@@ -95,17 +98,20 @@ const Search = () => {
       submitDataset(new Event("submit")); // Directly call submitDataset
     }
   }, [image, imagedataset.length, submitPhoto, submitDataset]);
-  
+
   const handleSwitchChange = () => {
     setChecked(!isChecked);
-  }
+  };
 
   const handleSearch = async () => {
-    const valueTosend = isChecked ? 'texture' : 'color';
+    const valueTosend = isChecked ? "texture" : "color";
     try {
       const apiUrl = `http://127.0.0.1:5000/api/cbir`;
-      const response = await axios.post(apiUrl,{ option: valueTosend});
+      const response = await axios.post(apiUrl, { option: valueTosend });
       console.log(response.data);
+
+      // Update delta time based on the response
+      setDeltaTime(response.data.delta_time);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -182,11 +188,11 @@ const Search = () => {
               <span className="font-montserrat text-[21px] font-semibold">
                 Color
               </span>
-              <Switch 
-                className="bg-black" 
-                checked={isChecked}  
-                onCheckedChange={handleSwitchChange} 
-                />
+              <Switch
+                className="bg-black"
+                checked={isChecked}
+                onCheckedChange={handleSwitchChange}
+              />
               <span className="font-montserrat text-[21px] font-semibold">
                 Texture
               </span>
@@ -208,9 +214,24 @@ const Search = () => {
         alt="garis daun"
         width={750}
         height={700}
-        className="lg:w-[1200px] lg:h-[80px] w-[300px] h-[500px] z-[-1] mt-10 mx-auto"
+        className="lg:w-[1425px] lg:h-[100px] z-[-1] mt-10 mx-auto"
       ></Image>
-      <Result imagedataset={imagedataset} />
+
+      <div className="px-8 sm:px-10 md:px-14 relative z-10 lg:px-20 xl:px-32 2xl:px-36 bg-custom-blue min-h-screen overflow-hidden">
+        <div className="flex flex-row items-center justify-between">
+          <h1 className="font-montserrat lg:my-8 z-20 text-[28px] lg:text-4xl text-custom-green-dark font-bold scale-x-105">
+            Search Results
+          </h1>
+          <p className="text-right text-black text-base font-outline">
+            {imagedataset?.length} results in{" "}
+            {deltaTime !== null
+              ? `${deltaTime.toFixed(2)} seconds`
+              : "loading..."}
+          </p>
+        </div>
+
+        <ResultClient data={imagedataset} />
+      </div>
     </div>
   );
 };

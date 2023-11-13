@@ -1,4 +1,3 @@
-
 from flask import Flask, render_template,request,jsonify,send_from_directory
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
@@ -61,18 +60,19 @@ def run():
         if request.method == 'POST':
             option = request.json.get('option')
 
-        if option == 'color':
-            app.logger.debug('Color method found in request')
-            result = searchColor()
+            if option == 'color':
+                app.logger.debug('Color method found in request')
+                result = searchColor()
+            elif option == 'texture':
+                app.logger.debug('Texture method found in request')
+                result = searchTexture()
+            else:
+                return jsonify({"error": "Invalid option"}), 400
+
             end_time = time.time()
             delta_time = end_time - start_time
-            return jsonify(result,  delta_time)
-        elif option == 'texture':
-            app.logger.debug('Texture method found in request')
-            result = searchTexture()
-            end_time = time.time()
-            delta_time = end_time - start_time
-            return jsonify(result, delta_time)
+            return jsonify({"result": result, "delta_time": delta_time})
+
         return jsonify({"error": "No method provided"}, 400)
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
