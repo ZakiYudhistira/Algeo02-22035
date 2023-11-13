@@ -207,28 +207,24 @@ def getImagePath():
     path_img = os.path.join(UPLOAD_IMAGE,img[0])
     return path_img
 
-#  Function to get the path of the dataset
-def getDatasetPath():
-    files = os.listdir(UPLOAD_DATASET)
-    file_Dictionary = {filename : 0 for filename in files}
-    return file_Dictionary
-    
 #  Function to return CBIR color result
 def searchColor():
-    dictionary = getDatasetPath()
-    for filename in dictionary.keys():
+    dictionary = {}
+    for filename in os.listdir(UPLOAD_DATASET):
         path_current = os.path.join(UPLOAD_DATASET,filename)
         res = runColor(getImagePath(),path_current)
-        dictionary[filename] = res
+        if res > 0.6:
+            dictionary[path_current] = res
     new_dict = dict(sorted(dictionary.items(), key=lambda item: item[1], reverse=True))
     return new_dict
 
 #  Function to return CBIR texture result
 def searchTexture():
-    dictionary = getDatasetPath()
-    for filename in dictionary.keys():
+    dictionary = {}
+    for filename in os.listdir(UPLOAD_DATASET):
         path_current = os.path.join(UPLOAD_DATASET,filename)
         res = runTexture(getImagePath(),path_current)
-        dictionary[filename] = res
+        if res > 0.6:
+            dictionary[path_current] = res
     new_dict = dict(sorted(dictionary.items(), key=lambda item: item[1], reverse=True))
     return new_dict
