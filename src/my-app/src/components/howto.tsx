@@ -43,12 +43,14 @@ const Howto = () => {
         </div>
       </div>
       <div className="relative">
-        <Button
-          variant="outline"
-          className="absolute left-[42%] text-xl text-white bg-custom-pink font-semibold font-raleway rounded-xl px-8 py-7"
-        >
-          <Link href="/Search">Use it now</Link>
-        </Button>
+        <Link href="/Search">
+          <Button
+            variant="outline"
+            className="absolute left-[42%] text-xl text-white bg-custom-pink font-semibold font-raleway rounded-xl px-8 py-7"
+          >
+            Use it now
+          </Button>
+        </Link>
       </div>
     </div>
   );

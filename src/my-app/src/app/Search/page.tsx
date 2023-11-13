@@ -130,9 +130,9 @@ const Search = () => {
           // receive image from input
           src={image ? URL.createObjectURL(image) : "/dummy.png"}
           alt="Image Input"
-          width={500}
-          height={500}
-          className="w-[500px] lg:w-fit"
+          width={400}
+          height={400}
+          className="w-[400px]"
         ></Image>
 
         <div className="flex flex-col">
