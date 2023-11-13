@@ -30,12 +30,14 @@ const Hero = () => {
           tugas besar mata kuliah IF2123 Aljabar Linear dan Geometri
         </p>
         <div className="flex justify-center">
-          <Button
-            variant="outline"
-            className="text-white text-lg bg-custom-green-dark font-semibold font-raleway py-6 px-8 rounded-xl"
-          >
-            <Link href="/Explore">Explore More</Link>
-          </Button>
+          <Link href="/Explore">
+            <Button
+              variant="outline"
+              className="text-white text-lg bg-custom-green-dark font-semibold font-raleway py-6 px-8 rounded-xl"
+            >
+              Explore More
+            </Button>
+          </Link>
         </div>
       </div>
     </div>
