@@ -2,7 +2,7 @@ import os
 import time
 import numpy as np
 import cv2 as cv
-from collections import OrderedDict
+
 
 # ------- CONTENT BASED IMAGE RETRIEVAL : COLOR -------
 

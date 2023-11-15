@@ -26,12 +26,14 @@ const Cbir = () => {
           tugas besar mata kuliah IF2123 Aljabar Linear dan Geometri.
         </p>
         <div>
-          <Button
-            variant="outline"
-            className="text-white text-xl bg-custom-pink font-semibold font-raleway mt-5 px-14 py-6 rounded-xl"
-          >
-            <Link href="/Search">Try it now</Link>
-          </Button>
+          <Link href="/Search">
+            <Button
+              variant="outline"
+              className="text-white text-xl bg-custom-pink font-semibold font-raleway mt-5 px-14 py-6 rounded-xl"
+            >
+              Try it now
+            </Button>
+          </Link>
         </div>
       </div>
     </div>
