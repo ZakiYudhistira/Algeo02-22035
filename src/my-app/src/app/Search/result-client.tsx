@@ -4,12 +4,15 @@ import Pagination from "@/app/Search/pagination";
 import React from "react";
 import { useState } from "react";
 
-type ResultCardProps = {
-  data: {
-    file: File[];
-  };
-};
+// type ResultCardProps = {
+//   data: {
+//     file: File[];
+//   };
+// };
 
+type ResultClientProps = {
+  data: { file: File; cosValue: number }[];
+};
 const ResultClient = ({ data }: { data: File[] }) => {
   console.log(data);
   const listPerPage = 6;

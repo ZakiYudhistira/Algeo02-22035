@@ -111,6 +111,7 @@ const Search = () => {
 
       // Update delta time based on the response
       setDeltaTime(response.data.delta_time);
+      setImagedataset(response.data.result);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
