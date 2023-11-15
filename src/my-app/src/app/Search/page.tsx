@@ -2,8 +2,10 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import React, { Component } from "react";
 import Image from "next/image";
-import ResultClient from "./result-client";
 import axios from "axios";
+
+import ResultClient from "./result-client";
+import ResultData from "./result-data";
 
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -15,8 +17,10 @@ const Search = () => {
   const inputRefFolder = useRef<HTMLInputElement>(null);
   const [isChecked, setChecked] = useState(false);
   const [deltaTime, setDeltaTime] = useState<number | null>(null);
-
-  console.log(imagedataset);
+  const [result, setResult] = useState<{ path: string; cosValue: number }[]>(
+    []
+  );
+  console.log("Result: ", result);
 
   const submitPhoto = useCallback(
     async (e: React.FormEvent) => {
@@ -29,7 +33,8 @@ const Search = () => {
           const apiUrl = `http://127.0.0.1:5000/api/upload`;
           const response = await axios.post(apiUrl, formData);
 
-          console.log(response.data);
+          console.log("Data: ", response.data.result);
+          setResult(response.data.result);
         } else {
           console.error("No image selected");
         }
@@ -58,7 +63,7 @@ const Search = () => {
     const selectedFiles = e.target.files;
 
     if (selectedFiles) {
-      setImagedataset(Array.from(selectedFiles));
+      setImagedataset(Array.from(selectedFiles).map((file) => file));
     }
   };
 
@@ -73,14 +78,17 @@ const Search = () => {
       e.preventDefault();
       try {
         const formData = new FormData();
-        imagedataset.forEach((file) => {
-          formData.append("dataset", file);
+        imagedataset.forEach((item) => {
+          formData.append("dataset", item);
         });
 
         const apiUrl = `http://127.0.0.1:5000/api/upload`;
         const response = await axios.post(apiUrl, formData);
 
         console.log(response.data);
+
+        // Assuming the response contains the cosValues for each file in the dataset
+        // setImagedataset( );
       } catch (error) {
         console.error("Error during backend POST request", error);
       }
@@ -108,6 +116,7 @@ const Search = () => {
       const apiUrl = `http://127.0.0.1:5000/api/cbir`;
       const response = await axios.post(apiUrl, { option: valueTosend });
       console.log(response.data);
+      setResult(response.data.result);
 
       // Update delta time based on the response
       setDeltaTime(response.data.delta_time);
@@ -228,8 +237,11 @@ const Search = () => {
               : "loading..."}
           </p>
         </div>
-
-        <ResultClient data={imagedataset} />
+        {result && result.length > 0 ? (
+          <ResultData data={result} />
+        ) : (
+          <ResultClient data={imagedataset} />
+        )}
       </div>
     </div>
   );
