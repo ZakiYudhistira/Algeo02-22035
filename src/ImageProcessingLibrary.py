@@ -208,18 +208,7 @@ def getImagePath():
     path_img = os.path.join(UPLOAD_IMAGE,img[0])
     return path_img
 
-#  Function to return CBIR color result
-def searchColor():
-    dictionary = {}
-    for filename in os.listdir(UPLOAD_DATASET):
-        path_current = os.path.join(UPLOAD_DATASET,filename)
-        res = runColor(getImagePath(),path_current)
-        if res > 0.6:
-            dictionary[path_current] = res
-    return dict(sorted(dictionary.items(), key=lambda item: item[1], reverse=True))
-
-#  Function to return CBIR texture result
-def searchTexture():
+def searchTextureOLD():
     dictionary = {}
     for filename in os.listdir(UPLOAD_DATASET):
         path_current = os.path.join(UPLOAD_DATASET,filename)
@@ -228,11 +217,26 @@ def searchTexture():
             dictionary[path_current] = res
     return dict(sorted(dictionary.items(), key=lambda item: item[1], reverse=True))
 
-def searchColorTuples():
+def searchColor():
     list = []
     for filename in os.listdir(UPLOAD_DATASET):
+        dictionary = {}
         path_current = os.path.join(UPLOAD_DATASET,filename)
         res = runColor(getImagePath(),path_current)
         if res > 0.6:
-            list.append((path_current,res))
-    return sorted(list, key=lambda item: item[1], reverse=True)
+            dictionary["path"] = path_current
+            dictionary["cosine"] = res * 100
+            list.append(dictionary)
+    return sorted(list,key=lambda x: x['cosine'], reverse=True)
+
+def searchTexture():
+    list = []
+    for filename in os.listdir(UPLOAD_DATASET):
+        dictionary = {}
+        path_current = os.path.join(UPLOAD_DATASET,filename)
+        res = runTexture(getImagePath(),path_current)
+        if res > 0.6:
+            dictionary["path"] = path_current
+            dictionary["cosine"] = res * 100
+            list.append(dictionary)
+    return sorted(list,key=lambda x: x['cosine'], reverse=True)
