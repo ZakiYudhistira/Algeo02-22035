@@ -216,7 +216,7 @@ def searchColor():
         path_current = os.path.join(UPLOAD_DATASET,filename)
         res = runColor(getImagePath(),path_current)
         if res > 0.6:
-            dictionary["path"] = path_current
+            dictionary["path"] = filename
             dictionary["cosine"] = round(res * 100, 2)
             list.append(dictionary)
     return sorted(list,key=lambda x: x['cosine'], reverse=True)
@@ -229,7 +229,7 @@ def searchTexture():
         path_current = os.path.join(UPLOAD_DATASET,filename)
         res = runTexture(getImagePath(),path_current)
         if res > 0.6:
-            dictionary["path"] = path_current
+            dictionary["path"] = filename
             dictionary["cosine"] = round(res * 100, 2)
             list.append(dictionary)
     return sorted(list,key=lambda x: x['cosine'], reverse=True)
