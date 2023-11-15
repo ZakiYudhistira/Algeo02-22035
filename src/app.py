@@ -50,10 +50,9 @@ def upload():
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
 # Endpoint for using the CBIR functions
-@app.route('/api/cbir', methods=['POST','GET'])
+@app.route('/api/cbir', methods=['POST', 'GET'])
 def run():
     app.logger.debug('Received a request to /api/cbir')
-    # Return the run time (start time - end time)
     try:
         if request.method == 'POST':
             option = request.json.get('option')
@@ -70,7 +69,13 @@ def run():
 
             end_time = time.time()
             delta_time = end_time - start_time
-            return jsonify({"result": result, "delta_time": delta_time})
+
+            # Modify the result format to include both file and cosine_similarity
+            result_with_cosine_similarity = [
+                {"file": file, "cosine_similarity": cos_sim} for file, cos_sim in result
+            ]
+
+            return jsonify({"result": result_with_cosine_similarity, "delta_time": delta_time})
 
         return jsonify({"error": "No method provided"}, 400)
     except Exception as e:

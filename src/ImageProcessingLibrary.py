@@ -215,7 +215,7 @@ def searchColor():
         path_current = os.path.join(UPLOAD_DATASET,filename)
         res = runColor(getImagePath(),path_current)
         if res > 0.6:
-            dictionary[path_current] = res
+            dictionary[path_current] = round(res * 100, 2)
     return dict(sorted(dictionary.items(), key=lambda item: item[1], reverse=True))
 
 #  Function to return CBIR texture result
@@ -225,7 +225,7 @@ def searchTexture():
         path_current = os.path.join(UPLOAD_DATASET,filename)
         res = runTexture(getImagePath(),path_current)
         if res > 0.6:
-            dictionary[path_current] = res
+            dictionary[path_current] = round(res * 100, 2)
     return dict(sorted(dictionary.items(), key=lambda item: item[1], reverse=True))
 
 def searchColorTuples():
@@ -234,5 +234,5 @@ def searchColorTuples():
         path_current = os.path.join(UPLOAD_DATASET,filename)
         res = runColor(getImagePath(),path_current)
         if res > 0.6:
-            list.append((path_current,res))
+            list.append((path_current,round(res * 100, 2)))
     return sorted(list, key=lambda item: item[1], reverse=True)
