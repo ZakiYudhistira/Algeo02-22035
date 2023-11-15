@@ -99,10 +99,8 @@ def get3X3Segments(input_array : np.ndarray) -> tuple:
 
 # Function to return the similarity index in on go (COLOR)
 def runColor(image1,image2):
-    img1 = cv.imread(image1)
-    img1 = normBGRtoHSV(img1)
-    img2 = cv.imread(image2)
-    img2 = normBGRtoHSV(img2)
+    img1 = normBGRtoHSV(image1)
+    img2 = normBGRtoHSV(image2)
     return(getSimilarityIndeks(get3X3Histograms(img1),get3X3Histograms(img2)))
 
 
@@ -174,7 +172,7 @@ def getVector(contrast : float, homogeneity : float, entropy : float, dissimilar
     return vektor
 
 # Function to process the image in one go
-def processTexture(image):
+def getVectorTexture(image):
     data = getCoOccurenceMatrix(getGrayScaleMatrix(image))
     data = getNormalizedSymmetryMatrix(getSymmetryMatrix(data))
     c = getContrast(data)
@@ -188,10 +186,8 @@ def processTexture(image):
 
 # Function to return the similarity index in on go (Texture)
 def  runTexture(image1,image2):
-    img1 = cv.imread(image1)
-    img2 = cv.imread(image2)
-    img1 = processTexture(img1)
-    img2 = processTexture(img2)
+    img1 = processTexture(image1)
+    img2 = processTexture(image2)
     return (getSimilarityIndeks(img1,img2))
 
 # ------- FILE HANDLING -------
@@ -203,40 +199,40 @@ UPLOAD_DATASET = os.path.join(base_path,"Dataset")
 DOWNLOAD_FOLDER = os.path.join(base_path,"Download")
 
 #  Function to get the path of the image
-def getImagePath():
-    img = os.listdir(UPLOAD_IMAGE)
-    path_img = os.path.join(UPLOAD_IMAGE,img[0])
-    return path_img
+# def getImagePath():
+#     img = os.listdir(UPLOAD_IMAGE)
+#     path_img = os.path.join(UPLOAD_IMAGE,img[0])
+#     return path_img
 
-def searchTextureOLD():
-    dictionary = {}
-    for filename in os.listdir(UPLOAD_DATASET):
-        path_current = os.path.join(UPLOAD_DATASET,filename)
-        res = runTexture(getImagePath(),path_current)
-        if res > 0.6:
-            dictionary[path_current] = res
-    return dict(sorted(dictionary.items(), key=lambda item: item[1], reverse=True))
+# def searchTextureOLD():
+#     dictionary = {}
+#     for filename in os.listdir(UPLOAD_DATASET):
+#         path_current = os.path.join(UPLOAD_DATASET,filename)
+#         res = runTexture(getImagePath(),path_current)
+#         if res > 0.6:
+#             dictionary[path_current] = res
+#     return dict(sorted(dictionary.items(), key=lambda item: item[1], reverse=True))
 
-def searchColor():
-    list = []
-    for filename in os.listdir(UPLOAD_DATASET):
-        dictionary = {}
-        path_current = os.path.join(UPLOAD_DATASET,filename)
-        res = runColor(getImagePath(),path_current)
-        if res > 0.6:
-            dictionary["path"] = path_current
-            dictionary["cosine"] = res * 100
-            list.append(dictionary)
-    return sorted(list,key=lambda x: x['cosine'], reverse=True)
+# def searchColor():
+#     list = []
+#     for filename in os.listdir(UPLOAD_DATASET):
+#         dictionary = {}
+#         path_current = os.path.join(UPLOAD_DATASET,filename)
+#         res = runColor(getImagePath(),path_current)
+#         if res > 0.6:
+#             dictionary["path"] = path_current
+#             dictionary["cosine"] = res * 100
+#             list.append(dictionary)
+#     return sorted(list,key=lambda x: x['cosine'], reverse=True)
 
-def searchTexture():
-    list = []
-    for filename in os.listdir(UPLOAD_DATASET):
-        dictionary = {}
-        path_current = os.path.join(UPLOAD_DATASET,filename)
-        res = runTexture(getImagePath(),path_current)
-        if res > 0.6:
-            dictionary["path"] = path_current
-            dictionary["cosine"] = res * 100
-            list.append(dictionary)
-    return sorted(list,key=lambda x: x['cosine'], reverse=True)
+# def searchTexture():
+#     list = []
+#     for filename in os.listdir(UPLOAD_DATASET):
+#         dictionary = {}
+#         path_current = os.path.join(UPLOAD_DATASET,filename)
+#         res = runTexture(getImagePath(),path_current)
+#         if res > 0.6:
+#             dictionary["path"] = path_current
+#             dictionary["cosine"] = res * 100
+#             list.append(dictionary)
+#     return sorted(list,key=lambda x: x['cosine'], reverse=True)

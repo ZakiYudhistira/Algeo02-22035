@@ -1,6 +1,11 @@
 # ---------- FILE FOR TESTINGS -----------
 from ImageProcessingLibrary import *
 import time
+from app import *
+
+print(len(query))
+print(len(datasets))
+
 
 #Testings
 # start = time.time()
