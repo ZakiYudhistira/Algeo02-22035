@@ -22,7 +22,7 @@ DOWNLOAD_FOLDER = os.path.join(base_path,"Download")
 #     dictionary = {}
 #     i = 0
 #     for filename in os.listdir(UPLOAD_DATASET):
-#         path_current = os.path.join("..", "public", "Dataset", filename)
+#         path_current = "/Dataset/" + filename
 #         res = runColor(imagepath,absPath[i])
 #         i += 1
 #         if res > 0.6:
@@ -32,11 +32,10 @@ DOWNLOAD_FOLDER = os.path.join(base_path,"Download")
 
 def searchColor():
     data = []
-    i = 0
     for filename in os.listdir(UPLOAD_DATASET):
-        path_current = os.path.join("..", "public", "Dataset", filename)
-        res = runColor(imagepath, absPath[i])
-        i += 1
+        pathAbs = os.path.join(UPLOAD_DATASET, filename)
+        path_current = "/Dataset/" + filename
+        res = runColor(imagepath, pathAbs)
         if res > 0.6:
             data.append({"path": path_current, "value": res})
     sorted_data = sorted(data, key=lambda x: x["value"], reverse=True)
@@ -56,15 +55,14 @@ def searchColor():
 
 def searchTexture():
     data = []
-    i = 0
     for filename in os.listdir(UPLOAD_DATASET):
-        path_current = os.path.join("..", "public", "Dataset", filename)
-        res = runTexture(imagepath, absPath[i])
-        i += 1
+        pathAbs = os.path.join(UPLOAD_DATASET, filename)
+        path_current = "/Dataset/" + filename
+        res = runTexture(imagepath, pathAbs)
         if res > 0.6:
             data.append({"path": path_current, "value": res})
     sorted_data = sorted(data, key=lambda x: x["value"], reverse=True)
-    return {"result": sorted_data}
+    return sorted_data
 
 # Post an image to Upload folder and a folder of images to Dataset folder
 @app.route('/api/upload', methods=['POST'])
@@ -132,7 +130,7 @@ def run():
             end_time = time.time()
             delta_time = end_time - start_time
             # sorted_result = {"result": {k: v for k, v in sorted(result["result"].items(), key=lambda item: item[1], reverse=True)}}
-            return jsonify({"result": result, "deltatime" : delta_time})
+            return jsonify({"result": result, "delta_time" : delta_time})
 
 
         return jsonify({"error": "No method provided"}, 400)
