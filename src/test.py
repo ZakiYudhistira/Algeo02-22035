@@ -1,6 +1,7 @@
 # ---------- FILE FOR TESTINGS -----------
 from ImageProcessingLibrary import *
 import time
+from app import *
 
 #Testings
 # start = time.time()
