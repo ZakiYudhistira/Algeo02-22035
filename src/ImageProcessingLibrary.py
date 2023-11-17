@@ -97,14 +97,6 @@ def get3X3Segments(input_array : np.ndarray) -> tuple:
     return ret11,ret12,ret13,ret21,ret22,ret23,ret31,ret32,ret33
     #return all divided images
 
-# Function to return the similarity index in on go (COLOR)
-def runColor(image1,image2):
-    img1 = cv.imread(image1)
-    img1 = normBGRtoHSV(img1)
-    img2 = cv.imread(image2)
-    img2 = normBGRtoHSV(img2)
-    return(getSimilarityIndeks(get3X3Histograms(img1),get3X3Histograms(img2)))
-
 
 # ------- CONTENT BASED IMAGE RETRIEVAL : TEXTURE -------
 
@@ -173,25 +165,6 @@ def getVector(contrast : float, homogeneity : float, entropy : float, dissimilar
     vektor = np.array([contrast,homogeneity,entropy,dissimilarity,asm,energy])
     return vektor
 
-# Function to process the image in one go
-def processTexture(image):
-    data = getCoOccurenceMatrix(getGrayScaleMatrix(image))
-    data = getNormalizedSymmetryMatrix(getSymmetryMatrix(data))
-    c = getContrast(data)
-    h = getHomogeneity(data)
-    e = getEntropy(data)
-    asm = getASM(data)
-    d = getDissimilarity(data)
-    energy = getEnergy(data)
-    v = getVector(c,h,e,d,asm,energy)
-    return(v)
 
-# Function to return the similarity index in on go (Texture)
-def  runTexture(image1,image2):
-    img1 = cv.imread(image1)
-    img2 = cv.imread(image2)
-    img1 = processTexture(img1)
-    img2 = processTexture(img2)
-    return (getSimilarityIndeks(img1,img2))
 
 

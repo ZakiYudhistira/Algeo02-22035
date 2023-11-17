@@ -2,15 +2,13 @@ from flask import Flask, render_template,request,jsonify,send_from_directory
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 from ImageProcessingLibrary import *
-import logging,os,json
-import time
+import logging,os,time
 
 app = Flask(__name__)
 CORS(app)
 app.logger.setLevel(logging.DEBUG)
 
 imagepath =""
-absPath = []
 
 #  Path Image, Dataset, and Download Folder
 base_path = os.path.join(os.path.dirname(os.path.dirname(__file__)),"src","my-app","public")
@@ -39,6 +37,35 @@ def searchTexture():
             data.append({"path": path_current, "value": round(res*100,2)})
     sorted_data = sorted(data, key=lambda x: x["value"], reverse=True)
     return sorted_data
+
+# Function to return the similarity index in on go (COLOR)
+def runColor(image1,image2):
+    img1 = cv.imread(image1)
+    img1 = normBGRtoHSV(img1)
+    img2 = cv.imread(image2)
+    img2 = normBGRtoHSV(img2)
+    return(getSimilarityIndeks(get3X3Histograms(img1),get3X3Histograms(img2)))
+
+# Function to process the image in one go
+def processTexture(image):
+    data = getCoOccurenceMatrix(getGrayScaleMatrix(image))
+    data = getNormalizedSymmetryMatrix(getSymmetryMatrix(data))
+    c = getContrast(data)
+    h = getHomogeneity(data)
+    e = getEntropy(data)
+    asm = getASM(data)
+    d = getDissimilarity(data)
+    energy = getEnergy(data)
+    v = getVector(c,h,e,d,asm,energy)
+    return(v)
+
+# Function to return the similarity index in on go (Texture)
+def  runTexture(image1,image2):
+    img1 = cv.imread(image1)
+    img2 = cv.imread(image2)
+    img1 = processTexture(img1)
+    img2 = processTexture(img2)
+    return (getSimilarityIndeks(img1,img2))
 
 # Post an image to Upload folder and a folder of images to Dataset folder
 @app.route('/api/upload', methods=['POST'])
@@ -77,7 +104,6 @@ def upload():
             for dataset in dataset_files:
                 dataset_name = secure_filename(dataset.filename)
                 dataset_path = os.path.join(UPLOAD_DATASET, dataset_name)
-                absPath.append(dataset_path)
                 dataset.save(dataset_path)
             return jsonify({"message": "Dataset uploaded successfully"})
         return jsonify({"error": "No file provided"}, 400)
