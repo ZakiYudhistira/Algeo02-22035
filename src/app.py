@@ -85,10 +85,9 @@ def upload():
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
     
 # Endpoint for using the CBIR functions
-@app.route('/api/cbir', methods=['POST','GET'])
+@app.route('/api/cbir', methods=['POST', 'GET'])
 def run():
     app.logger.debug('Received a request to /api/cbir')
-    # Return the run time (start time - end time)
     try:
         if request.method == 'POST':
             option = request.json.get('option')
@@ -105,9 +104,8 @@ def run():
 
             end_time = time.time()
             delta_time = end_time - start_time
-            # sorted_result = {"result": {k: v for k, v in sorted(result["result"].items(), key=lambda item: item[1], reverse=True)}}
+            
             return jsonify({"result": result, "delta_time" : delta_time})
-
 
         return jsonify({"error": "No method provided"}, 400)
     except Exception as e:
@@ -140,8 +138,6 @@ def run():
 #         return send_from_directory(DOWNLOAD_FOLDER, filename=filename, as_attachment=True)
 #     except Exception as e:
 #         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
-
-    pass
 
 if __name__ == '__main__':
     app.run(debug=True)
