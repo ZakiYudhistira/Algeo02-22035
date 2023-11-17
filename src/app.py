@@ -1,8 +1,11 @@
 from flask import Flask, render_template,request,jsonify,send_from_directory
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
+from functools import partial
 from ImageProcessingLibrary import *
 import logging,os,time,multiprocessing
+from multiprocessing import Pool
+from concurrent.futures import ProcessPoolExecutor
 
 app = Flask(__name__)
 CORS(app)
@@ -18,16 +21,27 @@ UPLOAD_IMAGE = os.path.join(base_path,"Upload")
 UPLOAD_DATASET = os.path.join(base_path,"Dataset")
 DOWNLOAD_FOLDER = os.path.join(base_path,"Download")
 
-def searchColor():
+def processColor(args):
+    base_vector, path = args
+    res = getSimilarityIndeks(base_vector, getVectorColor(path))
+    relPath = "/Dataset/" + os.path.basename(path)
+    return {"path": relPath, "value": round(res * 100, 2)} if res > 0.6 else None
+
+def colorParallel(base_vector, dataset_paths, parallel_processes):
     data = []
-    for filename in os.listdir(UPLOAD_DATASET):
-        pathAbs = os.path.join(UPLOAD_DATASET, filename)
-        path_current = "/Dataset/" + filename
-        res = getSimilarityIndeks(imageVectorColor,getVectorColor(pathAbs))
-        if res > 0.6:
-            data.append({"path": path_current, "value": round(res*100,2)})
-    sorted_data = sorted(data, key=lambda x: x["value"], reverse=True)
-    return sorted_data
+    args_list = [(base_vector, path) for path in dataset_paths]
+    with ProcessPoolExecutor(max_workers=parallel_processes) as executor:
+        results = list(executor.map(processColor, args_list))
+    return [result for result in results if result]
+
+def searchColor(parallel_processes=60):
+    global imageVectorColor
+
+    if imageVectorColor is None:
+        return jsonify({"error": "Base image vector not calculated"}), 400
+
+    dataset_paths = [os.path.join(UPLOAD_DATASET, filename) for filename in os.listdir(UPLOAD_DATASET)]
+    return sorted(colorParallel(imageVectorColor, dataset_paths, parallel_processes),key=lambda x:x["value"],reverse=True)
 
 def getVectorColor(path):
     img = cv.imread(path)
@@ -45,25 +59,27 @@ def searchTexture():
     sorted_data = sorted(data, key=lambda x: x["value"], reverse=True)
     return sorted_data
 
-# def searchTexture():
+# def processTexture(args):
+#     base_vector, path = args
+#     res = getSimilarityIndeks(base_vector, getVectorTexture(path))
+#     relPath = "/Dataset/" + os.path.basename(path)
+#     return {"path": relPath, "value": round(res * 100, 2)} if res > 0.6 else None
+
+# def textureParallel(base_vector, dataset_paths, parallel_processes):
 #     data = []
-#     for filename in os.listdir(UPLOAD_DATASET):
-#         pathAbs = os.path.join(UPLOAD_DATASET, filename)
-#         path_current = "/Dataset/" + filename
-#         res = runTexture(imagepath, pathAbs)
-#         if res > 0.6:
-#             data.append({"path": path_current, "value": round(res*100,2)})
-#     sorted_data = sorted(data, key=lambda x: x["value"], reverse=True)
-#     return sorted_data
+#     args_list = [(base_vector, path) for path in dataset_paths]
+#     with ProcessPoolExecutor(max_workers=parallel_processes) as executor:
+#         results = list(executor.map(processTexture, args_list))
+#     return [result for result in results if result]
 
+# def searchTexture(parallel_processes=60):
+#     global imageVectorColor
 
-# Function to return the similarity index in on go (COLOR)
-# def runColor(image1,image2):
-#     img1 = cv.imread(image1)
-#     img1 = normBGRtoHSV(img1)
-#     img2 = cv.imread(image2)
-#     img2 = normBGRtoHSV(img2)
-#     return(getSimilarityIndeks(get3X3Histograms(img1),get3X3Histograms(img2)))
+#     if imageVectorColor is None:
+#         return jsonify({"error": "Base image vector not calculated"}), 400
+
+#     dataset_paths = [os.path.join(UPLOAD_DATASET, filename) for filename in os.listdir(UPLOAD_DATASET)]
+#     return sorted(textureParallel(imageVectorColor, dataset_paths, parallel_processes),key=lambda x:x["value"],reverse=True)
 
 # Function to process the image in one go
 def getVectorTexture(path):
@@ -80,14 +96,6 @@ def getVectorTexture(path):
 def extractFeature(args):
     data, func = args
     return func(data)
-
-# Function to return the similarity index in on go (Texture)
-# def  runTexture(image1,image2):
-#     img1 = cv.imread(image1)
-#     img2 = cv.imread(image2)
-#     img1 = processTexture(img1)
-#     img2 = processTexture(img2)
-#     return (getSimilarityIndeks(img1,img2))
 
 # Post an image to Upload folder and a folder of images to Dataset folder
 @app.route('/api/upload', methods=['POST'])
@@ -112,6 +120,8 @@ def upload():
             image.save(path)
             imageVectorColor = getVectorColor(path)
             imageVectorTexture = getVectorTexture(path)
+            print("Image Vector Color:", imageVectorColor)
+            print("Image Vector Texture:", imageVectorTexture)
             return jsonify({"message": "File uploaded successfully"})
         elif 'dataset' in request.files:
             if not os.path.isdir(UPLOAD_DATASET):
@@ -150,7 +160,7 @@ def run():
 
             end_time = time.time()
             delta_time = end_time - start_time
-            
+            print(result)
             return jsonify({"result": result, "delta_time" : delta_time})
 
         return jsonify({"error": "No method provided"}, 400)
