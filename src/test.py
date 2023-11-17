@@ -1,6 +1,7 @@
 # ---------- FILE FOR TESTINGS -----------
 from ImageProcessingLibrary import *
 import time
+from app import *
 
 #Testings
 # start = time.time()
@@ -74,7 +75,7 @@ import time
 
 # new_dict = dict(sorted(dictionary.items(), key=lambda item: item[1], reverse=True))
 
-# start = time.time()
-# print(searchColor())
-# end = time.time()
-# print(end-start)
+start = time.time()
+print(searchColor())
+end = time.time()
+print(end-start)

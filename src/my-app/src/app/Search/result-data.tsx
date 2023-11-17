@@ -4,7 +4,7 @@ import { useState } from "react";
 import ResultContain from "@/app/Search/result-contain";
 
 type ResultDataProps = {
-  data: { path: string; cosValue: number }[];
+  data: { path: string; value: number }[];
 };
 
 const ResultData: React.FC<ResultDataProps> = ({ data }) => {
@@ -23,7 +23,7 @@ const ResultData: React.FC<ResultDataProps> = ({ data }) => {
           <ResultContain
             key={index}
             file={item.path}
-            cosValue={item.cosValue}
+            value={item.value}
           />
         ))}
       </div>

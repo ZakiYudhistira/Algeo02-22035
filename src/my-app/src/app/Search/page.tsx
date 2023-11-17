@@ -17,7 +17,7 @@ const Search = () => {
   const inputRefFolder = useRef<HTMLInputElement>(null);
   const [isChecked, setChecked] = useState(false);
   const [deltaTime, setDeltaTime] = useState<number | null>(null);
-  const [result, setResult] = useState<{ path: string; cosValue: number }[]>(
+  const [result, setResult] = useState<{ path: string; value: number }[]>(
     []
   );
   console.log("Result: ", result);
