@@ -21,6 +21,10 @@ const Navbar = ({ expandNavbar, setExpandNavbar }) => {
       url: "/Search",
     },
     {
+      name: "Camera",
+      url: "/Camera",
+    },
+    {
       name: "Explore",
       url: "/Explore",
     },

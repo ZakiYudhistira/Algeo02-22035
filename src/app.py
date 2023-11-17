@@ -1,4 +1,4 @@
-from flask import Flask, render_template,request,jsonify,send_from_directory
+from flask import Flask, render_template,request,jsonify,send_from_directory, Response
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 from functools import partial
@@ -15,7 +15,7 @@ imagepath =""
 imageVectorColor = None
 imageVectorTexture = None
 
-#  Path Image, Dataset, and Download Folder
+# Path Image, Dataset, and Download Folder
 base_path = os.path.join(os.path.dirname(os.path.dirname(__file__)),"src","my-app","public")
 UPLOAD_IMAGE = os.path.join(base_path,"Upload")
 UPLOAD_DATASET = os.path.join(base_path,"Dataset")
@@ -129,7 +129,7 @@ def upload():
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
     
-# Endpoint for using the CBIR functions
+# 2. Endpoint for using the CBIR functions
 @app.route('/api/cbir', methods=['POST', 'GET'])
 def run():
     app.logger.debug('Received a request to /api/cbir')
@@ -155,6 +155,14 @@ def run():
         return jsonify({"error": "No method provided"}, 400)
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+    
+# 3. Endpoint for image scrapping
+# @app.route('/api/scrap', methods=['POST'])
+
+# 4. Endpoint for downloading the result as PDF
+# @app.route('/api/download', methods=['POST'])
+# def download():
+#     app.logger.debug('Received a request to /api/download')
     
 if __name__ == '__main__':
     app.run(debug=True)
