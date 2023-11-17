@@ -2,11 +2,27 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import React, { Component } from "react";
 import Image from "next/image";
-import ResultClient from "./result-client";
 import axios from "axios";
+
+import ResultClient from "./result-client";
+import ResultData from "./result-data";
 
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+
+const LoadingDots: React.FC = () => {
+  const [dots, setDots] = useState("");
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setDots((prevDots) => (prevDots.length >= 3 ? "" : prevDots + "."));
+    }, 500);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
+  return <span>loading{dots}</span>;
+};
 
 const Search = () => {
   const [image, setImage] = useState<File | null>(null);
@@ -15,11 +31,13 @@ const Search = () => {
   const inputRefFolder = useRef<HTMLInputElement>(null);
   const [isChecked, setChecked] = useState(false);
   const [deltaTime, setDeltaTime] = useState<number | null>(null);
-
-  console.log(imagedataset);
+  const [result, setResult] = useState<{ path: string; value: number }[]>([]);
+  const [loading, setLoading] = useState(false); // Set initial loading to false
+  const [displayedLength, setDisplayedLength] = useState<number>(0);
+  console.log("Result: ", result);
 
   const submitPhoto = useCallback(
-    async (e: React.FormEvent) => {
+    async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       try {
         const formData = new FormData();
@@ -29,7 +47,8 @@ const Search = () => {
           const apiUrl = `http://127.0.0.1:5000/api/upload`;
           const response = await axios.post(apiUrl, formData);
 
-          console.log(response.data);
+          console.log("Data: ", response.data.result);
+          setResult(response.data.result);
         } else {
           console.error("No image selected");
         }
@@ -58,7 +77,7 @@ const Search = () => {
     const selectedFiles = e.target.files;
 
     if (selectedFiles) {
-      setImagedataset(Array.from(selectedFiles));
+      setImagedataset(Array.from(selectedFiles).map((file) => file));
     }
   };
 
@@ -69,18 +88,21 @@ const Search = () => {
   };
 
   const submitDataset = useCallback(
-    async (e: React.FormEvent) => {
+    async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       try {
         const formData = new FormData();
-        imagedataset.forEach((file) => {
-          formData.append("dataset", file);
+        imagedataset.forEach((item) => {
+          formData.append("dataset", item);
         });
 
         const apiUrl = `http://127.0.0.1:5000/api/upload`;
         const response = await axios.post(apiUrl, formData);
 
         console.log(response.data);
+
+        // Assuming the response contains the cosValues for each file in the dataset
+        // setImagedataset( );
       } catch (error) {
         console.error("Error during backend POST request", error);
       }
@@ -90,11 +112,18 @@ const Search = () => {
 
   useEffect(() => {
     if (image) {
-      const syntheticEventPhoto = new Event("submit");
+      const syntheticEventPhoto = new Event("submit", {
+        bubbles: true,
+        cancelable: true,
+      });
       submitPhoto(syntheticEventPhoto);
     }
     if (imagedataset.length > 0) {
-      submitDataset(new Event("submit")); // Directly call submitDataset
+      const syntheticEventDataset = new Event("submit", {
+        bubbles: true,
+        cancelable: true,
+      });
+      submitDataset(syntheticEventDataset);
     }
   }, [image, imagedataset.length, submitPhoto, submitDataset]);
 
@@ -103,16 +132,23 @@ const Search = () => {
   };
 
   const handleSearch = async () => {
-    const valueTosend = isChecked ? "texture" : "color";
+    setLoading(true); // Set loading to true when search starts
+    const valueToSend = isChecked ? "texture" : "color";
     try {
       const apiUrl = `http://127.0.0.1:5000/api/cbir`;
-      const response = await axios.post(apiUrl, { option: valueTosend });
+      const response = await axios.post(apiUrl, { option: valueToSend });
       console.log(response.data);
+      setResult(response.data.result);
 
       // Update delta time based on the response
       setDeltaTime(response.data.delta_time);
+
+      // Update displayed length
+      setDisplayedLength(response.data.result.length);
     } catch (error) {
       console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false); // Set loading to false when search is complete
     }
   };
 
@@ -130,9 +166,9 @@ const Search = () => {
           // receive image from input
           src={image ? URL.createObjectURL(image) : "/dummy.png"}
           alt="Image Input"
-          width={500}
-          height={500}
-          className="w-[500px] lg:w-fit"
+          width={400}
+          height={400}
+          className="w-[400px]"
         ></Image>
 
         <div className="flex flex-col">
@@ -222,14 +258,21 @@ const Search = () => {
             Search Results
           </h1>
           <p className="text-right text-black text-base font-outline">
-            {imagedataset?.length} results in{" "}
-            {deltaTime !== null
-              ? `${deltaTime.toFixed(2)} seconds`
-              : "loading..."}
+            {result?.length} results in{" "}
+            {loading ? (
+              <LoadingDots />
+            ) : deltaTime !== null ? (
+              `${deltaTime.toFixed(2)} seconds`
+            ) : (
+              "loading..."
+            )}
           </p>
         </div>
-
-        <ResultClient data={imagedataset} />
+        {result && result.length > 0 ? (
+          <ResultData data={result} />
+        ) : (
+          <ResultClient data={imagedataset} />
+        )}
       </div>
     </div>
   );

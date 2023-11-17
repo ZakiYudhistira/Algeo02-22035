@@ -2,15 +2,12 @@ import Image from "next/image";
 import React from "react";
 
 type ResultCardProps = {
-  file: File;
+  file: string;
+  value?: number;
 };
 
-const ResultCard: React.FC<ResultCardProps> = ({ file }) => {
-  if (!file || !file.type.startsWith("image/")) {
-    console.error("Invalid or unsupported file type.");
-    return null;
-  }
-
+const ResultContain: React.FC<ResultCardProps> = ({ file, value }) => {
+  console.log("Ini path: ", file);
   return (
     <div className="cursor-pointer drop-shadow-xl animate-blink rounded-3xl bg-gradient-to-br from-[#DEF6B6] to-[#AADD56] p-1 hover:scale-105 transition duration-300 ease-in-out">
       <div className="h-full rounded-3xl">
@@ -25,18 +22,21 @@ const ResultCard: React.FC<ResultCardProps> = ({ file }) => {
             priority
             width={300}
             height={300}
-            src={URL.createObjectURL(file)}
+            src={file}
             alt=""
             className={`rounded-t-3xl w-full h-[250px] object-center object-cover bg-[url('/logo.png')]`}
           />
-          <div className="w-full pt-3 flex flex-col items-center gap-3 px-2">
-            <p className="text-center text-custom-green-dark font-montserrat text-lg font-bold">
-            </p>
-          </div>
+          {value !== undefined && (
+            <div className="w-full pt-3 flex flex-col items-center gap-3 px-2">
+              <p className="text-center text-custom-green-dark font-montserrat text-lg font-bold">
+                {value.toFixed(2)}%
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 };
 
-export default ResultCard;
+export default ResultContain;

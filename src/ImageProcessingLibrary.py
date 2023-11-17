@@ -2,7 +2,7 @@ import os
 import time
 import numpy as np
 import cv2 as cv
-from collections import OrderedDict
+
 
 # ------- CONTENT BASED IMAGE RETRIEVAL : COLOR -------
 
@@ -97,14 +97,6 @@ def get3X3Segments(input_array : np.ndarray) -> tuple:
     return ret11,ret12,ret13,ret21,ret22,ret23,ret31,ret32,ret33
     #return all divided images
 
-# Function to return the similarity index in on go (COLOR)
-def runColor(image1,image2):
-    img1 = cv.imread(image1)
-    img1 = normBGRtoHSV(img1)
-    img2 = cv.imread(image2)
-    img2 = normBGRtoHSV(img2)
-    return(getSimilarityIndeks(get3X3Histograms(img1),get3X3Histograms(img2)))
-
 
 # ------- CONTENT BASED IMAGE RETRIEVAL : TEXTURE -------
 
@@ -173,66 +165,6 @@ def getVector(contrast : float, homogeneity : float, entropy : float, dissimilar
     vektor = np.array([contrast,homogeneity,entropy,dissimilarity,asm,energy])
     return vektor
 
-# Function to process the image in one go
-def processTexture(image):
-    data = getCoOccurenceMatrix(getGrayScaleMatrix(image))
-    data = getNormalizedSymmetryMatrix(getSymmetryMatrix(data))
-    c = getContrast(data)
-    h = getHomogeneity(data)
-    e = getEntropy(data)
-    asm = getASM(data)
-    d = getDissimilarity(data)
-    energy = getEnergy(data)
-    v = getVector(c,h,e,d,asm,energy)
-    return(v)
 
-# Function to return the similarity index in on go (Texture)
-def  runTexture(image1,image2):
-    img1 = cv.imread(image1)
-    img2 = cv.imread(image2)
-    img1 = processTexture(img1)
-    img2 = processTexture(img2)
-    return (getSimilarityIndeks(img1,img2))
 
-# ------- FILE HANDLING -------
 
-#  Path Image, Dataset, and Download Folder
-base_path = os.path.join(os.path.dirname(os.path.dirname(__file__)),"test")
-UPLOAD_IMAGE = os.path.join(base_path,"Upload")
-UPLOAD_DATASET = os.path.join(base_path,"Dataset")
-DOWNLOAD_FOLDER = os.path.join(base_path,"Download")
-
-#  Function to get the path of the image
-def getImagePath():
-    img = os.listdir(UPLOAD_IMAGE)
-    path_img = os.path.join(UPLOAD_IMAGE,img[0])
-    return path_img
-
-#  Function to return CBIR color result
-def searchColor():
-    dictionary = {}
-    for filename in os.listdir(UPLOAD_DATASET):
-        path_current = os.path.join(UPLOAD_DATASET,filename)
-        res = runColor(getImagePath(),path_current)
-        if res > 0.6:
-            dictionary[path_current] = res
-    return dict(sorted(dictionary.items(), key=lambda item: item[1], reverse=True))
-
-#  Function to return CBIR texture result
-def searchTexture():
-    dictionary = {}
-    for filename in os.listdir(UPLOAD_DATASET):
-        path_current = os.path.join(UPLOAD_DATASET,filename)
-        res = runTexture(getImagePath(),path_current)
-        if res > 0.6:
-            dictionary[path_current] = res
-    return dict(sorted(dictionary.items(), key=lambda item: item[1], reverse=True))
-
-def searchColorTuples():
-    list = []
-    for filename in os.listdir(UPLOAD_DATASET):
-        path_current = os.path.join(UPLOAD_DATASET,filename)
-        res = runColor(getImagePath(),path_current)
-        if res > 0.6:
-            list.append((path_current,res))
-    return sorted(list, key=lambda item: item[1], reverse=True)

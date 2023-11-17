@@ -1,5 +1,4 @@
 import ChevronIcon from "../../components/ui/chevron-icon";
-import DotIcon from "../../components/ui/dot-icon";
 
 const Pagination = ({
   numberPage,
@@ -14,8 +13,19 @@ const Pagination = ({
     pink: { selected: "fill-[#DF3890]", unselected: "fill-[#7A2F8B]" },
   };
 
-  // Create an array of numbers representing the page numbers
-  const numbers = Array.from({ length: numberPage }, (_, index) => index + 1);
+  // Calculate the range of pages to display
+  const displayRange = 5;
+  const startPage = Math.max(
+    1,
+    currentNumberPage - Math.floor(displayRange / 2)
+  );
+  const endPage = Math.min(startPage + displayRange - 1, numberPage);
+
+  // Create an array of numbers representing the page numbers to display
+  const numbers = Array.from(
+    { length: endPage - startPage + 1 },
+    (_, index) => startPage + index
+  );
 
   // Handle previous page button click
   const handlePreviousClick = () => {
@@ -33,7 +43,7 @@ const Pagination = ({
   return (
     // Display pagination only if there's more than one page
     numberPage > 1 && (
-      <div className="flex gap-3 lg:gap-5">
+      <div className="flex items-center gap-3 lg:gap-5">
         {/* Display previous page button if enabled */}
         {previousButton && (
           <button
@@ -46,25 +56,28 @@ const Pagination = ({
         )}
         <div className="flex gap-2 lg:gap-4">
           {/* Map through page numbers and display dots */}
-          {numbers.map((number) => (
-            <button
-              key={number}
-              onClick={() => setCurrentNumberPage(number)}
-              aria-label={`Page-${number}`}
-              className={`${
-                currentNumberPage === number && "scale-105"
-              } transition duration-300 hover:scale-125 hover:drop-shadow-[0px_0px_4px_#FFFFFF]`}
-            >
-              <DotIcon
-                size={12}
+          <div className="flex items-center">
+            {numbers.map((number) => (
+              <button
+                key={number}
+                onClick={() => setCurrentNumberPage(number)}
+                aria-label={`Page-${number}`}
                 className={`${
-                  currentNumberPage === number
-                    ? colorEffect[primaryColor].selected
-                    : colorEffect[primaryColor].unselected
-                } w-[8px] lg:w-[17px]`}
-              />
-            </button>
-          ))}
+                  currentNumberPage === number && "scale-105"
+                } flex items-center justify-center transition duration-300 hover:scale-125 hover:drop-shadow-[0px_0px_4px_#FFFFFF]`}
+              >
+                <div
+                  className={`border-solid border-custom-green mx-1 px-2 py-1 ${
+                    currentNumberPage === number
+                      ? "bg-custom-green text-white"
+                      : ""
+                  }`}
+                >
+                  {number}
+                </div>
+              </button>
+            ))}
+          </div>
         </div>
         {/* Display next page button if enabled */}
         {nextButton && (
@@ -80,4 +93,5 @@ const Pagination = ({
     )
   );
 };
+
 export default Pagination;

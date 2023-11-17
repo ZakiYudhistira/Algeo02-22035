@@ -1,6 +1,7 @@
 # ---------- FILE FOR TESTINGS -----------
 from ImageProcessingLibrary import *
 import time
+from app import *
 
 #Testings
 # start = time.time()
@@ -78,3 +79,7 @@ import time
 # print(searchColor())
 # end = time.time()
 # print(end-start)
+
+# path ="C:\\Users\\Angelica Gurning\\Documents\\Kuliah\\ALGEO\\Tubes_2\\Algeo02-22035\\src\\my-app\\public\\Upload\\Image20231116022159.jpg"
+# imageVector = getImageVectorColor(path)
+# print(getSimilarityIndeks(imageVector,imageVector))
