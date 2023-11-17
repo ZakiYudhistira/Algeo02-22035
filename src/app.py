@@ -2,13 +2,15 @@ from flask import Flask, render_template,request,jsonify,send_from_directory
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 from ImageProcessingLibrary import *
-import logging,os,time
+import logging,os,time,multiprocessing
 
 app = Flask(__name__)
 CORS(app)
 app.logger.setLevel(logging.DEBUG)
 
 imagepath =""
+imageVectorColor = None
+imageVectorTexture = None
 
 #  Path Image, Dataset, and Download Folder
 base_path = os.path.join(os.path.dirname(os.path.dirname(__file__)),"src","my-app","public")
@@ -21,56 +23,76 @@ def searchColor():
     for filename in os.listdir(UPLOAD_DATASET):
         pathAbs = os.path.join(UPLOAD_DATASET, filename)
         path_current = "/Dataset/" + filename
-        res = runColor(imagepath, pathAbs)
+        res = getSimilarityIndeks(imageVectorColor,getVectorColor(pathAbs))
         if res > 0.6:
             data.append({"path": path_current, "value": round(res*100,2)})
     sorted_data = sorted(data, key=lambda x: x["value"], reverse=True)
     return sorted_data
+
+def getVectorColor(path):
+    img = cv.imread(path)
+    img = normBGRtoHSV(img)
+    return get3X3Histograms(img)
 
 def searchTexture():
     data = []
     for filename in os.listdir(UPLOAD_DATASET):
         pathAbs = os.path.join(UPLOAD_DATASET, filename)
         path_current = "/Dataset/" + filename
-        res = runTexture(imagepath, pathAbs)
+        res = getSimilarityIndeks(imageVectorTexture,getVectorTexture(pathAbs))
         if res > 0.6:
             data.append({"path": path_current, "value": round(res*100,2)})
     sorted_data = sorted(data, key=lambda x: x["value"], reverse=True)
     return sorted_data
 
+# def searchTexture():
+#     data = []
+#     for filename in os.listdir(UPLOAD_DATASET):
+#         pathAbs = os.path.join(UPLOAD_DATASET, filename)
+#         path_current = "/Dataset/" + filename
+#         res = runTexture(imagepath, pathAbs)
+#         if res > 0.6:
+#             data.append({"path": path_current, "value": round(res*100,2)})
+#     sorted_data = sorted(data, key=lambda x: x["value"], reverse=True)
+#     return sorted_data
+
+
 # Function to return the similarity index in on go (COLOR)
-def runColor(image1,image2):
-    img1 = cv.imread(image1)
-    img1 = normBGRtoHSV(img1)
-    img2 = cv.imread(image2)
-    img2 = normBGRtoHSV(img2)
-    return(getSimilarityIndeks(get3X3Histograms(img1),get3X3Histograms(img2)))
+# def runColor(image1,image2):
+#     img1 = cv.imread(image1)
+#     img1 = normBGRtoHSV(img1)
+#     img2 = cv.imread(image2)
+#     img2 = normBGRtoHSV(img2)
+#     return(getSimilarityIndeks(get3X3Histograms(img1),get3X3Histograms(img2)))
 
 # Function to process the image in one go
-def processTexture(image):
-    data = getCoOccurenceMatrix(getGrayScaleMatrix(image))
+def getVectorTexture(path):
+    img1 = cv.imread(path)
+    data = getCoOccurenceMatrix(getGrayScaleMatrix(img1))
     data = getNormalizedSymmetryMatrix(getSymmetryMatrix(data))
-    c = getContrast(data)
-    h = getHomogeneity(data)
-    e = getEntropy(data)
-    asm = getASM(data)
-    d = getDissimilarity(data)
-    energy = getEnergy(data)
-    v = getVector(c,h,e,d,asm,energy)
-    return(v)
+
+    with multiprocessing.Pool() as pool:
+        features = pool.map(extractFeature, [(data, func) for func in [getContrast, getHomogeneity, getEntropy, getASM, getEnergy, getDissimilarity]])
+
+    v = getVector(*features)
+    return v
+
+def extractFeature(args):
+    data, func = args
+    return func(data)
 
 # Function to return the similarity index in on go (Texture)
-def  runTexture(image1,image2):
-    img1 = cv.imread(image1)
-    img2 = cv.imread(image2)
-    img1 = processTexture(img1)
-    img2 = processTexture(img2)
-    return (getSimilarityIndeks(img1,img2))
+# def  runTexture(image1,image2):
+#     img1 = cv.imread(image1)
+#     img2 = cv.imread(image2)
+#     img1 = processTexture(img1)
+#     img2 = processTexture(img2)
+#     return (getSimilarityIndeks(img1,img2))
 
 # Post an image to Upload folder and a folder of images to Dataset folder
 @app.route('/api/upload', methods=['POST'])
 def upload():
-    global imagepath, relPaths, absPath
+    global imagepath, imageVectorColor, imageVectorTexture
     try:
         if not os.path.isdir(base_path):
             os.mkdir(base_path)
@@ -88,12 +110,10 @@ def upload():
                 for file in files:
                     os.remove(os.path.join(UPLOAD_IMAGE, file))
             image.save(path)
-
+            imageVectorColor = getVectorColor(path)
+            imageVectorTexture = getVectorTexture(path)
             return jsonify({"message": "File uploaded successfully"})
         elif 'dataset' in request.files:
-            relPaths = {}
-            absPath = []
-
             if not os.path.isdir(UPLOAD_DATASET):
                 os.mkdir(UPLOAD_DATASET)
             dataset_files = request.files.getlist('dataset')
