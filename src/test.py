@@ -75,7 +75,11 @@ from app import *
 
 # new_dict = dict(sorted(dictionary.items(), key=lambda item: item[1], reverse=True))
 
-start = time.time()
-print(searchColor())
-end = time.time()
-print(end-start)
+# start = time.time()
+# print(searchColor())
+# end = time.time()
+# print(end-start)
+
+# path ="C:\\Users\\Angelica Gurning\\Documents\\Kuliah\\ALGEO\\Tubes_2\\Algeo02-22035\\src\\my-app\\public\\Upload\\Image20231116022159.jpg"
+# imageVector = getImageVectorColor(path)
+# print(getSimilarityIndeks(imageVector,imageVector))
