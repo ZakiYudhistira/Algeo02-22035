@@ -18,18 +18,6 @@ UPLOAD_IMAGE = os.path.join(base_path,"Upload")
 UPLOAD_DATASET = os.path.join(base_path,"Dataset")
 DOWNLOAD_FOLDER = os.path.join(base_path,"Download")
 
-# def searchColor():
-#     dictionary = {}
-#     i = 0
-#     for filename in os.listdir(UPLOAD_DATASET):
-#         path_current = "/Dataset/" + filename
-#         res = runColor(imagepath,absPath[i])
-#         i += 1
-#         if res > 0.6:
-#             dictionary[path_current] = res
-#     sorted_dict = dict(sorted(dictionary.items(), key=lambda item: item[1], reverse=True))
-#     return sorted_dict
-
 def searchColor():
     data = []
     for filename in os.listdir(UPLOAD_DATASET):
@@ -37,21 +25,9 @@ def searchColor():
         path_current = "/Dataset/" + filename
         res = runColor(imagepath, pathAbs)
         if res > 0.6:
-            data.append({"path": path_current, "value": res})
+            data.append({"path": path_current, "value": round(res*100,2)})
     sorted_data = sorted(data, key=lambda x: x["value"], reverse=True)
     return sorted_data
-
-# def searchTexture():
-#     dictionary = {}
-#     i = 0
-#     for filename in os.listdir(UPLOAD_DATASET):
-#         path_current = os.path.join("..", "public", "Dataset", filename)
-#         res = runTexture(imagepath,absPath[i])
-#         i += 1
-#         if res > 0.6:
-#             dictionary[path_current] = res
-#     sorted_dict = dict(sorted(dictionary.items(), key=lambda item: item[1], reverse=True))
-#     return sorted_dict
 
 def searchTexture():
     data = []
@@ -60,7 +36,7 @@ def searchTexture():
         path_current = "/Dataset/" + filename
         res = runTexture(imagepath, pathAbs)
         if res > 0.6:
-            data.append({"path": path_current, "value": res})
+            data.append({"path": path_current, "value": round(res*100,2)})
     sorted_data = sorted(data, key=lambda x: x["value"], reverse=True)
     return sorted_data
 

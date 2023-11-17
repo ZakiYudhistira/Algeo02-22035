@@ -31,7 +31,6 @@ const ResultCard: React.FC<ResultCardProps> = ({ file }) => {
           />
           <div className="w-full pt-3 flex flex-col items-center gap-3 px-2">
             <p className="text-center text-custom-green-dark font-montserrat text-lg font-bold">
-              COS VALUE:
             </p>
           </div>
         </div>

@@ -3,10 +3,10 @@ import React from "react";
 
 type ResultCardProps = {
   file: string;
-  cosValue?: number;
+  value?: number;
 };
 
-const ResultContain: React.FC<ResultCardProps> = ({ file, cosValue }) => {
+const ResultContain: React.FC<ResultCardProps> = ({ file, value }) => {
   console.log("Ini path: ", file);
   return (
     <div className="cursor-pointer drop-shadow-xl animate-blink rounded-3xl bg-gradient-to-br from-[#DEF6B6] to-[#AADD56] p-1 hover:scale-105 transition duration-300 ease-in-out">
@@ -26,10 +26,10 @@ const ResultContain: React.FC<ResultCardProps> = ({ file, cosValue }) => {
             alt=""
             className={`rounded-t-3xl w-full h-[250px] object-center object-cover bg-[url('/logo.png')]`}
           />
-          {cosValue !== undefined && (
+          {value !== undefined && (
             <div className="w-full pt-3 flex flex-col items-center gap-3 px-2">
               <p className="text-center text-custom-green-dark font-montserrat text-lg font-bold">
-                COS VALUE: {cosValue}
+                {value.toFixed(2)}%
               </p>
             </div>
           )}
