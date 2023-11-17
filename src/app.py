@@ -3,6 +3,9 @@ from flask_cors import CORS
 from werkzeug.utils import secure_filename
 from ImageProcessingLibrary import *
 import logging,os,time,multiprocessing
+import numpy as np
+import pandas as pd
+import cv2 as cv
 
 app = Flask(__name__)
 CORS(app)
@@ -18,6 +21,29 @@ UPLOAD_IMAGE = os.path.join(base_path,"Upload")
 UPLOAD_DATASET = os.path.join(base_path,"Dataset")
 DOWNLOAD_FOLDER = os.path.join(base_path,"Download")
 
+def writeCache():
+    main = np.zeros(126)
+    for filename in os.listdir(UPLOAD_DATASET):
+        img = cv.imread(os.path.join(UPLOAD_DATASET,filename))
+        img = normBGRtoHSV(img)
+        img = get3X3Histograms(img)
+        main = np.vstack((main,img))
+    main = np.delete(main,0,0)
+    data = pd.DataFrame(main)
+    data.to_csv(os.path.join(UPLOAD_DATASET,"cache.csv"), header=False, index=False)
+
+def getCache():
+    if(os.path.exists(os.path.join(UPLOAD_DATASET,"cache.csv"))):
+        data = np.loadtxt(open(os.path.join(UPLOAD_DATASET,"cache.csv"), "rb"), delimiter=",", dtype=int)
+        return data
+    else:
+        writeCache()
+        try:
+            data = np.loadtxt(open(os.path.join(UPLOAD_DATASET,"cache.csv"), "rb"), delimiter=",", dtype=int)
+            return data
+        except:
+            app.logger.debug("Failed to cache dataset")
+            
 def searchColor():
     data = []
     for filename in os.listdir(UPLOAD_DATASET):
