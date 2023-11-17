@@ -1,9 +1,10 @@
-from flask import Flask, render_template,request,jsonify,send_from_directory
+from flask import Flask, render_template,request,jsonify,send_from_directory, Response
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 from ImageProcessingLibrary import *
 import logging,os,json
 import time
+from camera import VideoCamera
 
 app = Flask(__name__)
 CORS(app)
@@ -12,7 +13,7 @@ app.logger.setLevel(logging.DEBUG)
 imagepath =""
 absPath = []
 
-#  Path Image, Dataset, and Download Folder
+# Path Image, Dataset, and Download Folder
 base_path = os.path.join(os.path.dirname(os.path.dirname(__file__)),"src","my-app","public")
 UPLOAD_IMAGE = os.path.join(base_path,"Upload")
 UPLOAD_DATASET = os.path.join(base_path,"Dataset")
@@ -40,7 +41,7 @@ def searchTexture():
     sorted_data = sorted(data, key=lambda x: x["value"], reverse=True)
     return sorted_data
 
-# Post an image to Upload folder and a folder of images to Dataset folder
+# 1. Endpoint to post an image to Upload folder and a folder of images to Dataset folder
 @app.route('/api/upload', methods=['POST'])
 def upload():
     global imagepath, relPaths, absPath
@@ -84,7 +85,7 @@ def upload():
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
     
-# Endpoint for using the CBIR functions
+# 2. Endpoint for using the CBIR functions
 @app.route('/api/cbir', methods=['POST', 'GET'])
 def run():
     app.logger.debug('Received a request to /api/cbir')
@@ -111,33 +112,29 @@ def run():
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
     
-# Endpoint for downloading the result
+# 3. Endpoint for camera
+@app.route('/api/camera', methods=['GET'])  # Change to GET method
+def index():
+    return render_template('index.html')  # Correct template name
+
+def gen(camera):
+    while True:
+        frame = camera.get_frame()
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+
+@app.route('/video_feed')
+def video_feed():
+    return Response(gen(VideoCamera()),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
+
+# 4. Endpoint for image scrapping
+# @app.route('/api/scrap', methods=['POST'])
+
+# 5. Endpoint for downloading the result as PDF
 # @app.route('/api/download', methods=['POST'])
 # def download():
 #     app.logger.debug('Received a request to /api/download')
-#     try:
-#         if not os.path.isdir(DOWNLOAD_FOLDER):
-#             os.mkdir(DOWNLOAD_FOLDER)
-#         if request.form['method'] == 'color':
-#             app.logger.debug('Color method found in request')
-#             result = searchColor()
-#             return jsonify(result)
-#         elif request.form['method'] == 'texture':
-#             app.logger.debug('Texture method found in request')
-#             result = searchTexture()
-#             return jsonify(result)
-#         return jsonify({"error": "No method provided"}, 400)
-#     except Exception as e:
-#         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
     
-# Endpoint for downloading the result
-# @app.route('/api/download/<path:filename>', methods=['GET', 'POST'])
-# def download_file(filename):
-#     app.logger.debug('Received a request to /api/download/<path:filename>')
-#     try:
-#         return send_from_directory(DOWNLOAD_FOLDER, filename=filename, as_attachment=True)
-#     except Exception as e:
-#         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
-
 if __name__ == '__main__':
     app.run(debug=True)

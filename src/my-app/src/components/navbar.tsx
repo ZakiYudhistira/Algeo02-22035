@@ -24,6 +24,10 @@ const Navbar = ({ expandNavbar, setExpandNavbar }) => {
       name: "Explore",
       url: "/Explore",
     },
+    {
+      name: "Camera",
+      url: "/Camera",
+    },
   ];
 
   // Close Navbar when user clicks on black background stuffs

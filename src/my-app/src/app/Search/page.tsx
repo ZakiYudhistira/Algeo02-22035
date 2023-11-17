@@ -4,8 +4,8 @@ import React, { Component } from "react";
 import Image from "next/image";
 import axios from "axios";
 
-import ResultClient from "./result-client";
-import ResultData from "./result-data";
+import ResultClient from "../../components/result-client";
+import ResultData from "../../components/result-data";
 
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -15,7 +15,7 @@ const LoadingDots: React.FC = () => {
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      setDots((prevDots) => (prevDots.length >= 3 ? "" : prevDots + "."));
+      setDots((prevDots) => (prevDots.length >= 5 ? "" : prevDots + "."));
     }, 500);
 
     return () => clearInterval(intervalId);
@@ -264,7 +264,7 @@ const Search = () => {
             ) : deltaTime !== null ? (
               `${deltaTime.toFixed(2)} seconds`
             ) : (
-              "loading..."
+              "loading....."
             )}
           </p>
         </div>
