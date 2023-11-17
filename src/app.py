@@ -48,47 +48,35 @@ def getVectorColor(path):
     img = normBGRtoHSV(img)
     return get3X3Histograms(img)
 
-def searchTexture():
-    data = []
-    for filename in os.listdir(UPLOAD_DATASET):
-        pathAbs = os.path.join(UPLOAD_DATASET, filename)
-        path_current = "/Dataset/" + filename
-        res = getSimilarityIndeks(imageVectorTexture,getVectorTexture(pathAbs))
-        if res > 0.6:
-            data.append({"path": path_current, "value": round(res*100,2)})
-    sorted_data = sorted(data, key=lambda x: x["value"], reverse=True)
-    return sorted_data
+def processTexture(args):
+    base_vector, path = args
+    img1 = cv.imread(path)
+    res = getSimilarityIndeks(base_vector, getVectorTexture(img1))
+    relPath = "/Dataset/" + os.path.basename(path)
+    return {"path": relPath, "value": round(res * 100, 2)} if res > 0.6 else None
 
-# def processTexture(args):
-#     base_vector, path = args
-#     res = getSimilarityIndeks(base_vector, getVectorTexture(path))
-#     relPath = "/Dataset/" + os.path.basename(path)
-#     return {"path": relPath, "value": round(res * 100, 2)} if res > 0.6 else None
 
-# def textureParallel(base_vector, dataset_paths, parallel_processes):
-#     data = []
-#     args_list = [(base_vector, path) for path in dataset_paths]
-#     with ProcessPoolExecutor(max_workers=parallel_processes) as executor:
-#         results = list(executor.map(processTexture, args_list))
-#     return [result for result in results if result]
+def textureParallel(base_vector, dataset_paths, parallel_processes):
+    args_list = [(base_vector, path) for path in dataset_paths]
+    with ProcessPoolExecutor(max_workers=parallel_processes) as executor:
+        results = list(executor.map(processTexture, args_list))
+    return [result for result in results if result]
 
-# def searchTexture(parallel_processes=60):
-#     global imageVectorColor
+def searchTexture(parallel_processes=60):
+    global imageVectorTexture
 
-#     if imageVectorColor is None:
-#         return jsonify({"error": "Base image vector not calculated"}), 400
+    if imageVectorColor is None:
+        return jsonify({"error": "Base image vector not calculated"}), 400
 
-#     dataset_paths = [os.path.join(UPLOAD_DATASET, filename) for filename in os.listdir(UPLOAD_DATASET)]
-#     return sorted(textureParallel(imageVectorColor, dataset_paths, parallel_processes),key=lambda x:x["value"],reverse=True)
+    dataset_paths = [os.path.join(UPLOAD_DATASET, filename) for filename in os.listdir(UPLOAD_DATASET)]
+    return sorted(textureParallel(imageVectorTexture, dataset_paths, parallel_processes),key=lambda x:x["value"],reverse=True)
 
 # Function to process the image in one go
-def getVectorTexture(path):
-    img1 = cv.imread(path)
-    data = getCoOccurenceMatrix(getGrayScaleMatrix(img1))
+def getVectorTexture(img):
+    data = getCoOccurenceMatrix(getGrayScaleMatrix(img))
     data = getNormalizedSymmetryMatrix(getSymmetryMatrix(data))
 
-    with multiprocessing.Pool() as pool:
-        features = pool.map(extractFeature, [(data, func) for func in [getContrast, getHomogeneity, getEntropy, getASM, getEnergy, getDissimilarity]])
+    features = [extractFeature((data, func)) for func in [getContrast, getHomogeneity, getEntropy, getASM, getEnergy, getDissimilarity]]
 
     v = getVector(*features)
     return v
@@ -119,7 +107,8 @@ def upload():
                     os.remove(os.path.join(UPLOAD_IMAGE, file))
             image.save(path)
             imageVectorColor = getVectorColor(path)
-            imageVectorTexture = getVectorTexture(path)
+            img = cv.imread(path)
+            imageVectorTexture = getVectorTexture(img)
             print("Image Vector Color:", imageVectorColor)
             print("Image Vector Texture:", imageVectorTexture)
             return jsonify({"message": "File uploaded successfully"})
@@ -167,33 +156,5 @@ def run():
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
     
-# Endpoint for downloading the result
-# @app.route('/api/download', methods=['POST'])
-# def download():
-#     app.logger.debug('Received a request to /api/download')
-#     try:
-#         if not os.path.isdir(DOWNLOAD_FOLDER):
-#             os.mkdir(DOWNLOAD_FOLDER)
-#         if request.form['method'] == 'color':
-#             app.logger.debug('Color method found in request')
-#             result = searchColor()
-#             return jsonify(result)
-#         elif request.form['method'] == 'texture':
-#             app.logger.debug('Texture method found in request')
-#             result = searchTexture()
-#             return jsonify(result)
-#         return jsonify({"error": "No method provided"}, 400)
-#     except Exception as e:
-#         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
-    
-# Endpoint for downloading the result
-# @app.route('/api/download/<path:filename>', methods=['GET', 'POST'])
-# def download_file(filename):
-#     app.logger.debug('Received a request to /api/download/<path:filename>')
-#     try:
-#         return send_from_directory(DOWNLOAD_FOLDER, filename=filename, as_attachment=True)
-#     except Exception as e:
-#         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
-
 if __name__ == '__main__':
     app.run(debug=True)
