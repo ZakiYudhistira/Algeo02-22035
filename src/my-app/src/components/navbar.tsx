@@ -21,12 +21,12 @@ const Navbar = ({ expandNavbar, setExpandNavbar }) => {
       url: "/Search",
     },
     {
-      name: "Explore",
-      url: "/Explore",
-    },
-    {
       name: "Camera",
       url: "/Camera",
+    },
+    {
+      name: "Explore",
+      url: "/Explore",
     },
   ];
 
