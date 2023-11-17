@@ -4,7 +4,6 @@ from werkzeug.utils import secure_filename
 from ImageProcessingLibrary import *
 import logging,os,json
 import time
-from camera import VideoCamera
 
 app = Flask(__name__)
 CORS(app)
@@ -112,26 +111,10 @@ def run():
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
     
-# 3. Endpoint for camera
-@app.route('/api/camera', methods=['GET'])  # Change to GET method
-def index():
-    return render_template('index.html')  # Correct template name
-
-def gen(camera):
-    while True:
-        frame = camera.get_frame()
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
-
-@app.route('/video_feed')
-def video_feed():
-    return Response(gen(VideoCamera()),
-                    mimetype='multipart/x-mixed-replace; boundary=frame')
-
-# 4. Endpoint for image scrapping
+# 3. Endpoint for image scrapping
 # @app.route('/api/scrap', methods=['POST'])
 
-# 5. Endpoint for downloading the result as PDF
+# 4. Endpoint for downloading the result as PDF
 # @app.route('/api/download', methods=['POST'])
 # def download():
 #     app.logger.debug('Received a request to /api/download')
