@@ -161,7 +161,6 @@ def upload():
             img = cv.imread(path)
             imageVectorColor = getVectorColor(path)
             print(imageVectorColor)
-            # imageVectorTexture = getVectorTexture(img)
             return jsonify({"message": "File uploaded successfully"})
         elif 'dataset' in request.files:
             if not os.path.isdir(UPLOAD_DATASET):
@@ -175,13 +174,27 @@ def upload():
                 dataset_name = secure_filename(dataset.filename)
                 dataset_path = os.path.join(UPLOAD_DATASET, dataset_name)
                 dataset.save(dataset_path)
-            if os.path.exists(os.path.join(CACHING_FOLDER,"color_cache.csv")):
-                os.remove(os.path.join(CACHING_FOLDER,"color_cache.csv"))
+
+            # Delete the CSV file only if it exists
+            csv_path = os.path.join(CACHING_FOLDER, "color_cache.csv")
+            if os.path.exists(csv_path):
+                os.remove(csv_path)
+
+            # Update the cache when a dataset is uploaded
+            # writeCacheColor()
             return jsonify({"message": "Dataset uploaded successfully"})
         return jsonify({"error": "No file provided"}, 400)
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
-    
+
+# @app.route('/api/cache', methods=['POST'])
+# def cache():
+#     try:
+#         writeCacheColor()
+#         return jsonify({"message": "Cache updated successfully"})
+#     except Exception as e:
+#         return jsonify({"error": f"An error occurred during cache update: {str(e)}"}), 500
+
 # 2. Endpoint for using the CBIR functions
 @app.route('/api/cbir', methods=['POST', 'GET'])
 def run():

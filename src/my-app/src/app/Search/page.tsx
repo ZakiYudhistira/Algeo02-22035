@@ -43,12 +43,18 @@ const Search = () => {
         const formData = new FormData();
         if (image) {
           formData.append("image", image);
-
+  
           const apiUrl = `http://127.0.0.1:5000/api/upload`;
           const response = await axios.post(apiUrl, formData);
-
+  
           console.log("Data: ", response.data.result);
           setResult(response.data.result);
+  
+          // Check if the dataset is not being uploaded before deleting the cache file
+          if (imagedataset.length === 0) {
+            const cacheUpdateUrl = `http://127.0.0.1:5000/api/cache`;
+            await axios.post(cacheUpdateUrl);
+          }
         } else {
           console.error("No image selected");
         }
@@ -56,7 +62,7 @@ const Search = () => {
         console.error("Error during backend POST request", error);
       }
     },
-    [image]
+    [image, imagedataset]
   );
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
