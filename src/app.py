@@ -21,7 +21,7 @@ UPLOAD_IMAGE = os.path.join(base_path,"Upload")
 UPLOAD_DATASET = os.path.join(base_path,"Dataset")
 DOWNLOAD_FOLDER = os.path.join(base_path,"Download")
 
-def writeCache():
+def writeCacheColor():
     main = np.zeros(126)
     for filename in os.listdir(UPLOAD_DATASET):
         img = cv.imread(os.path.join(UPLOAD_DATASET,filename))
@@ -30,19 +30,21 @@ def writeCache():
         main = np.vstack((main,img))
     main = np.delete(main,0,0)
     data = pd.DataFrame(main)
-    data.to_csv(os.path.join(UPLOAD_DATASET,"cache.csv"), header=False, index=False)
+    data.to_csv(os.path.join(UPLOAD_DATASET,"cacheColor.csv"), header=False, index=False)
 
-def getCache():
-    if(os.path.exists(os.path.join(UPLOAD_DATASET,"cache.csv"))):
-        data = np.loadtxt(open(os.path.join(UPLOAD_DATASET,"cache.csv"), "rb"), delimiter=",", dtype=int)
+def getCacheColor():
+    if(os.path.exists(os.path.join(UPLOAD_DATASET,"cacheColor.csv"))):
+        data = np.loadtxt(open(os.path.join(UPLOAD_DATASET,"cacheColor.csv"), "rb"), delimiter=",", dtype=int)
         return data
     else:
-        writeCache()
+        writeCacheColor()
         try:
-            data = np.loadtxt(open(os.path.join(UPLOAD_DATASET,"cache.csv"), "rb"), delimiter=",", dtype=int)
+            data = np.loadtxt(open(os.path.join(UPLOAD_DATASET,"cacheColor.csv"), "rb"), delimiter=",", dtype=int)
             return data
         except:
             app.logger.debug("Failed to cache dataset")
+
+
             
 def searchColor():
     data = []
