@@ -193,7 +193,7 @@ def upload():
             image.save(path)
             img = cv.imread(path)
             imageVectorColor = getVectorColor(path)
-            print(imageVectorColor)
+            imageVectorTexture = getVectorTexture(img)
             return jsonify({"message": "File uploaded successfully"})
         elif 'dataset' in request.files:
             if not os.path.isdir(UPLOAD_DATASET):
