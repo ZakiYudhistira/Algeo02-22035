@@ -135,8 +135,6 @@ def upload():
             imageVectorColor = getVectorColor(path)
             img = cv.imread(path)
             imageVectorTexture = getVectorTexture(img)
-            print("Image Vector Color:", imageVectorColor)
-            print("Image Vector Texture:", imageVectorTexture)
             return jsonify({"message": "File uploaded successfully"})
         elif 'dataset' in request.files:
             if not os.path.isdir(UPLOAD_DATASET):
@@ -175,7 +173,6 @@ def run():
 
             end_time = time.time()
             delta_time = end_time - start_time
-            print(result)
             return jsonify({"result": result, "delta_time" : delta_time})
 
         return jsonify({"error": "No method provided"}, 400)
