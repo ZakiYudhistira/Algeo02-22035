@@ -1,4 +1,4 @@
-from flask import Flask,request,jsonify,send_file
+from flask import Flask,request,jsonify,send_file,Response
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 from ImageProcessingLibrary import *
@@ -9,7 +9,7 @@ import cv2 as cv
 from multiprocessing import Pool
 from concurrent.futures import ProcessPoolExecutor
 from fpdf import FPDF
-
+from reportlab.pdfgen import canvas
 app = Flask(__name__)
 CORS(app)
 app.logger.setLevel(logging.DEBUG)
@@ -171,44 +171,50 @@ def searchTexture():
         print("Non-Cache")
         return searchTextureParallel()
 
+
 def writePDF(results):
+    app.logger.debug('Writing PDF...')
     if not os.path.isdir(DOWNLOAD_FOLDER):
         os.mkdir(DOWNLOAD_FOLDER)
-    pdf_path = os.path.join(DOWNLOAD_FOLDER,"results.pdf")
-    pdf = FPDF()
-    pdf.add_page()
-    
-    pdf.set_font("Arial", size=14)
-    pdf.cell(200, 10, txt="Reverse Image Search", ln=True)
-    pdf.set_font("Arial", size=12)
+    pdf_path = os.path.join(DOWNLOAD_FOLDER, "results.pdf")
 
-    pdf.cell(200, 10, txt="Input Query Image", ln=True)
+    pdf = canvas.Canvas(pdf_path)
+
+    # Title
+    pdf.setFont("Helvetica-Bold", 16)
+    pdf.drawCentredString(300, 770, "Reverse Image Search")
+    pdf.drawCentredString(300, 750, "Keluarga Cemara")
+
+    # Input Query Image
+    pdf.setFont("Helvetica-Bold", 14)
+    pdf.drawString(30, 720, "Input Query Image")
     pathInput = os.listdir(UPLOAD_IMAGE)
-    inputImg = os.path.join(UPLOAD_IMAGE,pathInput[0])
-    pdf.image(inputImg, x=30, y=pdf.get_y(), w=70)
-    pdf.ln(60)
+    inputImg = os.path.join(UPLOAD_IMAGE, pathInput[0])
+    pdf.drawInlineImage(inputImg, 30, 600, width=150, height=100)
 
-    pdf.cell(200, 10, txt="Hasil Image Query", ln=True)
-    pdf.set_font("Arial", size=10)
+    pdf.setFont("Helvetica-Bold", 14)
+    pdf.drawString(30, 570, "Hasil Image Query")
+    pdf.setFont("Helvetica", 12)
+    y_position = 450
+
     for result in results:
         path = result.get('path', '')
         value = result.get('value', '')
 
-        if pdf.get_y() + 35 > pdf.h - 20:
-            pdf.add_page()
+        if y_position < 50:
+            pdf.showPage()
+            y_position = 700 
 
         image_path = os.path.join(UPLOAD_DATASET, os.path.basename(path))
-        pdf.image(image_path, x=30, y=pdf.get_y(), w=70)
-        pdf.ln(40)
-        textY = pdf.get_y() + 10
-        pdf.set_xy(30,textY)
-        pdf.cell(100, 10, txt=f"Cosine Similarity: {value}%", ln=True)
-        pdf.ln(10) 
+        pdf.drawInlineImage(image_path, 30, y_position, width=150, height=100)
+        text = f"Cosine Similarity: {value}%"
+        pdf.drawString(210, y_position + 40, text)
+        y_position -= 100
 
-    # Save the PDF
-    pdf.output(pdf_path)
+    pdf.save()
+
+    app.logger.debug(f'PDF Path: {pdf_path}')
     return pdf_path
-
 
 
 # Post an image to Upload folder and a folder of images to Dataset folder
@@ -292,6 +298,7 @@ def run():
 
             end_time = time.time()
             delta_time = end_time - start_time
+            # writePDF(result)
             return jsonify({"result": result, "delta_time" : delta_time})
         return jsonify({"error": "No method provided"}, 400)
     except Exception as e:
@@ -304,15 +311,8 @@ def run():
 @app.route('/api/download', methods=['POST'])
 def downloadPDF():
     global download
-    try:
-        results = download
-        pdf_path = writePDF(results)
-        app.logger.debug('PDF Succesfully Created')
-        return send_file(pdf_path, as_attachment=True, download_name='results.pdf')
-
-    except Exception as e:
-        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
-
+    pdf_path = writePDF(download)
+    return send_file(pdf_path, as_attachment=True, download_name='results.pdf')
     
 if __name__ == '__main__':
     app.run(debug=True)
