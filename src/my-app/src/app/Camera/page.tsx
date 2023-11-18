@@ -9,6 +9,7 @@ import { Switch } from "@/components/ui/switch";
 
 import ResultClient from "../../components/result-client";
 import ResultData from "../../components/result-data";
+import UrlForm from "@/components/url-form";
 
 const LoadingDots: React.FC = () => {
   const [dots, setDots] = useState("");
@@ -147,7 +148,7 @@ const Camera = () => {
       // Capture and send an image every 3 seconds
       intervalId = setInterval(() => {
         captureAndSend();
-      }, 3000);
+      }, 10000);
     }
 
     if (imagedataset.length > 0) {
@@ -207,7 +208,7 @@ const Camera = () => {
           {/* Start button */}
           {isCaptureEnable || (
             <Button
-              className="text-white text-xl bg-custom-green-calm font-semibold rounded-xl px-10 py-5"
+              className="text-white text-lg bg-custom-green-calm font-semibold rounded-xl px-10 py-5"
               onClick={() => {
                 setCaptureEnable(true);
                 setAutoCapture(true);
@@ -244,7 +245,7 @@ const Camera = () => {
             <Button
               type="submit"
               variant="outline"
-              className="text-white text-xl bg-custom-black font-semibold rounded-xl px-10 py-5"
+              className="text-white text-lg bg-custom-black font-semibold rounded-xl px-10 py-5"
               onClick={handleFolderClick}
             >
               Upload Dataset
@@ -254,7 +255,7 @@ const Camera = () => {
           {url && (
             <div className="flex gap-5">
               <Button
-                className="text-white text-xl bg-custom-green-calm font-semibold rounded-xl px-10 py-5"
+                className="text-white text-lg bg-custom-green-calm font-semibold rounded-xl px-10 py-5"
                 onClick={() => {
                   setUrl(null);
                 }}
@@ -286,13 +287,15 @@ const Camera = () => {
           <Button
             type="submit"
             variant="outline"
-            className="text-white text-xl bg-gradient-to-r from-[#DF3890] to-[150%] to-[#FF87C6] font-semibold rounded-xl py-5 px-48"
+            className="text-white text-lg bg-gradient-to-r from-[#DF3890] to-[150%] to-[#FF87C6] font-semibold rounded-xl py-5 px-48"
             onClick={handleSearch}
           >
             Search
           </Button>
         </div>
       </div>
+
+      <UrlForm />
 
       {/* Batas suci buat retrieve Dataset terus langsung jebret */}
       <Image
@@ -303,11 +306,27 @@ const Camera = () => {
         className="lg:w-[1425px] lg:h-[100px] z-[-1] mt-10 mx-auto"
       ></Image>
 
-      <div className="px-8 sm:px-10 md:px-14 relative z-10 lg:px-20 xl:px-32 2xl:px-36 bg-custom-blue min-h-screen overflow-hidden">
+      <div className="px-8 sm:px-10 md:px-14 relative z-10 lg:px-20 xl:px-32 2xl:px-12 bg-custom-blue min-h-screen overflow-hidden">
         <div className="flex flex-row items-center justify-between">
-          <h1 className="font-montserrat lg:my-8 z-20 text-[28px] lg:text-4xl text-custom-green-dark font-bold scale-x-105">
-            Search Results
-          </h1>
+          {result && result.length > 0 ? (
+            <div className="flex items-center justify-between gap-10">
+              <h1 className="font-montserrat lg:my-8 z-20 text-[28px] lg:text-4xl text-custom-green-dark font-bold scale-x-105">
+                Search Results
+              </h1>
+              <Button
+                type="submit"
+                variant="outline"
+                className="text-white bg-custom-green-calm font-semibold rounded-xl px-5"
+                // onClick={handlePhotoClick} DOWNLOAD RESULTS
+              >
+                Download Results
+              </Button>
+            </div>
+          ) : (
+            <h1 className="font-montserrat lg:my-8 z-20 text-[28px] lg:text-4xl text-custom-green-dark font-bold scale-x-105">
+              Search Results
+            </h1>
+          )}
           <p className="text-right text-black text-base font-outline">
             {result?.length} results in{" "}
             {loading ? (

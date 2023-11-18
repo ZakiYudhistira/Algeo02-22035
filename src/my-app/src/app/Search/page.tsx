@@ -9,6 +9,7 @@ import ResultData from "../../components/result-data";
 
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import UrlForm from "@/components/url-form";
 
 const LoadingDots: React.FC = () => {
   const [dots, setDots] = useState("");
@@ -166,16 +167,16 @@ const Search = () => {
           // receive image from input
           src={image ? URL.createObjectURL(image) : "/dummy.png"}
           alt="Image Input"
-          width={400}
-          height={400}
-          className="w-[400px]"
+          width={700}
+          height={350}
+          className="w-[500px]"
         ></Image>
 
-        <div className="flex flex-col">
+        <div className="flex flex-col justify-between">
           <h2 className="text-custom-green-dark font-montserrat text-[22px] font-extrabold">
             Image Input
           </h2>
-          <div className="flex flex-row gap-4 mb-28">
+          <div className="flex flex-row gap-4 mb-10">
             {/* Form to post an uploaded image */}
             <form onSubmit={submitPhoto}>
               <input
@@ -218,7 +219,12 @@ const Search = () => {
               </Button>
             </form>
           </div>
-          <div className="flex flex-col gap-2">
+
+          {/* INPUT FORM */}
+          <UrlForm />
+
+          {/* SWITCH COLOR-TEXTURE */}
+          <div className="flex flex-col gap-2 mt-10">
             <div className="flex items-center justify-center gap-4">
               <span className="font-montserrat text-[21px] font-semibold">
                 Color
@@ -254,9 +260,26 @@ const Search = () => {
 
       <div className="px-8 sm:px-10 md:px-14 relative z-10 lg:px-20 xl:px-32 2xl:px-36 bg-custom-blue min-h-screen overflow-hidden">
         <div className="flex flex-row items-center justify-between">
-          <h1 className="font-montserrat lg:my-8 z-20 text-[28px] lg:text-4xl text-custom-green-dark font-bold scale-x-105">
-            Search Results
-          </h1>
+          {result && result.length > 0 ? (
+            <div className="flex items-center justify-between gap-10">
+              <h1 className="font-montserrat lg:my-8 z-20 text-[28px] lg:text-4xl text-custom-green-dark font-bold scale-x-105">
+                Search Results
+              </h1>
+              <Button
+                type="submit"
+                variant="outline"
+                className="text-white bg-custom-green-calm font-semibold rounded-xl px-5"
+                // onClick={handlePhotoClick} DOWNLOAD RESULTS
+              >
+                Download Results
+              </Button>
+            </div>
+          ) : (
+            <h1 className="font-montserrat lg:my-8 z-20 text-[28px] lg:text-4xl text-custom-green-dark font-bold scale-x-105">
+              Search Results
+            </h1>
+          )}
+
           <p className="text-right text-black text-base font-outline">
             {result?.length} results in{" "}
             {loading ? (
