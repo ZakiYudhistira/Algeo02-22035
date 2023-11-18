@@ -180,12 +180,10 @@ def writePDF(results):
 
     pdf = canvas.Canvas(pdf_path)
 
-    # Title
     pdf.setFont("Helvetica-Bold", 16)
     pdf.drawCentredString(300, 770, "Reverse Image Search")
     pdf.drawCentredString(300, 750, "Keluarga Cemara")
 
-    # Input Query Image
     pdf.setFont("Helvetica-Bold", 14)
     pdf.drawString(30, 720, "Input Query Image")
     pathInput = os.listdir(UPLOAD_IMAGE)
