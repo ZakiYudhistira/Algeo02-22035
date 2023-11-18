@@ -182,6 +182,24 @@ useEffect(() => {
     }
   };
 
+  const handleDownload = async () => {
+    try {
+        const apiUrl = 'http://127.0.0.1:5000/api/download';
+        const response = await axios.post(apiUrl, {});
+
+        // Create a Blob from the response data
+        const blob = new Blob([response.data], { type: 'application/pdf' });
+
+        // Create a link element and trigger a download
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = 'results.pdf';
+        link.click();
+    } catch (error) {
+        console.error('Error during download:', error);
+    }
+};
+
   return (
     <div className="mt-10">
       <h1 className="text-custom-green font-montserrat text-[30px] lg:text-7xl font-bold tracking-[0.54px] text-center mb-12">
@@ -295,10 +313,10 @@ useEffect(() => {
                 Search Results
               </h1>
               <Button
-                type="submit"
+                type="button"
                 variant="outline"
                 className="text-white bg-custom-green-calm font-semibold rounded-xl px-5"
-                // onClick={handlePhotoClick} DOWNLOAD RESULTS
+                onClick={handleDownload}
               >
                 Download Results
               </Button>

@@ -1,4 +1,4 @@
-from flask import Flask,request,jsonify,send_file
+from flask import Flask,request,jsonify,send_file,Response
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 from ImageProcessingLibrary import *
@@ -172,6 +172,7 @@ def searchTexture():
         return searchTextureParallel()
 
 def writePDF(results):
+    app.logger.debug('Writing PDF...')
     if not os.path.isdir(DOWNLOAD_FOLDER):
         os.mkdir(DOWNLOAD_FOLDER)
     pdf_path = os.path.join(DOWNLOAD_FOLDER,"results.pdf")
@@ -205,8 +206,8 @@ def writePDF(results):
         pdf.cell(100, 10, txt=f"Cosine Similarity: {value}%", ln=True)
         pdf.ln(10) 
 
-    # Save the PDF
     pdf.output(pdf_path)
+    app.logger.debug(f'PDF Path: {pdf_path}')
     return pdf_path
 
 
@@ -292,6 +293,7 @@ def run():
 
             end_time = time.time()
             delta_time = end_time - start_time
+            writePDF(download)
             return jsonify({"result": result, "delta_time" : delta_time})
         return jsonify({"error": "No method provided"}, 400)
     except Exception as e:
@@ -303,16 +305,8 @@ def run():
 # 4. Endpoint for downloading the result as PDF
 @app.route('/api/download', methods=['POST'])
 def downloadPDF():
-    global download
-    try:
-        results = download
-        pdf_path = writePDF(results)
-        app.logger.debug('PDF Succesfully Created')
-        return send_file(pdf_path, as_attachment=True, download_name='results.pdf')
-
-    except Exception as e:
-        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
-
+    pdf_path = os.path.join(DOWNLOAD_FOLDER,"results.pdf")
+    return send_file(pdf_path, as_attachment=True, download_name='results.pdf')
     
 if __name__ == '__main__':
     app.run(debug=True)
