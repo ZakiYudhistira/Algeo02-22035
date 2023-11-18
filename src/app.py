@@ -2,7 +2,6 @@ from flask import Flask, render_template,request,jsonify,send_from_directory, Re
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 from functools import partial
-from ImageProcessingLibrary import *
 import logging,os,time,multiprocessing,ast
 import numpy as np
 import pandas as pd
@@ -10,6 +9,9 @@ import cv2 as cv
 from multiprocessing import Pool
 from concurrent.futures import ProcessPoolExecutor
 from fpdf import FPDF
+
+from ImageProcessingLibrary import *
+from WebImageScraper import *
 
 app = Flask(__name__)
 CORS(app)
@@ -284,7 +286,22 @@ def run():
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
     
 # 3. Endpoint for image scrapping
-# @app.route('/api/scrap', methods=['POST'])
+@app.route('/api/scrap', methods=['POST'])
+def scrap_images():
+    try:
+        app.logger.info("Received POST request to /api/scrap")
+        url = request.json.get('url')
+        
+        if not url:
+            return jsonify({"error": "No URL provided"}), 400
+
+        # Call your image scraping function
+        scrapeImage(url, UPLOAD_DATASET)
+
+        return jsonify({"message": "Image scraping successful"})
+    except Exception as e:
+        app.logger.error(f"An error occurred: {str(e)}")
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
 # 4. Endpoint for downloading the result as PDF
 @app.route('/api/download', methods=['POST'])
