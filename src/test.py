@@ -1,8 +1,6 @@
 # ---------- FILE FOR TESTINGS -----------
 from ImageProcessingLibrary import *
 import time
-from app import *
-import ast
 
 #Testings
 # start = time.time()
@@ -84,25 +82,7 @@ import ast
 # path ="C:\\Users\\Angelica Gurning\\Documents\\Kuliah\\ALGEO\\Tubes_2\\Algeo02-22035\\src\\my-app\\public\\Upload\\Image20231116022159.jpg"
 # imageVector = getImageVectorColor(path)
 # print(getSimilarityIndeks(imageVector,imageVector))
-cacheColor = {}
 
-def writeCacheColor():
-    global cacheColor
-    vectors = []
-    filenames = []
-
-    for filename in os.listdir(UPLOAD_DATASET):
-        img = cv.imread(os.path.join(UPLOAD_DATASET, filename))
-        img = normBGRtoHSV(img)
-        img = get3X3Histograms(img)
-        vectors.append(img.tolist())  # Convert the numpy array to a Python list
-        filenames.append(os.path.basename(filename))
-
-    data = pd.DataFrame({"filename": filenames, "vectors": vectors})
-    data.set_index("filename", inplace=True)  # Set 'filename' as the index
-    data.to_csv(os.path.join(CACHING_FOLDER, "color_cache.csv"), header=False)
-
-    cacheColor = getCache(os.path.join(CACHING_FOLDER, "color_cache.csv"))
 
 # def getCacheColor():
 #     cache_file_path = os.path.join(CACHING_FOLDER, "color_cache.csv")
@@ -138,6 +118,10 @@ def writeCacheColor():
 #             data.append({"path": path_current, "value": round(res*100,2)})
 #     sorted_data = sorted(data, key=lambda x: x["value"], reverse=True)
 #     return sorted_data
-writeCacheColor()
-imageVectorColor = getVectorColor("C:\\Users\\Angelica Gurning\\Documents\\Kuliah\\ALGEO\\Tubes_2\\Algeo02-22035\\src\\my-app\\public\\Upload\\Image20231116022159.jpg")
-print(searchColorCache())
+# writeCacheColor()
+# imageVectorColor = getVectorColor("C:\\Users\\Angelica Gurning\\Documents\\Kuliah\\ALGEO\\Tubes_2\\Algeo02-22035\\src\\my-app\\public\\Upload\\Image20231116022159.jpg")
+# print(searchColorCache())
+
+relPath = "/Dataset/aa"
+a = os.path.basename(relPath)
+print(a)

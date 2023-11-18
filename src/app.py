@@ -8,8 +8,8 @@ import numpy as np
 import pandas as pd
 import cv2 as cv
 from multiprocessing import Pool
-import concurrent.futures
 from concurrent.futures import ProcessPoolExecutor
+from fpdf import FPDF
 
 app = Flask(__name__)
 CORS(app)
@@ -19,6 +19,8 @@ imagepath =""
 imageVectorColor = None
 imageVectorTexture = None
 cacheColor = {}
+download = []
+
 # Path Image, Dataset, and Download Folder
 base_path = os.path.join(os.path.dirname(os.path.dirname(__file__)),"src","my-app","public")
 UPLOAD_IMAGE = os.path.join(base_path,"Upload")
@@ -170,6 +172,31 @@ def searchTexture():
         print("Non-Cache")
         return searchTextureParallel()
 
+def writePDF(results):
+    if not os.path.isdir(DOWNLOAD_FOLDER):
+        os.mkdir(DOWNLOAD_FOLDER)
+    pdf_path = os.path.join(DOWNLOAD_FOLDER,"results.pdf")
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", size=12)
+
+    for result in results:
+        path = result.get('path', '')
+        value = result.get('value', '')
+
+        image_path = os.path.join(UPLOAD_DATASET, os.path.basename(path))
+        pdf.image(image_path, x=10, y=pdf.get_y(), w=50)
+        
+        pdf.cell(100, 10, txt=f"Path: {path}", ln=True)
+        pdf.cell(100, 10, txt=f"Value: {value}", ln=True)
+        pdf.ln(10) 
+
+    # Save the PDF
+    pdf.output(pdf_path)
+    return pdf_path
+
+
+
 # Post an image to Upload folder and a folder of images to Dataset folder
 @app.route('/api/upload', methods=['POST'])
 def upload():
@@ -194,6 +221,7 @@ def upload():
             img = cv.imread(path)
             imageVectorColor = getVectorColor(path)
             imageVectorTexture = getVectorTexture(img)
+            print("VECTOR TEXTURE" ,imageVectorTexture)
             return jsonify({"message": "File uploaded successfully"})
         elif 'dataset' in request.files:
             if not os.path.isdir(UPLOAD_DATASET):
@@ -224,7 +252,7 @@ def upload():
 # 2. Endpoint for using the CBIR functions
 @app.route('/api/cbir', methods=['POST', 'GET'])
 def run():
-    global cacheColor
+    global cacheColor,download
     app.logger.debug('Received a request to /api/cbir')
     try:
         if request.method == 'POST':
@@ -233,12 +261,15 @@ def run():
                 app.logger.debug('Color method found in request')
                 start_time = time.time()
                 result = searchColor()
+                download = result
+                writePDF(download)
                 if not os.path.exists(os.path.join(CACHING_FOLDER,"color_cache.csv")):
                     writeCacheColor()
             elif option == 'texture':
                 app.logger.debug('Texture method found in request')
                 start_time = time.time()
                 result = searchTexture()
+                download = result
                 if not os.path.exists(os.path.join(CACHING_FOLDER,"texture_cache.csv")):
                     writeCacheTexture()
             else:
@@ -246,7 +277,6 @@ def run():
 
             end_time = time.time()
             delta_time = end_time - start_time
-            
             return jsonify({"result": result, "delta_time" : delta_time})
 
         return jsonify({"error": "No method provided"}, 400)
@@ -257,7 +287,9 @@ def run():
 # @app.route('/api/scrap', methods=['POST'])
 
 # 4. Endpoint for downloading the result as PDF
-# @app.route('/api/download', methods=['POST'])
+@app.route('/api/download', methods=['POST'])
+def downloadPDF():
+    pass
 # def download():
 #     app.logger.debug('Received a request to /api/download')
     
