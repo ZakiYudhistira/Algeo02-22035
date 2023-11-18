@@ -111,22 +111,51 @@ const Search = () => {
     [imagedataset]
   );
 
-  useEffect(() => {
-    if (image) {
-      const syntheticEventPhoto = new Event("submit", {
-        bubbles: true,
-        cancelable: true,
-      });
-      submitPhoto(syntheticEventPhoto);
+  // useEffect for image upload
+useEffect(() => {
+  const submitImageRequest = async () => {
+    try {
+      const formDataPhoto = new FormData();
+      if (image) {
+        const apiUrl = `http://127.0.0.1:5000/api/upload`;
+        formDataPhoto.append("image", image);
+        const responsePhoto = await axios.post(apiUrl, formDataPhoto);
+        console.log("Data Photo: ", responsePhoto.data.result);
+        setResult(responsePhoto.data.result);
+      }
+    } catch (error) {
+      console.error("Error during backend POST request for image", error);
     }
-    if (imagedataset.length > 0) {
-      const syntheticEventDataset = new Event("submit", {
-        bubbles: true,
-        cancelable: true,
+  };
+
+  submitImageRequest();
+}, [image]);
+
+// useEffect for dataset upload
+useEffect(() => {
+  const submitDatasetRequest = async () => {
+    try {
+      const formDataDataset = new FormData();
+      imagedataset.forEach((item) => {
+        formDataDataset.append("dataset", item);
       });
-      submitDataset(syntheticEventDataset);
+      const apiUrl = `http://127.0.0.1:5000/api/upload`;
+      const responseDataset = await axios.post(apiUrl, formDataDataset);
+      console.log("Data Dataset: ", responseDataset.data);
+
+      // Assuming the response contains the cosValues for each file in the dataset
+      // setImagedataset( );
+    } catch (error) {
+      console.error("Error during backend POST request for dataset", error);
     }
-  }, [image, imagedataset.length, submitPhoto, submitDataset]);
+  };
+
+  if (imagedataset.length > 0) {
+    submitDatasetRequest();
+  }
+}, [imagedataset]);
+
+  
 
   const handleSwitchChange = () => {
     setChecked(!isChecked);

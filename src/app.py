@@ -3,11 +3,12 @@ from flask_cors import CORS
 from werkzeug.utils import secure_filename
 from functools import partial
 from ImageProcessingLibrary import *
-import logging,os,time,multiprocessing
+import logging,os,time,multiprocessing,ast
 import numpy as np
 import pandas as pd
 import cv2 as cv
 from multiprocessing import Pool
+import concurrent.futures
 from concurrent.futures import ProcessPoolExecutor
 
 app = Flask(__name__)
@@ -17,41 +18,60 @@ app.logger.setLevel(logging.DEBUG)
 imagepath =""
 imageVectorColor = None
 imageVectorTexture = None
-
+cacheColor = {}
 # Path Image, Dataset, and Download Folder
 base_path = os.path.join(os.path.dirname(os.path.dirname(__file__)),"src","my-app","public")
 UPLOAD_IMAGE = os.path.join(base_path,"Upload")
 UPLOAD_DATASET = os.path.join(base_path,"Dataset")
 DOWNLOAD_FOLDER = os.path.join(base_path,"Download")
+CACHING_FOLDER= os.path.join(base_path,"Cache")
 
-def writeCache():
-    main = np.zeros(126)
+def writeCacheColor():
+    global cacheColor
+    vectors = []
+    filenames = []
+
     for filename in os.listdir(UPLOAD_DATASET):
-        img = cv.imread(os.path.join(UPLOAD_DATASET,filename))
+        img = cv.imread(os.path.join(UPLOAD_DATASET, filename))
         img = normBGRtoHSV(img)
         img = get3X3Histograms(img)
-        main = np.vstack((main,img))
-    main = np.delete(main,0,0)
-    data = pd.DataFrame(main)
-    data.to_csv(os.path.join(UPLOAD_DATASET,"cache.csv"), header=False, index=False)
+        vectors.append(img.tolist())  # Convert the numpy array to a Python list
+        filenames.append(os.path.basename(filename))
 
-def getCache():
-    if(os.path.exists(os.path.join(UPLOAD_DATASET,"cache.csv"))):
-        data = np.loadtxt(open(os.path.join(UPLOAD_DATASET,"cache.csv"), "rb"), delimiter=",", dtype=int)
-        return data
-    else:
-        writeCache()
-        try:
-            data = np.loadtxt(open(os.path.join(UPLOAD_DATASET,"cache.csv"), "rb"), delimiter=",", dtype=int)
-            return data
-        except:
-            app.logger.debug("Failed to cache dataset")
-            
+    data = pd.DataFrame({"filename": filenames, "vectors": vectors})
+    data.set_index("filename", inplace=True)  # Set 'filename' as the index
+    data.to_csv(os.path.join(CACHING_FOLDER, "color_cache.csv"), header=False)
+
+    cacheColor = getCache(os.path.join(CACHING_FOLDER, "color_cache.csv"))
+
+def getCache(csv_path):
+    df = pd.read_csv(csv_path, header=None, names=['filename', 'vector'])
+    df['vector'] = df['vector'].apply(ast.literal_eval)  
+    data_dict = df.set_index('filename')['vector'].to_dict()
+    return data_dict
+
+def getVectorColor(path):
+    img = cv.imread(path)
+    img = normBGRtoHSV(img)
+    return get3X3Histograms(img)
+
+def searchColorCache():
+    cacheColor = getCache(os.path.join(CACHING_FOLDER, "color_cache.csv"))
+    data = []
+    for key in cacheColor.keys():
+        path_current = "/Dataset/" + key
+        res = getSimilarityIndeks(imageVectorColor, cacheColor[key])
+        if res is not None and res > 0.6:
+            data.append({"path": path_current, "value": round(res * 100, 2)})
+    sorted_data = sorted(data, key=lambda x: x["value"], reverse=True)
+    return sorted_data
+
 def processColor(args):
     base_vector, path = args
     res = getSimilarityIndeks(base_vector, getVectorColor(path))
     relPath = "/Dataset/" + os.path.basename(path)
     return {"path": relPath, "value": round(res * 100, 2)} if res > 0.6 else None
+
 
 def colorParallel(base_vector, dataset_paths, parallel_processes):
     data = []
@@ -60,19 +80,14 @@ def colorParallel(base_vector, dataset_paths, parallel_processes):
         results = list(executor.map(processColor, args_list))
     return [result for result in results if result]
 
-def searchColor(parallel_processes=60):
+def searchColorParallel(parallel_processes=60):
     global imageVectorColor
-
+    
     if imageVectorColor is None:
         return jsonify({"error": "Base image vector not calculated"}), 400
 
     dataset_paths = [os.path.join(UPLOAD_DATASET, filename) for filename in os.listdir(UPLOAD_DATASET)]
     return sorted(colorParallel(imageVectorColor, dataset_paths, parallel_processes),key=lambda x:x["value"],reverse=True)
-
-def getVectorColor(path):
-    img = cv.imread(path)
-    img = normBGRtoHSV(img)
-    return get3X3Histograms(img)
 
 def processTexture(args):
     base_vector, path = args
@@ -88,7 +103,15 @@ def textureParallel(base_vector, dataset_paths, parallel_processes):
         results = list(executor.map(processTexture, args_list))
     return [result for result in results if result]
 
-def searchTexture(parallel_processes=60):
+def searchColor():
+    if os.path.exists(os.path.join(CACHING_FOLDER, "color_cache.csv")):
+        print("Cache")
+        return searchColorCache()
+    else:
+        print("Non-Cache")
+        return searchColorParallel()
+
+def searchTextureParallel(parallel_processes=60):
     global imageVectorTexture
 
     if imageVectorColor is None:
@@ -111,6 +134,42 @@ def extractFeature(args):
     data, func = args
     return func(data)
 
+def writeCacheTexture():
+    global cacheTexture
+    vectors = []
+    filenames = []
+
+    for filename in os.listdir(UPLOAD_DATASET):
+        img = cv.imread(os.path.join(UPLOAD_DATASET, filename))
+        img = getVectorTexture(img)
+        vectors.append(img.tolist())
+        filenames.append(os.path.basename(filename))
+
+    data = pd.DataFrame({"filename": filenames, "vectors": vectors})
+    data.set_index("filename", inplace=True)  # Set 'filename' as the index
+    data.to_csv(os.path.join(CACHING_FOLDER, "texture_cache.csv"), header=False)
+
+    cacheTexture = getCache(os.path.join(CACHING_FOLDER, "texture_cache.csv"))
+
+def searchTextureCache(): 
+    cacheTexture = getCache(os.path.join(CACHING_FOLDER, "texture_cache.csv"))
+    data = []
+    for key in cacheTexture.keys():
+        path_current = "/Dataset/" + key
+        res = getSimilarityIndeks(imageVectorTexture, cacheTexture[key])
+        if res is not None and res > 0.6:
+            data.append({"path": path_current, "value": round(res * 100, 2)})
+    sorted_data = sorted(data, key=lambda x: x["value"], reverse=True)
+    return sorted_data
+
+def searchTexture():
+    if os.path.exists(os.path.join(CACHING_FOLDER, "texture_cache.csv")):
+        print("Cache")
+        return searchTextureCache()
+    else:
+        print("Non-Cache")
+        return searchTextureParallel()
+
 # Post an image to Upload folder and a folder of images to Dataset folder
 @app.route('/api/upload', methods=['POST'])
 def upload():
@@ -132,8 +191,8 @@ def upload():
                 for file in files:
                     os.remove(os.path.join(UPLOAD_IMAGE, file))
             image.save(path)
-            imageVectorColor = getVectorColor(path)
             img = cv.imread(path)
+            imageVectorColor = getVectorColor(path)
             imageVectorTexture = getVectorTexture(img)
             return jsonify({"message": "File uploaded successfully"})
         elif 'dataset' in request.files:
@@ -148,14 +207,24 @@ def upload():
                 dataset_name = secure_filename(dataset.filename)
                 dataset_path = os.path.join(UPLOAD_DATASET, dataset_name)
                 dataset.save(dataset_path)
+
+            # Delete the CSV file only if it exists
+            csvColor = os.path.join(CACHING_FOLDER, "color_cache.csv")
+            if os.path.exists(csvColor):
+                os.remove(csvColor)
+            csvTexture = os.path.join(CACHING_FOLDER, "texture_cache.csv")
+            if os.path.exists(csvTexture):
+                os.remove(csvTexture)
+
             return jsonify({"message": "Dataset uploaded successfully"})
         return jsonify({"error": "No file provided"}, 400)
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
-    
+
 # 2. Endpoint for using the CBIR functions
 @app.route('/api/cbir', methods=['POST', 'GET'])
 def run():
+    global cacheColor
     app.logger.debug('Received a request to /api/cbir')
     try:
         if request.method == 'POST':
@@ -164,15 +233,20 @@ def run():
                 app.logger.debug('Color method found in request')
                 start_time = time.time()
                 result = searchColor()
+                if not os.path.exists(os.path.join(CACHING_FOLDER,"color_cache.csv")):
+                    writeCacheColor()
             elif option == 'texture':
                 app.logger.debug('Texture method found in request')
                 start_time = time.time()
                 result = searchTexture()
+                if not os.path.exists(os.path.join(CACHING_FOLDER,"texture_cache.csv")):
+                    writeCacheTexture()
             else:
                 return jsonify({"error": "Invalid option"}), 400
 
             end_time = time.time()
             delta_time = end_time - start_time
+            
             return jsonify({"result": result, "delta_time" : delta_time})
 
         return jsonify({"error": "No method provided"}, 400)
