@@ -1,14 +1,14 @@
-import Pagination from "@/app/Search/pagination";
+// result-client.tsx
+import ResultCard from "@/components/result-card";
+import Pagination from "@/components/pagination";
 import React from "react";
 import { useState } from "react";
-import ResultContain from "@/app/Search/result-contain";
 
-type ResultDataProps = {
-  data: { path: string; value: number }[];
+type ResultClientProps = {
+  data: File[]; // Change data type to an array of File
 };
 
-const ResultData: React.FC<ResultDataProps> = ({ data }) => {
-  console.log("Ini data: ", data);
+const ResultClient: React.FC<ResultClientProps> = ({ data }) => {
   const listPerPage = 6;
   const [currentPage, setCurrentPage] = useState(1);
   const indexOfLastCard = currentPage * listPerPage;
@@ -20,11 +20,7 @@ const ResultData: React.FC<ResultDataProps> = ({ data }) => {
     <div className="flex flex-col gap-10 lg:gap-16">
       <div className="grid h-fit gap-7 pt-7 lg:gap-12 items-stretch grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
         {currentList.map((item, index) => (
-          <ResultContain
-            key={index}
-            file={item.path}
-            value={item.value}
-          />
+          <ResultCard key={index} file={item} />
         ))}
       </div>
 
@@ -42,4 +38,4 @@ const ResultData: React.FC<ResultDataProps> = ({ data }) => {
   );
 };
 
-export default ResultData;
+export default ResultClient;

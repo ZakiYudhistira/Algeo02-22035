@@ -2,6 +2,7 @@
 from ImageProcessingLibrary import *
 import time
 from app import *
+import ast
 
 #Testings
 # start = time.time()
@@ -83,3 +84,60 @@ from app import *
 # path ="C:\\Users\\Angelica Gurning\\Documents\\Kuliah\\ALGEO\\Tubes_2\\Algeo02-22035\\src\\my-app\\public\\Upload\\Image20231116022159.jpg"
 # imageVector = getImageVectorColor(path)
 # print(getSimilarityIndeks(imageVector,imageVector))
+cacheColor = {}
+
+def writeCacheColor():
+    global cacheColor
+    vectors = []
+    filenames = []
+
+    for filename in os.listdir(UPLOAD_DATASET):
+        img = cv.imread(os.path.join(UPLOAD_DATASET, filename))
+        img = normBGRtoHSV(img)
+        img = get3X3Histograms(img)
+        vectors.append(img.tolist())  # Convert the numpy array to a Python list
+        filenames.append(os.path.basename(filename))
+
+    data = pd.DataFrame({"filename": filenames, "vectors": vectors})
+    data.set_index("filename", inplace=True)  # Set 'filename' as the index
+    data.to_csv(os.path.join(CACHING_FOLDER, "color_cache.csv"), header=False)
+
+    cacheColor = getCache(os.path.join(CACHING_FOLDER, "color_cache.csv"))
+
+# def getCacheColor():
+#     cache_file_path = os.path.join(CACHING_FOLDER, "color_cache.csv")
+
+#     if os.path.exists(cache_file_path):
+#         # Load data from CSV using pandas
+#         data = pd.read_csv(cache_file_path, index_col='filename', converters={'vectors': eval}) 
+#         cache = {"filenames": data.index.tolist(), "vectors": data['vectors'].tolist()}
+#         return cache
+#     else:
+#         return {"filenames": [], "vectors": []}
+    
+
+# def getCache(csv_path):
+#     df = pd.read_csv(csv_path, header=None, names=['filename', 'vector'])
+#     df['vector'] = df['vector'].apply(ast.literal_eval)  # Convert string representation to a list
+#     data_dict = df.set_index('filename')['vector'].to_dict()
+#     return data_dict
+
+# writeCacheColor()
+# print(cacheColor)
+
+
+
+
+# imgvector = getVectorColor("C:\\Users\\Angelica Gurning\\Documents\\Kuliah\\ALGEO\\Tubes_2\\Algeo02-22035\\src\\my-app\\public\\Upload\\Image20231116022159.jpg")
+# def searchColor_Cache():
+#     data = []
+#     for key in cacheColor.keys():
+#         path_current = "/Dataset/" + key
+#         res = getSimilarityIndeks(imgvector,cacheColor[key])
+#         if res > 0.6:
+#             data.append({"path": path_current, "value": round(res*100,2)})
+#     sorted_data = sorted(data, key=lambda x: x["value"], reverse=True)
+#     return sorted_data
+writeCacheColor()
+imageVectorColor = getVectorColor("C:\\Users\\Angelica Gurning\\Documents\\Kuliah\\ALGEO\\Tubes_2\\Algeo02-22035\\src\\my-app\\public\\Upload\\Image20231116022159.jpg")
+print(searchColorCache())

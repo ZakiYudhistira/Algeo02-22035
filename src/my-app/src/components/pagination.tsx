@@ -1,4 +1,4 @@
-import ChevronIcon from "../../components/ui/chevron-icon";
+import ChevronIcon from "./ui/chevron-icon";
 
 const Pagination = ({
   numberPage,
