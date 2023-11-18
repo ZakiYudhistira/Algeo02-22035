@@ -117,6 +117,7 @@ const Search = () => {
   );
 
   useEffect(() => {
+    
     if (image) {
       const syntheticEventPhoto = new Event("submit", {
         bubbles: true,

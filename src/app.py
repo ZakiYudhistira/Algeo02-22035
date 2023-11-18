@@ -89,22 +89,19 @@ def searchColorParallel(parallel_processes=60):
     dataset_paths = [os.path.join(UPLOAD_DATASET, filename) for filename in os.listdir(UPLOAD_DATASET)]
     return sorted(colorParallel(imageVectorColor, dataset_paths, parallel_processes),key=lambda x:x["value"],reverse=True)
 
+def processTexture(args):
+    base_vector, path = args
+    img1 = cv.imread(path)
+    res = getSimilarityIndeks(base_vector, getVectorTexture(img1))
+    relPath = "/Dataset/" + os.path.basename(path)
+    return {"path": relPath, "value": round(res * 100, 2)} if res > 0.6 else None
 
 
-
-# def processTexture(args):
-#     base_vector, path = args
-#     img1 = cv.imread(path)
-#     res = getSimilarityIndeks(base_vector, getVectorTexture(img1))
-#     relPath = "/Dataset/" + os.path.basename(path)
-#     return {"path": relPath, "value": round(res * 100, 2)} if res > 0.6 else None
-
-
-# def textureParallel(base_vector, dataset_paths, parallel_processes):
-#     args_list = [(base_vector, path) for path in dataset_paths]
-#     with ProcessPoolExecutor(max_workers=parallel_processes) as executor:
-#         results = list(executor.map(processTexture, args_list))
-#     return [result for result in results if result]
+def textureParallel(base_vector, dataset_paths, parallel_processes):
+    args_list = [(base_vector, path) for path in dataset_paths]
+    with ProcessPoolExecutor(max_workers=parallel_processes) as executor:
+        results = list(executor.map(processTexture, args_list))
+    return [result for result in results if result]
 
 def searchColor():
     if os.path.exists(os.path.join(CACHING_FOLDER, "color_cache.csv")):
@@ -114,28 +111,64 @@ def searchColor():
         print("Non-Cache")
         return searchColorParallel()
 
-# def searchTexture(parallel_processes=60):
-#     global imageVectorTexture
+def searchTextureParallel(parallel_processes=60):
+    global imageVectorTexture
 
-#     if imageVectorColor is None:
-#         return jsonify({"error": "Base image vector not calculated"}), 400
+    if imageVectorColor is None:
+        return jsonify({"error": "Base image vector not calculated"}), 400
 
-#     dataset_paths = [os.path.join(UPLOAD_DATASET, filename) for filename in os.listdir(UPLOAD_DATASET)]
-#     return sorted(textureParallel(imageVectorTexture, dataset_paths, parallel_processes),key=lambda x:x["value"],reverse=True)
+    dataset_paths = [os.path.join(UPLOAD_DATASET, filename) for filename in os.listdir(UPLOAD_DATASET)]
+    return sorted(textureParallel(imageVectorTexture, dataset_paths, parallel_processes),key=lambda x:x["value"],reverse=True)
 
-# # Function to process the image in one go
-# def getVectorTexture(img):
-#     data = getCoOccurenceMatrix(getGrayScaleMatrix(img))
-#     data = getNormalizedSymmetryMatrix(getSymmetryMatrix(data))
+# Function to process the image in one go
+def getVectorTexture(img):
+    data = getCoOccurenceMatrix(getGrayScaleMatrix(img))
+    data = getNormalizedSymmetryMatrix(getSymmetryMatrix(data))
 
-#     features = [extractFeature((data, func)) for func in [getContrast, getHomogeneity, getEntropy, getASM, getEnergy, getDissimilarity]]
+    features = [extractFeature((data, func)) for func in [getContrast, getHomogeneity, getEntropy, getASM, getEnergy, getDissimilarity]]
 
-#     v = getVector(*features)
-#     return v
+    v = getVector(*features)
+    return v
 
-# def extractFeature(args):
-#     data, func = args
-#     return func(data)
+def extractFeature(args):
+    data, func = args
+    return func(data)
+
+def writeCacheTexture():
+    global cacheTexture
+    vectors = []
+    filenames = []
+
+    for filename in os.listdir(UPLOAD_DATASET):
+        img = cv.imread(os.path.join(UPLOAD_DATASET, filename))
+        img = getVectorTexture(img)
+        vectors.append(img.tolist())
+        filenames.append(os.path.basename(filename))
+
+    data = pd.DataFrame({"filename": filenames, "vectors": vectors})
+    data.set_index("filename", inplace=True)  # Set 'filename' as the index
+    data.to_csv(os.path.join(CACHING_FOLDER, "texture_cache.csv"), header=False)
+
+    cacheTexture = getCache(os.path.join(CACHING_FOLDER, "texture_cache.csv"))
+
+def searchTextureCache(): 
+    cacheTexture = getCache(os.path.join(CACHING_FOLDER, "texture_cache.csv"))
+    data = []
+    for key in cacheTexture.keys():
+        path_current = "/Dataset/" + key
+        res = getSimilarityIndeks(imageVectorTexture, cacheTexture[key])
+        if res is not None and res > 0.6:
+            data.append({"path": path_current, "value": round(res * 100, 2)})
+    sorted_data = sorted(data, key=lambda x: x["value"], reverse=True)
+    return sorted_data
+
+def searchTexture():
+    if os.path.exists(os.path.join(CACHING_FOLDER, "texture_cache.csv")):
+        print("Cache")
+        return searchTextureCache()
+    else:
+        print("Non-Cache")
+        return searchTextureParallel()
 
 # Post an image to Upload folder and a folder of images to Dataset folder
 @app.route('/api/upload', methods=['POST'])
@@ -176,24 +209,17 @@ def upload():
                 dataset.save(dataset_path)
 
             # Delete the CSV file only if it exists
-            csv_path = os.path.join(CACHING_FOLDER, "color_cache.csv")
-            if os.path.exists(csv_path):
-                os.remove(csv_path)
+            csvColor = os.path.join(CACHING_FOLDER, "color_cache.csv")
+            if os.path.exists(csvColor):
+                os.remove(csvColor)
+            csvTexture = os.path.join(CACHING_FOLDER, "texture_cache.csv")
+            if os.path.exists(csvTexture):
+                os.remove(csvTexture)
 
-            # Update the cache when a dataset is uploaded
-            # writeCacheColor()
             return jsonify({"message": "Dataset uploaded successfully"})
         return jsonify({"error": "No file provided"}, 400)
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
-
-# @app.route('/api/cache', methods=['POST'])
-# def cache():
-#     try:
-#         writeCacheColor()
-#         return jsonify({"message": "Cache updated successfully"})
-#     except Exception as e:
-#         return jsonify({"error": f"An error occurred during cache update: {str(e)}"}), 500
 
 # 2. Endpoint for using the CBIR functions
 @app.route('/api/cbir', methods=['POST', 'GET'])
@@ -207,17 +233,20 @@ def run():
                 app.logger.debug('Color method found in request')
                 start_time = time.time()
                 result = searchColor()
+                if not os.path.exists(os.path.join(CACHING_FOLDER,"color_cache.csv")):
+                    writeCacheColor()
             elif option == 'texture':
                 app.logger.debug('Texture method found in request')
                 start_time = time.time()
-                # result = searchTexture()
+                result = searchTexture()
+                if not os.path.exists(os.path.join(CACHING_FOLDER,"texture_cache.csv")):
+                    writeCacheTexture()
             else:
                 return jsonify({"error": "Invalid option"}), 400
 
             end_time = time.time()
             delta_time = end_time - start_time
-            if not os.path.exists(os.path.join(CACHING_FOLDER,"color_cache.csv")):
-                writeCacheColor()
+            
             return jsonify({"result": result, "delta_time" : delta_time})
 
         return jsonify({"error": "No method provided"}, 400)
