@@ -1,15 +1,14 @@
-from flask import Flask, render_template,request,jsonify,send_from_directory, Response
+from flask import Flask,request,jsonify,send_file
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
-from functools import partial
 from ImageProcessingLibrary import *
 import logging,os,time,multiprocessing,ast
 import numpy as np
 import pandas as pd
 import cv2 as cv
 from multiprocessing import Pool
-import concurrent.futures
 from concurrent.futures import ProcessPoolExecutor
+from fpdf import FPDF
 
 app = Flask(__name__)
 CORS(app)
@@ -19,6 +18,8 @@ imagepath =""
 imageVectorColor = None
 imageVectorTexture = None
 cacheColor = {}
+download = []
+
 # Path Image, Dataset, and Download Folder
 base_path = os.path.join(os.path.dirname(os.path.dirname(__file__)),"src","my-app","public")
 UPLOAD_IMAGE = os.path.join(base_path,"Upload")
@@ -170,6 +171,46 @@ def searchTexture():
         print("Non-Cache")
         return searchTextureParallel()
 
+def writePDF(results):
+    if not os.path.isdir(DOWNLOAD_FOLDER):
+        os.mkdir(DOWNLOAD_FOLDER)
+    pdf_path = os.path.join(DOWNLOAD_FOLDER,"results.pdf")
+    pdf = FPDF()
+    pdf.add_page()
+    
+    pdf.set_font("Arial", size=14)
+    pdf.cell(200, 10, txt="Reverse Image Search", ln=True)
+    pdf.set_font("Arial", size=12)
+
+    pdf.cell(200, 10, txt="Input Query Image", ln=True)
+    pathInput = os.listdir(UPLOAD_IMAGE)
+    inputImg = os.path.join(UPLOAD_IMAGE,pathInput[0])
+    pdf.image(inputImg, x=30, y=pdf.get_y(), w=70)
+    pdf.ln(60)
+
+    pdf.cell(200, 10, txt="Hasil Image Query", ln=True)
+    pdf.set_font("Arial", size=10)
+    for result in results:
+        path = result.get('path', '')
+        value = result.get('value', '')
+
+        if pdf.get_y() + 35 > pdf.h - 20:
+            pdf.add_page()
+
+        image_path = os.path.join(UPLOAD_DATASET, os.path.basename(path))
+        pdf.image(image_path, x=30, y=pdf.get_y(), w=70)
+        pdf.ln(40)
+        textY = pdf.get_y() + 10
+        pdf.set_xy(30,textY)
+        pdf.cell(100, 10, txt=f"Cosine Similarity: {value}%", ln=True)
+        pdf.ln(10) 
+
+    # Save the PDF
+    pdf.output(pdf_path)
+    return pdf_path
+
+
+
 # Post an image to Upload folder and a folder of images to Dataset folder
 @app.route('/api/upload', methods=['POST'])
 def upload():
@@ -194,6 +235,7 @@ def upload():
             img = cv.imread(path)
             imageVectorColor = getVectorColor(path)
             imageVectorTexture = getVectorTexture(img)
+            print("VECTOR TEXTURE" ,imageVectorTexture)
             return jsonify({"message": "File uploaded successfully"})
         elif 'dataset' in request.files:
             if not os.path.isdir(UPLOAD_DATASET):
@@ -208,7 +250,6 @@ def upload():
                 dataset_path = os.path.join(UPLOAD_DATASET, dataset_name)
                 dataset.save(dataset_path)
 
-            # Delete the CSV file only if it exists
             csvColor = os.path.join(CACHING_FOLDER, "color_cache.csv")
             if os.path.exists(csvColor):
                 os.remove(csvColor)
@@ -224,21 +265,26 @@ def upload():
 # 2. Endpoint for using the CBIR functions
 @app.route('/api/cbir', methods=['POST', 'GET'])
 def run():
-    global cacheColor
+    global cacheColor,download
     app.logger.debug('Received a request to /api/cbir')
     try:
         if request.method == 'POST':
             option = request.json.get('option')
+            down = os.listdir(DOWNLOAD_FOLDER)
+            for file in down:
+                os.remove(os.path.join(DOWNLOAD_FOLDER,file))
             if option == 'color':
                 app.logger.debug('Color method found in request')
                 start_time = time.time()
                 result = searchColor()
+                download = result
                 if not os.path.exists(os.path.join(CACHING_FOLDER,"color_cache.csv")):
                     writeCacheColor()
             elif option == 'texture':
                 app.logger.debug('Texture method found in request')
                 start_time = time.time()
                 result = searchTexture()
+                download = result
                 if not os.path.exists(os.path.join(CACHING_FOLDER,"texture_cache.csv")):
                     writeCacheTexture()
             else:
@@ -246,9 +292,7 @@ def run():
 
             end_time = time.time()
             delta_time = end_time - start_time
-            
             return jsonify({"result": result, "delta_time" : delta_time})
-
         return jsonify({"error": "No method provided"}, 400)
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
@@ -257,9 +301,18 @@ def run():
 # @app.route('/api/scrap', methods=['POST'])
 
 # 4. Endpoint for downloading the result as PDF
-# @app.route('/api/download', methods=['POST'])
-# def download():
-#     app.logger.debug('Received a request to /api/download')
+@app.route('/api/download', methods=['POST'])
+def downloadPDF():
+    global download
+    try:
+        results = download
+        pdf_path = writePDF(results)
+        app.logger.debug('PDF Succesfully Created')
+        return send_file(pdf_path, as_attachment=True, download_name='results.pdf')
+
+    except Exception as e:
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
     
 if __name__ == '__main__':
     app.run(debug=True)
