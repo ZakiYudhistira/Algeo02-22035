@@ -1,8 +1,14 @@
 from flask import Flask, render_template,request,jsonify,send_from_directory, Response
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
+from functools import partial
 from ImageProcessingLibrary import *
 import logging,os,time,multiprocessing
+import numpy as np
+import pandas as pd
+import cv2 as cv
+from multiprocessing import Pool
+from concurrent.futures import ProcessPoolExecutor
 
 app = Flask(__name__)
 CORS(app)
@@ -18,41 +24,85 @@ UPLOAD_IMAGE = os.path.join(base_path,"Upload")
 UPLOAD_DATASET = os.path.join(base_path,"Dataset")
 DOWNLOAD_FOLDER = os.path.join(base_path,"Download")
 
-def searchColor():
-    data = []
+def writeCache():
+    main = np.zeros(126)
     for filename in os.listdir(UPLOAD_DATASET):
-        pathAbs = os.path.join(UPLOAD_DATASET, filename)
-        path_current = "/Dataset/" + filename
-        res = getSimilarityIndeks(imageVectorColor,getVectorColor(pathAbs))
-        if res > 0.6:
-            data.append({"path": path_current, "value": round(res*100,2)})
-    sorted_data = sorted(data, key=lambda x: x["value"], reverse=True)
-    return sorted_data
+        img = cv.imread(os.path.join(UPLOAD_DATASET,filename))
+        img = normBGRtoHSV(img)
+        img = get3X3Histograms(img)
+        main = np.vstack((main,img))
+    main = np.delete(main,0,0)
+    data = pd.DataFrame(main)
+    data.to_csv(os.path.join(UPLOAD_DATASET,"cache.csv"), header=False, index=False)
+
+def getCache():
+    if(os.path.exists(os.path.join(UPLOAD_DATASET,"cache.csv"))):
+        data = np.loadtxt(open(os.path.join(UPLOAD_DATASET,"cache.csv"), "rb"), delimiter=",", dtype=int)
+        return data
+    else:
+        writeCache()
+        try:
+            data = np.loadtxt(open(os.path.join(UPLOAD_DATASET,"cache.csv"), "rb"), delimiter=",", dtype=int)
+            return data
+        except:
+            app.logger.debug("Failed to cache dataset")
+            
+def processColor(args):
+    base_vector, path = args
+    res = getSimilarityIndeks(base_vector, getVectorColor(path))
+    relPath = "/Dataset/" + os.path.basename(path)
+    return {"path": relPath, "value": round(res * 100, 2)} if res > 0.6 else None
+
+def colorParallel(base_vector, dataset_paths, parallel_processes):
+    data = []
+    args_list = [(base_vector, path) for path in dataset_paths]
+    with ProcessPoolExecutor(max_workers=parallel_processes) as executor:
+        results = list(executor.map(processColor, args_list))
+    return [result for result in results if result]
+
+def searchColor(parallel_processes=60):
+    global imageVectorColor
+
+    if imageVectorColor is None:
+        return jsonify({"error": "Base image vector not calculated"}), 400
+
+    dataset_paths = [os.path.join(UPLOAD_DATASET, filename) for filename in os.listdir(UPLOAD_DATASET)]
+    return sorted(colorParallel(imageVectorColor, dataset_paths, parallel_processes),key=lambda x:x["value"],reverse=True)
 
 def getVectorColor(path):
     img = cv.imread(path)
     img = normBGRtoHSV(img)
     return get3X3Histograms(img)
 
-def searchTexture():
-    data = []
-    for filename in os.listdir(UPLOAD_DATASET):
-        pathAbs = os.path.join(UPLOAD_DATASET, filename)
-        path_current = "/Dataset/" + filename
-        res = getSimilarityIndeks(imageVectorTexture,getVectorTexture(pathAbs))
-        if res > 0.6:
-            data.append({"path": path_current, "value": round(res*100,2)})
-    sorted_data = sorted(data, key=lambda x: x["value"], reverse=True)
-    return sorted_data
+def processTexture(args):
+    base_vector, path = args
+    img1 = cv.imread(path)
+    res = getSimilarityIndeks(base_vector, getVectorTexture(img1))
+    relPath = "/Dataset/" + os.path.basename(path)
+    return {"path": relPath, "value": round(res * 100, 2)} if res > 0.6 else None
+
+
+def textureParallel(base_vector, dataset_paths, parallel_processes):
+    args_list = [(base_vector, path) for path in dataset_paths]
+    with ProcessPoolExecutor(max_workers=parallel_processes) as executor:
+        results = list(executor.map(processTexture, args_list))
+    return [result for result in results if result]
+
+def searchTexture(parallel_processes=60):
+    global imageVectorTexture
+
+    if imageVectorColor is None:
+        return jsonify({"error": "Base image vector not calculated"}), 400
+
+    dataset_paths = [os.path.join(UPLOAD_DATASET, filename) for filename in os.listdir(UPLOAD_DATASET)]
+    return sorted(textureParallel(imageVectorTexture, dataset_paths, parallel_processes),key=lambda x:x["value"],reverse=True)
 
 # Function to process the image in one go
-def getVectorTexture(path):
-    img1 = cv.imread(path)
-    data = getCoOccurenceMatrix(getGrayScaleMatrix(img1))
+def getVectorTexture(img):
+    data = getCoOccurenceMatrix(getGrayScaleMatrix(img))
     data = getNormalizedSymmetryMatrix(getSymmetryMatrix(data))
 
-    with multiprocessing.Pool() as pool:
-        features = pool.map(extractFeature, [(data, func) for func in [getContrast, getHomogeneity, getEntropy, getASM, getEnergy, getDissimilarity]])
+    features = [extractFeature((data, func)) for func in [getContrast, getHomogeneity, getEntropy, getASM, getEnergy, getDissimilarity]]
 
     v = getVector(*features)
     return v
@@ -61,7 +111,7 @@ def extractFeature(args):
     data, func = args
     return func(data)
 
-# 1. Endpoint to post an image to Upload folder and a folder of images to Dataset folder
+# Post an image to Upload folder and a folder of images to Dataset folder
 @app.route('/api/upload', methods=['POST'])
 def upload():
     global imagepath, imageVectorColor, imageVectorTexture
@@ -83,7 +133,8 @@ def upload():
                     os.remove(os.path.join(UPLOAD_IMAGE, file))
             image.save(path)
             imageVectorColor = getVectorColor(path)
-            imageVectorTexture = getVectorTexture(path)
+            img = cv.imread(path)
+            imageVectorTexture = getVectorTexture(img)
             return jsonify({"message": "File uploaded successfully"})
         elif 'dataset' in request.files:
             if not os.path.isdir(UPLOAD_DATASET):
@@ -122,7 +173,6 @@ def run():
 
             end_time = time.time()
             delta_time = end_time - start_time
-            
             return jsonify({"result": result, "delta_time" : delta_time})
 
         return jsonify({"error": "No method provided"}, 400)
