@@ -1,7 +1,6 @@
-from flask import Flask, render_template,request,jsonify,send_from_directory, Response
+from flask import Flask,request,jsonify,send_file
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
-from functools import partial
 from ImageProcessingLibrary import *
 import logging,os,time,multiprocessing,ast
 import numpy as np
@@ -178,17 +177,32 @@ def writePDF(results):
     pdf_path = os.path.join(DOWNLOAD_FOLDER,"results.pdf")
     pdf = FPDF()
     pdf.add_page()
+    
+    pdf.set_font("Arial", size=14)
+    pdf.cell(200, 10, txt="Reverse Image Search", ln=True)
     pdf.set_font("Arial", size=12)
 
+    pdf.cell(200, 10, txt="Input Query Image", ln=True)
+    pathInput = os.listdir(UPLOAD_IMAGE)
+    inputImg = os.path.join(UPLOAD_IMAGE,pathInput[0])
+    pdf.image(inputImg, x=30, y=pdf.get_y(), w=70)
+    pdf.ln(60)
+
+    pdf.cell(200, 10, txt="Hasil Image Query", ln=True)
+    pdf.set_font("Arial", size=10)
     for result in results:
         path = result.get('path', '')
         value = result.get('value', '')
 
+        if pdf.get_y() + 35 > pdf.h - 20:
+            pdf.add_page()
+
         image_path = os.path.join(UPLOAD_DATASET, os.path.basename(path))
-        pdf.image(image_path, x=10, y=pdf.get_y(), w=50)
-        
-        pdf.cell(100, 10, txt=f"Path: {path}", ln=True)
-        pdf.cell(100, 10, txt=f"Value: {value}", ln=True)
+        pdf.image(image_path, x=30, y=pdf.get_y(), w=70)
+        pdf.ln(40)
+        textY = pdf.get_y() + 10
+        pdf.set_xy(30,textY)
+        pdf.cell(100, 10, txt=f"Cosine Similarity: {value}%", ln=True)
         pdf.ln(10) 
 
     # Save the PDF
@@ -236,7 +250,6 @@ def upload():
                 dataset_path = os.path.join(UPLOAD_DATASET, dataset_name)
                 dataset.save(dataset_path)
 
-            # Delete the CSV file only if it exists
             csvColor = os.path.join(CACHING_FOLDER, "color_cache.csv")
             if os.path.exists(csvColor):
                 os.remove(csvColor)
@@ -257,12 +270,14 @@ def run():
     try:
         if request.method == 'POST':
             option = request.json.get('option')
+            down = os.listdir(DOWNLOAD_FOLDER)
+            for file in down:
+                os.remove(os.path.join(DOWNLOAD_FOLDER,file))
             if option == 'color':
                 app.logger.debug('Color method found in request')
                 start_time = time.time()
                 result = searchColor()
                 download = result
-                writePDF(download)
                 if not os.path.exists(os.path.join(CACHING_FOLDER,"color_cache.csv")):
                     writeCacheColor()
             elif option == 'texture':
@@ -278,7 +293,6 @@ def run():
             end_time = time.time()
             delta_time = end_time - start_time
             return jsonify({"result": result, "delta_time" : delta_time})
-
         return jsonify({"error": "No method provided"}, 400)
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
@@ -289,9 +303,16 @@ def run():
 # 4. Endpoint for downloading the result as PDF
 @app.route('/api/download', methods=['POST'])
 def downloadPDF():
-    pass
-# def download():
-#     app.logger.debug('Received a request to /api/download')
+    global download
+    try:
+        results = download
+        pdf_path = writePDF(results)
+        app.logger.debug('PDF Succesfully Created')
+        return send_file(pdf_path, as_attachment=True, download_name='results.pdf')
+
+    except Exception as e:
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
     
 if __name__ == '__main__':
     app.run(debug=True)
