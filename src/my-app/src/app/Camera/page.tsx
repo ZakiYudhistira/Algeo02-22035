@@ -43,6 +43,24 @@ const dataURLtoFile = (dataurl, filename) => {
   return new File([u8arr], filename, { type: mime });
 };
 
+const handleDownload = async () => {
+  try {
+    const apiUrl = "http://127.0.0.1:5000/api/download";
+    const response = await axios.post(apiUrl, {});
+
+    // Create a Blob from the response data
+    const blob = new Blob([response.data], { type: "application/pdf" });
+
+    // Create a link element and trigger a download
+    const link = document.createElement("a");
+    link.href = window.URL.createObjectURL(blob);
+    link.download = "results.pdf";
+    link.click();
+  } catch (error) {
+    console.error("Error during download:", error);
+  }
+};
+
 const Camera = () => {
   const [isCaptureEnable, setCaptureEnable] = useState<boolean>(false);
   const [autoCapture, setAutoCapture] = useState<boolean>(false);
@@ -57,27 +75,6 @@ const Camera = () => {
   const [loading, setLoading] = useState(false);
 
   const [isChecked, setChecked] = useState(false);
-
-  const handleSearch = async () => {
-    setLoading(true); // Set loading to true when search starts
-    const valueToSend = isChecked ? "texture" : "color";
-    try {
-      const apiUrl = `http://127.0.0.1:5000/api/cbir`;
-      const response = await axios.post(apiUrl, { option: valueToSend });
-      console.log(response.data);
-      setResult(response.data.result);
-
-      // Update delta time based on the response
-      setDeltaTime(response.data.delta_time);
-
-      // Update displayed length
-      setDisplayedLength(response.data.result.length);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
-      setLoading(false); // Set loading to false when search is complete
-    }
-  };
 
   const handleSwitchChange = () => {
     setChecked(!isChecked);
@@ -144,14 +141,45 @@ const Camera = () => {
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
 
+    const captureAndSend = async () => {
+      const imageSrc = webcamRef.current?.getScreenshot();
+      if (imageSrc) {
+        setUrl(imageSrc);
+
+        // Send the captured image to the local folder
+        try {
+          const formData = new FormData();
+          formData.append("image", dataURLtoFile(imageSrc, "captured.jpg"));
+
+          const apiUrl = `http://127.0.0.1:5000/api/upload`; // Update the API endpoint
+          const response = await axios.post(apiUrl, formData);
+
+          console.log(response.data);
+
+          // Call CBIR endpoint for automatic processing
+          const cbirApiUrl = `http://127.0.0.1:5000/api/cbir`;
+          const cbirResponse = await axios.post(cbirApiUrl, {
+            option: isChecked ? "texture" : "color",
+          });
+
+          // Update the results and delta time
+          setResult(cbirResponse.data.result);
+          setDeltaTime(cbirResponse.data.delta_time);
+        } catch (error) {
+          console.error("Error during backend POST request", error);
+        }
+      }
+    };
+
     if (isCaptureEnable && autoCapture) {
-      // Capture and send an image every 3 seconds
+      // Capture and send an image every 10 seconds
       intervalId = setInterval(() => {
         captureAndSend();
-      }, 10000);
+      }, 15000);
     }
 
     if (imagedataset.length > 0) {
+      // Assuming you want to submit the dataset when it is uploaded
       const syntheticEventDataset = new Event("submit", {
         bubbles: true,
         cancelable: true,
@@ -159,6 +187,7 @@ const Camera = () => {
       submitDataset(syntheticEventDataset);
     }
 
+    // Cleanup function
     return () => {
       clearInterval(intervalId);
     };
@@ -168,6 +197,7 @@ const Camera = () => {
     imagedataset.length,
     submitDataset,
     captureAndSend,
+    isChecked,
   ]);
 
   return (
@@ -267,32 +297,17 @@ const Camera = () => {
         </div>
       </div>
 
-      {/* Color-Texture + Search Button */}
-      <div className="flex flex-col gap-2 my-8">
-        <div className="flex items-center justify-center gap-4">
-          <span className="font-montserrat text-[21px] font-semibold">
-            Color
-          </span>
-          <Switch
-            className="bg-black"
-            checked={isChecked}
-            onCheckedChange={handleSwitchChange}
-          />
-          <span className="font-montserrat text-[21px] font-semibold">
-            Texture
-          </span>
-        </div>
-
-        <div className="flex justify-center">
-          <Button
-            type="submit"
-            variant="outline"
-            className="text-white text-lg bg-gradient-to-r from-[#DF3890] to-[150%] to-[#FF87C6] font-semibold rounded-xl py-5 px-48"
-            onClick={handleSearch}
-          >
-            Search
-          </Button>
-        </div>
+      {/* Color-Texture Switch*/}
+      <div className="flex items-center justify-center py-8 gap-4">
+        <span className="font-montserrat text-[21px] font-semibold">Color</span>
+        <Switch
+          className="bg-black"
+          checked={isChecked}
+          onCheckedChange={handleSwitchChange}
+        />
+        <span className="font-montserrat text-[21px] font-semibold">
+          Texture
+        </span>
       </div>
 
       <UrlForm />
@@ -306,7 +321,7 @@ const Camera = () => {
         className="lg:w-[1425px] lg:h-[100px] z-[-1] mt-10 mx-auto"
       ></Image>
 
-      <div className="px-8 sm:px-10 md:px-14 relative z-10 lg:px-20 xl:px-32 2xl:px-12 bg-custom-blue min-h-screen overflow-hidden">
+      <div className="px-8 sm:px-8 md:px-12 relative z-10 lg:px-12 xl:px-12 2xl:px-12 bg-custom-blue min-h-screen overflow-hidden">
         <div className="flex flex-row items-center justify-between">
           {result && result.length > 0 ? (
             <div className="flex items-center justify-between gap-10">
@@ -317,7 +332,7 @@ const Camera = () => {
                 type="submit"
                 variant="outline"
                 className="text-white bg-custom-green-calm font-semibold rounded-xl px-5"
-                // onClick={handlePhotoClick} DOWNLOAD RESULTS
+                onClick={handleDownload}
               >
                 Download Results
               </Button>

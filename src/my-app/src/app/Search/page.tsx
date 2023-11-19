@@ -112,50 +112,48 @@ const Search = () => {
   );
 
   // useEffect for image upload
-useEffect(() => {
-  const submitImageRequest = async () => {
-    try {
-      const formDataPhoto = new FormData();
-      if (image) {
-        const apiUrl = `http://127.0.0.1:5000/api/upload`;
-        formDataPhoto.append("image", image);
-        const responsePhoto = await axios.post(apiUrl, formDataPhoto);
-        console.log("Data Photo: ", responsePhoto.data.result);
-        setResult(responsePhoto.data.result);
+  useEffect(() => {
+    const submitImageRequest = async () => {
+      try {
+        const formDataPhoto = new FormData();
+        if (image) {
+          const apiUrl = `http://127.0.0.1:5000/api/upload`;
+          formDataPhoto.append("image", image);
+          const responsePhoto = await axios.post(apiUrl, formDataPhoto);
+          console.log("Data Photo: ", responsePhoto.data.result);
+          setResult(responsePhoto.data.result);
+        }
+      } catch (error) {
+        console.error("Error during backend POST request for image", error);
       }
-    } catch (error) {
-      console.error("Error during backend POST request for image", error);
+    };
+
+    submitImageRequest();
+  }, [image]);
+
+  // useEffect for dataset upload
+  useEffect(() => {
+    const submitDatasetRequest = async () => {
+      try {
+        const formDataDataset = new FormData();
+        imagedataset.forEach((item) => {
+          formDataDataset.append("dataset", item);
+        });
+        const apiUrl = `http://127.0.0.1:5000/api/upload`;
+        const responseDataset = await axios.post(apiUrl, formDataDataset);
+        console.log("Data Dataset: ", responseDataset.data);
+
+        // Assuming the response contains the cosValues for each file in the dataset
+        // setImagedataset( );
+      } catch (error) {
+        console.error("Error during backend POST request for dataset", error);
+      }
+    };
+
+    if (imagedataset.length > 0) {
+      submitDatasetRequest();
     }
-  };
-
-  submitImageRequest();
-}, [image]);
-
-// useEffect for dataset upload
-useEffect(() => {
-  const submitDatasetRequest = async () => {
-    try {
-      const formDataDataset = new FormData();
-      imagedataset.forEach((item) => {
-        formDataDataset.append("dataset", item);
-      });
-      const apiUrl = `http://127.0.0.1:5000/api/upload`;
-      const responseDataset = await axios.post(apiUrl, formDataDataset);
-      console.log("Data Dataset: ", responseDataset.data);
-
-      // Assuming the response contains the cosValues for each file in the dataset
-      // setImagedataset( );
-    } catch (error) {
-      console.error("Error during backend POST request for dataset", error);
-    }
-  };
-
-  if (imagedataset.length > 0) {
-    submitDatasetRequest();
-  }
-}, [imagedataset]);
-
-  
+  }, [imagedataset]);
 
   const handleSwitchChange = () => {
     setChecked(!isChecked);
@@ -182,6 +180,24 @@ useEffect(() => {
     }
   };
 
+  const handleDownload = async () => {
+    try {
+      const apiUrl = "http://127.0.0.1:5000/api/download";
+      const response = await axios.post(apiUrl, {});
+
+      // Create a Blob from the response data
+      const blob = new Blob([response.data], { type: "application/pdf" });
+
+      // Create a link element and trigger a download
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = "results.pdf";
+      link.click();
+    } catch (error) {
+      console.error("Error during download:", error);
+    }
+  };
+
   return (
     <div className="mt-10">
       <h1 className="text-custom-green font-montserrat text-[30px] lg:text-7xl font-bold tracking-[0.54px] text-center mb-12">
@@ -196,57 +212,59 @@ useEffect(() => {
           // receive image from input
           src={image ? URL.createObjectURL(image) : "/dummy.png"}
           alt="Image Input"
-          width={700}
-          height={350}
-          className="w-[500px]"
+          width={600}
+          height={300}
+          className="w-[600px]"
         ></Image>
 
         <div className="flex flex-col justify-between">
-          <h2 className="text-custom-green-dark font-montserrat text-[22px] font-extrabold">
-            Image Input
-          </h2>
-          <div className="flex flex-row gap-4 mb-10">
-            {/* Form to post an uploaded image */}
-            <form onSubmit={submitPhoto}>
-              <input
-                type="file"
-                className="hidden"
-                ref={inputRef}
-                onChange={handleImageUpload}
-                accept="image/*"
-                required
-                name="fileupload"
-              />
-              <Button
-                type="submit"
-                variant="outline"
-                className="text-white bg-custom-green-calm font-semibold rounded-xl px-5"
-                onClick={handlePhotoClick}
-              >
-                Upload Image
-              </Button>
-            </form>
-            <form onSubmit={submitDataset}>
-              <input
-                type="file"
-                webkitdirectory=""
-                multiple
-                className="hidden"
-                ref={inputRefFolder}
-                onChange={handleFolderUpload}
-                required
-                accept="image/*"
-                name="folderupload"
-              />
-              <Button
-                type="submit"
-                variant="outline"
-                className="text-white bg-custom-black font-semibold rounded-xl px-5"
-                onClick={handleFolderClick}
-              >
-                Upload Dataset
-              </Button>
-            </form>
+          <div className="flex flex-col justify-start">
+            <h2 className="text-custom-green-dark font-montserrat text-[22px] font-extrabold">
+              Image Input
+            </h2>
+            <div className="flex flex-row gap-4 mb-10">
+              {/* Form to post an uploaded image */}
+              <form onSubmit={submitPhoto}>
+                <input
+                  type="file"
+                  className="hidden"
+                  ref={inputRef}
+                  onChange={handleImageUpload}
+                  accept="image/*"
+                  required
+                  name="fileupload"
+                />
+                <Button
+                  type="submit"
+                  variant="outline"
+                  className="text-white bg-custom-green-calm font-semibold rounded-xl px-5"
+                  onClick={handlePhotoClick}
+                >
+                  Upload Image
+                </Button>
+              </form>
+              <form onSubmit={submitDataset}>
+                <input
+                  type="file"
+                  webkitdirectory=""
+                  multiple
+                  className="hidden"
+                  ref={inputRefFolder}
+                  onChange={handleFolderUpload}
+                  required
+                  accept="image/*"
+                  name="folderupload"
+                />
+                <Button
+                  type="submit"
+                  variant="outline"
+                  className="text-white bg-custom-black font-semibold rounded-xl px-5"
+                  onClick={handleFolderClick}
+                >
+                  Upload Dataset
+                </Button>
+              </form>
+            </div>
           </div>
 
           {/* INPUT FORM */}
@@ -295,10 +313,10 @@ useEffect(() => {
                 Search Results
               </h1>
               <Button
-                type="submit"
+                type="button"
                 variant="outline"
                 className="text-white bg-custom-green-calm font-semibold rounded-xl px-5"
-                // onClick={handlePhotoClick} DOWNLOAD RESULTS
+                onClick={handleDownload}
               >
                 Download Results
               </Button>

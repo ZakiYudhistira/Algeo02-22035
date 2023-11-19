@@ -18,12 +18,11 @@ const Cbir = () => {
           CBIR
         </h1>
         <p className="text-custom-black font-outfit lg:text-xl font-regular mt-[10px]">
-          Kami dari kelompok 4 Keluarga Cemara dari kelas IF 01
+          Pada project ini kami akan menggunakan CBIR, CBIR sendiri adalah
           <br />
-          yang beranggotakan Amel, Zaki, Angie. Project Reverse Image Search ini
-          merupakan
+          kepanjangan dari <em>Content Based Image Retrieval</em>, kami akan menggunakan
           <br />
-          tugas besar mata kuliah IF2123 Aljabar Linear dan Geometri.
+          dua paramater CBIR, yaitu berdasarkan <strong>Warna</strong> dan <strong>Tekstur</strong>.
         </p>
         <div>
           <Link href="/Search">

@@ -1,8 +1,8 @@
-"use client";
-
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import axios, { AxiosError, AxiosResponse } from "axios";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -19,7 +19,10 @@ const formSchema = z.object({
 });
 
 const UrlForm = () => {
-  // 1. Define your form.
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -27,11 +30,47 @@ const UrlForm = () => {
     },
   });
 
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      setLoading(true);
+      setError(null);
+      setSuccess(null); // Clear success message
+
+      console.log("Encoded URL:", values.websiteUrl);
+      const response = await axios.post<any, AxiosResponse<any>>(
+        "http://127.0.0.1:5000/api/scrap",
+        {
+          url: values.websiteUrl,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      console.log("Response:", response);
+
+      if (response.status === 200) {
+        const data = response.data;
+        console.log(data.message);
+        // Set success state
+        setSuccess("Image scraping was successful!");
+      } else {
+        console.error("Image scraping failed");
+        setError("Image scraping failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("An error occurred:", error);
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError;
+        setError(`An error occurred: ${axiosError.message}`);
+      } else {
+        setError("An unexpected error occurred");
+      }
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -56,9 +95,20 @@ const UrlForm = () => {
           type="submit"
           variant="outline"
           className="text-white bg-custom-black font-semibold rounded-xl px-5"
+          disabled={loading}
         >
-          SUBMIT
+          {loading ? "Loading..." : "SUBMIT"}
         </Button>
+        {error && (
+          <p className="text-red-500 mt-2">
+            <strong>Error:</strong> {error}
+          </p>
+        )}
+        {success && (
+          <p className="text-green-500 mt-2">
+            <strong>Success:</strong> {success}
+          </p>
+        )}
       </form>
     </Form>
   );
