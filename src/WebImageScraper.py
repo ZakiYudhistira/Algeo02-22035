@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from PIL import Image
 import os
 import io
+import time
 
 # Function to create the folder if it doesn't exist
 def create_folder_if_not_exists(folder_path):
@@ -35,7 +36,7 @@ def scrapeImage(url: str, save_folder: str):
                 image = Image.open(image_file).convert("RGBA")
 
                 # Save the image to the specified folder
-                image_path = os.path.join(save_folder, f"{count}_image.png")
+                image_path = os.path.join(save_folder, f"{count}__{time.time()}_image.png")
                 image.save(image_path, format="PNG", quality=80)
 
                 count += 1
