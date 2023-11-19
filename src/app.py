@@ -316,6 +316,11 @@ def scrap_images():
         if not url:
             return jsonify({"error": "No URL provided"}), 400
         else:
+            if not os.path.exists(UPLOAD_DATASET):
+                os.mkdir(UPLOAD_DATASET)
+            if not os.path.exists(CACHING_FOLDER):
+                os.mkdir(CACHING_FOLDER)
+
             files = os.listdir(UPLOAD_DATASET)
             if files:
                 for file in files:
