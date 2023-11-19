@@ -25,7 +25,6 @@ Angelica Kierra/13522048
 - What problem does it (intend to) solve?
 - What is the purpose of your project?
 - Why did you undertake it?
-<!-- You don't have to answer all the questions - just the ones relevant to your project. -->
 
 ## Technologies Used
 
@@ -44,7 +43,7 @@ Angelica Kierra/13522048
 
 ## Screenshots
 
-![Example screenshot](./img/screenshot.png)
+![Example screenshot](./img/Screenshot (147).png)
 
 ## Setup
 
