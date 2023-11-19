@@ -20,7 +20,6 @@ app.logger.setLevel(logging.DEBUG)
 imagepath =""
 imageVectorColor = None
 imageVectorTexture = None
-cacheColor = {}
 download = []
 
 # Path Image, Dataset, and Download Folder
@@ -31,7 +30,6 @@ DOWNLOAD_FOLDER = os.path.join(base_path,"Download")
 CACHING_FOLDER= os.path.join(base_path,"Cache")
 
 def writeCacheColor():
-    global cacheColor
     vectors = []
     filenames = []
     if not os.path.exists(CACHING_FOLDER):
@@ -48,7 +46,6 @@ def writeCacheColor():
     data.set_index("filename", inplace=True)  # Set 'filename' as the index
     data.to_csv(os.path.join(CACHING_FOLDER, "color_cache.csv"), header=False)
 
-    cacheColor = getCache(os.path.join(CACHING_FOLDER, "color_cache.csv"))
 
 def getCache(csv_path):
     df = pd.read_csv(csv_path, header=None, names=['filename', 'vector'])
