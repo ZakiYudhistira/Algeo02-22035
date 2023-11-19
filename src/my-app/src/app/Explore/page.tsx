@@ -16,10 +16,11 @@ const Explore = () => {
       </h1>
       <div className="box-content w-[53.25rem]">
         <p className="text-custom-black font-outfit lg:text-xl font-normal text-justify mb-[6rem] mt-10">
-          Kami dari kelompok 04, bernama 🌲<strong>{"Keluarga Cemara"}</strong>🌲. Kami terdiri dari
-          3 orang yang semuanya dari kelas K01. Jujur banget, ini pertama kali
-          kami nguli website, tapi gapapa. Jadinya, kami banyak explore hal
-          baru. So... maap ya kalo website-nya jelek, <em>kami masih belajar hehe</em> 😋
+          Kami dari kelompok 04, bernama 🌲<strong>{"Keluarga Cemara"}</strong>
+          🌲. Kami terdiri dari 3 orang yang semuanya dari kelas K01. Jujur
+          banget, ini pertama kali kami nguli website, tapi gapapa. Jadinya,
+          kami banyak explore hal baru. So... maap ya kalo website-nya jelek,{" "}
+          <em>kami masih belajar hehe</em> 😋
         </p>
       </div>
       <h1 className="text-custom-green-dark font-outfit lg:text-3xl font-bold tracking-[0.54px]">
@@ -71,11 +72,12 @@ const Explore = () => {
       </h1>
       <div className="box-content  w-[53.25rem]">
         <p className="text-custom-black font-outfit lg:text-xl font-normal text-justify mb-[6rem] mt-5">
-          Ini adalah (●'◡'●) tugas besar ke-2 (●'◡'●)  mata kuliah Aljabar Linier dan Geometri
-          IF2123. Di website ini, pengguna dapat menjelajahi informasi visual
-          yang tersimpan di berbagai platform, baik itu dalam bentuk pencarian
-          gambar pribadi, analisis gambar medis untuk diagnosis, pencarian
-          ilustrasi ilmiah hingga pencarian produk berdasarkan gambar komersial.
+          Ini adalah {"(●'◡'●)"} tugas besar ke-2 {"(●'◡'●)"} mata kuliah Aljabar
+          Linier dan Geometri IF2123. Di website ini, pengguna dapat menjelajahi
+          informasi visual yang tersimpan di berbagai platform, baik itu dalam
+          bentuk pencarian gambar pribadi, analisis gambar medis untuk
+          diagnosis, pencarian ilustrasi ilmiah hingga pencarian produk
+          berdasarkan gambar komersial.
         </p>
       </div>
       <h1 className="text-custom-green-dark font-outfit lg:text-3xl font-bold tracking-[0.54px]">
@@ -102,14 +104,15 @@ const Explore = () => {
             Parameter Warna
           </h2>
           CBIR dengan parameter warna adalah teknik Content-Based Image
-          Retrieval yang memanfaatkan <strong>spektrum warna</strong> dalam suatu gambar. Proses
-          ini melibatkan ekstraksi dan perbandingan fitur-fitur visual untuk
-          menemukan gambar serupa. CBIR menggunakan karakteristik warna pada
-          setiap pixel, diekspresikan melalui <strong>histogram warna</strong>, untuk menilai
-          kemiripan antara gambar. Dengan fokus pada representasi warna, CBIR
-          memungkinkan pencarian gambar berdasarkan kesamaan visual, memberikan
-          hasil yang relevan dan efisien dalam mengidentifikasi gambar dengan
-          warna serupa dalam dataset.
+          Retrieval yang memanfaatkan <strong>spektrum warna</strong> dalam
+          suatu gambar. Proses ini melibatkan ekstraksi dan perbandingan
+          fitur-fitur visual untuk menemukan gambar serupa. CBIR menggunakan
+          karakteristik warna pada setiap pixel, diekspresikan melalui{" "}
+          <strong>histogram warna</strong>, untuk menilai kemiripan antara
+          gambar. Dengan fokus pada representasi warna, CBIR memungkinkan
+          pencarian gambar berdasarkan kesamaan visual, memberikan hasil yang
+          relevan dan efisien dalam mengidentifikasi gambar dengan warna serupa
+          dalam dataset.
           <br />
           <br />
           <h2 className="text-custom-green-dark font-outfit text-2xl font-semibold">
@@ -117,38 +120,39 @@ const Explore = () => {
           </h2>
           CBIR dengan parameter tekstur adalah metode Content-Based Image
           Retrieval yang memanfaatkan karakteristik tekstur dalam suatu gambar.
-          Ini melibatkan <strong>ekstraksi pola tekstur</strong> yang membedakan objek atau area
-          dalam gambar. Proses CBIR dengan parameter tekstur melibatkan analisis
-          pola spesifik pada struktur permukaan gambar. Gambar diubah menjadi
-          matriks dan diperlakukan sebagai citra Grayscale untuk memfasilitasi
-          pemrosesan. Dengan fokus pada tekstur, CBIR ini memungkinkan pencarian
-          gambar berdasarkan kemiripan pola tekstur, memberikan hasil yang
-          relevan dan efisien dalam menemukan gambar dengan karakteristik
-          tekstur serupa dalam dataset.
+          Ini melibatkan <strong>ekstraksi pola tekstur</strong> yang membedakan
+          objek atau area dalam gambar. Proses CBIR dengan parameter tekstur
+          melibatkan analisis pola spesifik pada struktur permukaan gambar.
+          Gambar diubah menjadi matriks dan diperlakukan sebagai citra Grayscale
+          untuk memfasilitasi pemrosesan. Dengan fokus pada tekstur, CBIR ini
+          memungkinkan pencarian gambar berdasarkan kemiripan pola tekstur,
+          memberikan hasil yang relevan dan efisien dalam menemukan gambar
+          dengan karakteristik tekstur serupa dalam dataset.
           <br />
           <br />
           <h2 className="text-custom-green-dark font-outfit text-2xl font-semibold">
             Front-End Website
           </h2>
-          Untuk pembuatan front-end website, sistem ini memanfaatkan <strong>Next.js</strong>,
-          sebuah framework React, untuk mempermudah pengembangan web. Dirancang
-          oleh tim Vercel, Next.js menyediakan fitur-fitur seperti Server-Side
-          Rendering (SSR), Static Site Generation (SSG), dan routing berbasis
-          file system. Framework ini memungkinkan pengembang membuat aplikasi
-          web responsif, efisien, dan mudah diatur. Dengan fokus pada kemudahan
-          pengembangan, Next.js memfasilitasi pembuatan aplikasi web yang lebih
-          baik dalam hal kinerja dan responsivitas.
+          Untuk pembuatan front-end website, sistem ini memanfaatkan{" "}
+          <strong>Next.js</strong>, sebuah framework React, untuk mempermudah
+          pengembangan web. Dirancang oleh tim Vercel, Next.js menyediakan
+          fitur-fitur seperti Server-Side Rendering (SSR), Static Site
+          Generation (SSG), dan routing berbasis file system. Framework ini
+          memungkinkan pengembang membuat aplikasi web responsif, efisien, dan
+          mudah diatur. Dengan fokus pada kemudahan pengembangan, Next.js
+          memfasilitasi pembuatan aplikasi web yang lebih baik dalam hal kinerja
+          dan responsivitas.
           <br />
           <br />
           <h2 className="text-custom-green-dark font-outfit text-2xl font-semibold">
             Back-End Website
           </h2>
           Untuk pembuatan back-end website, sistem ini framework yang digunakan
-          adalah <strong>Flask</strong> yang merupakan berbasis python. Flask dipilih karena
-          kalkulasi CBIR menggunakan bahasa python. Flask dirancang untuk
-          menjadi sederhana, fleksibel, dan mudah dipahami, memungkinkan
-          pengembang untuk membuat aplikasi web dengan cepat tanpa kompleksitas
-          yang berlebihan.
+          adalah <strong>Flask</strong> yang merupakan berbasis python. Flask
+          dipilih karena kalkulasi CBIR menggunakan bahasa python. Flask
+          dirancang untuk menjadi sederhana, fleksibel, dan mudah dipahami,
+          memungkinkan pengembang untuk membuat aplikasi web dengan cepat tanpa
+          kompleksitas yang berlebihan.
         </p>
       </div>
       <div className="flex justify-center mt-20">
