@@ -276,6 +276,8 @@ def run():
     try:
         if request.method == 'POST':
             option = request.json.get('option')
+            if not os.path.isdir(DOWNLOAD_FOLDER):
+                os.mkdir(DOWNLOAD_FOLDER)
             down = os.listdir(DOWNLOAD_FOLDER)
             for file in down:
                 os.remove(os.path.join(DOWNLOAD_FOLDER,file))
