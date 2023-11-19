@@ -35,10 +35,17 @@ const UrlForm = () => {
     try {
       setLoading(true);
       setError(null);
-
-      const response = await axios.post("/api/scrap", {
+      
+      console.log('Encoded URL:', values.websiteUrl);
+      const response = await axios.post("http://127.0.0.1:5000/api/scrap", {
         url: values.websiteUrl,
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
+      
+      console.log('Response:', response);
 
       if (response.status === 200) {
         const data = response.data;

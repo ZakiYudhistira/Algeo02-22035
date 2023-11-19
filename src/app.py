@@ -34,6 +34,8 @@ def writeCacheColor():
     global cacheColor
     vectors = []
     filenames = []
+    if not os.path.exists(CACHING_FOLDER):
+        os.makedirs(CACHING_FOLDER)
 
     for filename in os.listdir(UPLOAD_DATASET):
         img = cv.imread(os.path.join(UPLOAD_DATASET, filename))
@@ -306,16 +308,23 @@ def run():
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
     
 # 3. Endpoint for image scrapping
-@app.route('/api/scrap', methods=['POST'])
+@app.route('/api/scrap', methods=['GET', 'POST'])
 def scrap_images():
     try:
         app.logger.info("Received POST request to /api/scrap")
         url = request.json.get('url')
-        
         if not url:
             return jsonify({"error": "No URL provided"}), 400
+        else:
+            files = os.listdir(UPLOAD_DATASET)
+            if files:
+                for file in files:
+                    os.remove(os.path.join(UPLOAD_DATASET, file))
+            files = os.listdir(CACHING_FOLDER)
+            if files:
+                for file in files:
+                    os.remove(os.path.join(CACHING_FOLDER, file))
 
-        # Call your image scraping function
         scrapeImage(url, UPLOAD_DATASET)
 
         return jsonify({"message": "Image scraping successful"})

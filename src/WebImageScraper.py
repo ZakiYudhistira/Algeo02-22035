@@ -13,7 +13,7 @@ def getRawHTML(url: str):
     data = requests.get(url, verify=True)
     return data.text
 
-def scrapeImage(url: str, save_folder: str = "my-app/public/Dataset"):
+def scrapeImage(url: str, save_folder: str):
     # Create the folder if it doesn't exist
     create_folder_if_not_exists(save_folder)
 
