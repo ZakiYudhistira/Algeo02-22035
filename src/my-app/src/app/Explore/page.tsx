@@ -16,10 +16,10 @@ const Explore = () => {
       </h1>
       <div className="box-content w-[53.25rem]">
         <p className="text-custom-black font-outfit lg:text-xl font-normal text-justify mb-[6rem] mt-10">
-          Kami dari kelompok 04, bernama {"Keluarga Cemara"}. Kami terdiri dari
+          Kami dari kelompok 04, bernama 🌲<strong>{"Keluarga Cemara"}</strong>🌲. Kami terdiri dari
           3 orang yang semuanya dari kelas K01. Jujur banget, ini pertama kali
           kami nguli website, tapi gapapa. Jadinya, kami banyak explore hal
-          baru. So... maap ya kalo website-nya jelek, kami masih belajar hehe😋
+          baru. So... maap ya kalo website-nya jelek, <em>kami masih belajar hehe</em> 😋
         </p>
       </div>
       <h1 className="text-custom-green-dark font-outfit lg:text-3xl font-bold tracking-[0.54px]">
@@ -71,7 +71,7 @@ const Explore = () => {
       </h1>
       <div className="box-content  w-[53.25rem]">
         <p className="text-custom-black font-outfit lg:text-xl font-normal text-justify mb-[6rem] mt-5">
-          Ini adalah tugas besar ke-2 mata kuliah Aljabar Linier dan Geometri
+          Ini adalah (●'◡'●) tugas besar ke-2 (●'◡'●)  mata kuliah Aljabar Linier dan Geometri
           IF2123. Di website ini, pengguna dapat menjelajahi informasi visual
           yang tersimpan di berbagai platform, baik itu dalam bentuk pencarian
           gambar pribadi, analisis gambar medis untuk diagnosis, pencarian
@@ -102,10 +102,10 @@ const Explore = () => {
             Parameter Warna
           </h2>
           CBIR dengan parameter warna adalah teknik Content-Based Image
-          Retrieval yang memanfaatkan spektrum warna dalam suatu gambar. Proses
+          Retrieval yang memanfaatkan <strong>spektrum warna</strong> dalam suatu gambar. Proses
           ini melibatkan ekstraksi dan perbandingan fitur-fitur visual untuk
           menemukan gambar serupa. CBIR menggunakan karakteristik warna pada
-          setiap pixel, diekspresikan melalui histogram warna, untuk menilai
+          setiap pixel, diekspresikan melalui <strong>histogram warna</strong>, untuk menilai
           kemiripan antara gambar. Dengan fokus pada representasi warna, CBIR
           memungkinkan pencarian gambar berdasarkan kesamaan visual, memberikan
           hasil yang relevan dan efisien dalam mengidentifikasi gambar dengan
@@ -117,7 +117,7 @@ const Explore = () => {
           </h2>
           CBIR dengan parameter tekstur adalah metode Content-Based Image
           Retrieval yang memanfaatkan karakteristik tekstur dalam suatu gambar.
-          Ini melibatkan ekstraksi pola tekstur yang membedakan objek atau area
+          Ini melibatkan <strong>ekstraksi pola tekstur</strong> yang membedakan objek atau area
           dalam gambar. Proses CBIR dengan parameter tekstur melibatkan analisis
           pola spesifik pada struktur permukaan gambar. Gambar diubah menjadi
           matriks dan diperlakukan sebagai citra Grayscale untuk memfasilitasi
@@ -130,7 +130,7 @@ const Explore = () => {
           <h2 className="text-custom-green-dark font-outfit text-2xl font-semibold">
             Front-End Website
           </h2>
-          Untuk pembuatan front-end website, sistem ini memanfaatkan Next.js,
+          Untuk pembuatan front-end website, sistem ini memanfaatkan <strong>Next.js</strong>,
           sebuah framework React, untuk mempermudah pengembangan web. Dirancang
           oleh tim Vercel, Next.js menyediakan fitur-fitur seperti Server-Side
           Rendering (SSR), Static Site Generation (SSG), dan routing berbasis
@@ -144,7 +144,7 @@ const Explore = () => {
             Back-End Website
           </h2>
           Untuk pembuatan back-end website, sistem ini framework yang digunakan
-          adalah Flask yang merupakan berbasis python. Flask dipilih karena
+          adalah <strong>Flask</strong> yang merupakan berbasis python. Flask dipilih karena
           kalkulasi CBIR menggunakan bahasa python. Flask dirancang untuk
           menjadi sederhana, fleksibel, dan mudah dipahami, memungkinkan
           pengembang untuk membuat aplikasi web dengan cepat tanpa kompleksitas

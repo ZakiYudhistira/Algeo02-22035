@@ -120,8 +120,4 @@ import time
 #     return sorted_data
 # writeCacheColor()
 # imageVectorColor = getVectorColor("C:\\Users\\Angelica Gurning\\Documents\\Kuliah\\ALGEO\\Tubes_2\\Algeo02-22035\\src\\my-app\\public\\Upload\\Image20231116022159.jpg")
-# print(searchColorCache())
-
-relPath = "/Dataset/aa"
-a = os.path.basename(relPath)
-print(a)
+# print(searchColorCache())git 
