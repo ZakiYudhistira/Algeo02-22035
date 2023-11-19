@@ -33,7 +33,6 @@ Angelica Kierra/13522048
 
 
 ## Features
-List the ready features here:
 - Content Based Image Retrieval dengan Parameter Texture (UTAMA)
 - Content Based Image Retrieval dengan Parameter Warna (UTAMA)
 - CBIR dengan menggunakan Kamera
