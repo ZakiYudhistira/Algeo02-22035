@@ -6,7 +6,7 @@ Angelica Kierra/13522048
 
 
 # Content Based Image Retrieval
-> Terdapat dua fitur CBIR yang dapat digunakan yaitu, CBIR dengan parameter Warna dan CBIR dengan parameter Tekstur
+> Terdapat dua fitur CBIR yang dapat digunakan yaitu, CBIR dengan parameter Warna dan Teksur
 > Video Explanation [_here_](https://www.example.com). 
 
 ## Table of Contents
