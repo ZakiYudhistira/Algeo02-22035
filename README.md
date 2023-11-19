@@ -1,23 +1,22 @@
 > APLIKASI ALJABAR VEKTOR DALAM SISTEM TEMU BALIK GAMBAR
 
 Tugas besar Aljabar Linier dan Geomteri, dibuat oleh :
-Angelica Kierra
-Amalia Putri
-Zaki Yudhistira Candra
+Zaki Yudhistira Candra/13522031
+Amalia Putri/13522042
+Angelica Kierra/13522048
+
+
+# Content Based Image Retrieval
+> Terdapat dua fitur CBIR yang dapat digunakan yaitu, CBIR dengan parameter Warna dan Teksur
+> Video Explanation [_here_](https://www.example.com). 
 
 ## Table of Contents
-
-- [General Info](#general-information)
-- [Technologies Used](#technologies-used)
-- [Features](#features)
-- [Screenshots](#screenshots)
-- [Setup](#setup)
-- [Usage](#usage)
-- [Project Status](#project-status)
-- [Room for Improvement](#room-for-improvement)
-- [Acknowledgements](#acknowledgements)
-- [Contact](#contact)
-<!-- * [License](#license) -->
+* [General Info](#general-information)
+* [Technologies Used](#technologies-used)
+* [Features](#features)
+* [Screenshots](#screenshots)
+* [Setup](#setup)
+* [Usage](#usage)
 
 ## General Information
 
@@ -28,22 +27,21 @@ Zaki Yudhistira Candra
 <!-- You don't have to answer all the questions - just the ones relevant to your project. -->
 
 ## Technologies Used
-
-- Tech 1 - version 1.0
-- Tech 3 - version 3.0
+- Python - version 3.10.5
+- NextJs - next@14.0.1
+- Flask - version 3.0.0
 
 ## Features
-
-List the ready features here:
-
-- Awesome feature 1
-- Awesome feature 3
+- Content Based Image Retrieval dengan Parameter Texture (UTAMA)
+- Content Based Image Retrieval dengan Parameter Warna (UTAMA)
+- CBIR dengan menggunakan Kamera
+- Image Scraping
+- Caching
+- Download as PDF
 
 ## Screenshots
 
 ![Example screenshot](./img/screenshot.png)
-
-<!-- If you have screenshots you'd like to share, include them here. -->
 
 ## Setup
 
@@ -57,8 +55,21 @@ List the ready features here:
 - python app.py
 
 ## Usage
+### CBIR-WARNA
+1. Upload gambar query atau menggunakan kamera
+2. Upload dataset gambar atau masukan link URL sebagai dataset
+3. Pilih seleksi warna
+4. Tekan tombol 'Search'
+5. Tunggu hasil pencarian
+6. Mengunduh hasil pencarian (opsional)
 
-Kegunaan:
+### CBIR-TEKSTUR
+1. Upload gambar query atau menggunakan kamera
+2. Upload dataset gambar atau masukan link URL sebagai dataset
+3. Pilih seleksi teksur
+4. Tekan tombol 'Search'
+5. Tunggu hasil pencarian
+6. Mengunduh hasil pencarian (opsional)
 
 - Mencari cosine similarity berdasarkan konsep CBIR warna atau CBIR tekstur dari input gambar/frame camera dan dataset/image scraping
 - Mengurutkan nilai cosine similarity dari yang terbesar hingga terkecil dengan kemiripan > 60% saja yang ditampilkan
