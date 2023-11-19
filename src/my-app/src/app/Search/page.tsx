@@ -112,50 +112,48 @@ const Search = () => {
   );
 
   // useEffect for image upload
-useEffect(() => {
-  const submitImageRequest = async () => {
-    try {
-      const formDataPhoto = new FormData();
-      if (image) {
-        const apiUrl = `http://127.0.0.1:5000/api/upload`;
-        formDataPhoto.append("image", image);
-        const responsePhoto = await axios.post(apiUrl, formDataPhoto);
-        console.log("Data Photo: ", responsePhoto.data.result);
-        setResult(responsePhoto.data.result);
+  useEffect(() => {
+    const submitImageRequest = async () => {
+      try {
+        const formDataPhoto = new FormData();
+        if (image) {
+          const apiUrl = `http://127.0.0.1:5000/api/upload`;
+          formDataPhoto.append("image", image);
+          const responsePhoto = await axios.post(apiUrl, formDataPhoto);
+          console.log("Data Photo: ", responsePhoto.data.result);
+          setResult(responsePhoto.data.result);
+        }
+      } catch (error) {
+        console.error("Error during backend POST request for image", error);
       }
-    } catch (error) {
-      console.error("Error during backend POST request for image", error);
+    };
+
+    submitImageRequest();
+  }, [image]);
+
+  // useEffect for dataset upload
+  useEffect(() => {
+    const submitDatasetRequest = async () => {
+      try {
+        const formDataDataset = new FormData();
+        imagedataset.forEach((item) => {
+          formDataDataset.append("dataset", item);
+        });
+        const apiUrl = `http://127.0.0.1:5000/api/upload`;
+        const responseDataset = await axios.post(apiUrl, formDataDataset);
+        console.log("Data Dataset: ", responseDataset.data);
+
+        // Assuming the response contains the cosValues for each file in the dataset
+        // setImagedataset( );
+      } catch (error) {
+        console.error("Error during backend POST request for dataset", error);
+      }
+    };
+
+    if (imagedataset.length > 0) {
+      submitDatasetRequest();
     }
-  };
-
-  submitImageRequest();
-}, [image]);
-
-// useEffect for dataset upload
-useEffect(() => {
-  const submitDatasetRequest = async () => {
-    try {
-      const formDataDataset = new FormData();
-      imagedataset.forEach((item) => {
-        formDataDataset.append("dataset", item);
-      });
-      const apiUrl = `http://127.0.0.1:5000/api/upload`;
-      const responseDataset = await axios.post(apiUrl, formDataDataset);
-      console.log("Data Dataset: ", responseDataset.data);
-
-      // Assuming the response contains the cosValues for each file in the dataset
-      // setImagedataset( );
-    } catch (error) {
-      console.error("Error during backend POST request for dataset", error);
-    }
-  };
-
-  if (imagedataset.length > 0) {
-    submitDatasetRequest();
-  }
-}, [imagedataset]);
-
-  
+  }, [imagedataset]);
 
   const handleSwitchChange = () => {
     setChecked(!isChecked);
@@ -184,21 +182,21 @@ useEffect(() => {
 
   const handleDownload = async () => {
     try {
-        const apiUrl = 'http://127.0.0.1:5000/api/download';
-        const response = await axios.post(apiUrl, {});
+      const apiUrl = "http://127.0.0.1:5000/api/download";
+      const response = await axios.post(apiUrl, {});
 
-        // Create a Blob from the response data
-        const blob = new Blob([response.data], { type: 'application/pdf' });
+      // Create a Blob from the response data
+      const blob = new Blob([response.data], { type: "application/pdf" });
 
-        // Create a link element and trigger a download
-        const link = document.createElement('a');
-        link.href = window.URL.createObjectURL(blob);
-        link.download = 'results.pdf';
-        link.click();
+      // Create a link element and trigger a download
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = "results.pdf";
+      link.click();
     } catch (error) {
-        console.error('Error during download:', error);
+      console.error("Error during download:", error);
     }
-};
+  };
 
   return (
     <div className="mt-10">
