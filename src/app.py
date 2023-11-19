@@ -9,6 +9,9 @@ import cv2 as cv
 from multiprocessing import Pool
 from concurrent.futures import ProcessPoolExecutor
 from fpdf import FPDF
+
+from ImageProcessingLibrary import *
+from WebImageScraper import *
 from reportlab.pdfgen import canvas
 app = Flask(__name__)
 CORS(app)
@@ -31,6 +34,8 @@ def writeCacheColor():
     global cacheColor
     vectors = []
     filenames = []
+    if not os.path.exists(CACHING_FOLDER):
+        os.makedirs(CACHING_FOLDER)
 
     for filename in os.listdir(UPLOAD_DATASET):
         img = cv.imread(os.path.join(UPLOAD_DATASET, filename))
@@ -180,12 +185,10 @@ def writePDF(results):
 
     pdf = canvas.Canvas(pdf_path)
 
-    # Title
     pdf.setFont("Helvetica-Bold", 16)
     pdf.drawCentredString(300, 770, "Reverse Image Search")
     pdf.drawCentredString(300, 750, "Keluarga Cemara")
 
-    # Input Query Image
     pdf.setFont("Helvetica-Bold", 14)
     pdf.drawString(30, 720, "Input Query Image")
     pathInput = os.listdir(UPLOAD_IMAGE)
@@ -305,7 +308,29 @@ def run():
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
     
 # 3. Endpoint for image scrapping
-# @app.route('/api/scrap', methods=['POST'])
+@app.route('/api/scrap', methods=['GET', 'POST'])
+def scrap_images():
+    try:
+        app.logger.info("Received POST request to /api/scrap")
+        url = request.json.get('url')
+        if not url:
+            return jsonify({"error": "No URL provided"}), 400
+        else:
+            files = os.listdir(UPLOAD_DATASET)
+            if files:
+                for file in files:
+                    os.remove(os.path.join(UPLOAD_DATASET, file))
+            files = os.listdir(CACHING_FOLDER)
+            if files:
+                for file in files:
+                    os.remove(os.path.join(CACHING_FOLDER, file))
+
+        scrapeImage(url, UPLOAD_DATASET)
+
+        return jsonify({"message": "Image scraping successful"})
+    except Exception as e:
+        app.logger.error(f"An error occurred: {str(e)}")
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
 # 4. Endpoint for downloading the result as PDF
 @app.route('/api/download', methods=['POST'])

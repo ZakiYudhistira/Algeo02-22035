@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import axios from "axios";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -19,7 +21,9 @@ const formSchema = z.object({
 });
 
 const UrlForm = () => {
-  // 1. Define your form.
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -27,11 +31,35 @@ const UrlForm = () => {
     },
   });
 
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      console.log('Encoded URL:', values.websiteUrl);
+      const response = await axios.post("http://127.0.0.1:5000/api/scrap", {
+        url: values.websiteUrl,
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      console.log('Response:', response);
+
+      if (response.status === 200) {
+        const data = response.data;
+        console.log(data.message);
+      } else {
+        console.error("Image scraping failed");
+        setError("Image scraping failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("An error occurred:", error);
+      setError(`An error occurred: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -56,9 +84,15 @@ const UrlForm = () => {
           type="submit"
           variant="outline"
           className="text-white bg-custom-black font-semibold rounded-xl px-5"
+          disabled={loading}
         >
-          SUBMIT
+          {loading ? "Loading..." : "SUBMIT"}
         </Button>
+        {error && (
+          <p className="text-red-500 mt-2">
+            <strong>Error:</strong> {error}
+          </p>
+        )}
       </form>
     </Form>
   );
