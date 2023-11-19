@@ -306,7 +306,7 @@ def run():
     
 # 3. Endpoint for image scrapping
 @app.route('/api/scrap', methods=['GET', 'POST'])
-def scrap_images():
+def scrapImages():
     try:
         app.logger.info("Received POST request to /api/scrap")
         url = request.json.get('url')
