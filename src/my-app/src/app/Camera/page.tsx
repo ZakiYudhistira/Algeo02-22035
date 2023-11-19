@@ -43,6 +43,24 @@ const dataURLtoFile = (dataurl, filename) => {
   return new File([u8arr], filename, { type: mime });
 };
 
+const handleDownload = async () => {
+  try {
+    const apiUrl = "http://127.0.0.1:5000/api/download";
+    const response = await axios.post(apiUrl, {});
+
+    // Create a Blob from the response data
+    const blob = new Blob([response.data], { type: "application/pdf" });
+
+    // Create a link element and trigger a download
+    const link = document.createElement("a");
+    link.href = window.URL.createObjectURL(blob);
+    link.download = "results.pdf";
+    link.click();
+  } catch (error) {
+    console.error("Error during download:", error);
+  }
+};
+
 const Camera = () => {
   const [isCaptureEnable, setCaptureEnable] = useState<boolean>(false);
   const [autoCapture, setAutoCapture] = useState<boolean>(false);
@@ -306,7 +324,7 @@ const Camera = () => {
         className="lg:w-[1425px] lg:h-[100px] z-[-1] mt-10 mx-auto"
       ></Image>
 
-      <div className="px-8 sm:px-10 md:px-14 relative z-10 lg:px-20 xl:px-32 2xl:px-12 bg-custom-blue min-h-screen overflow-hidden">
+      <div className="px-8 sm:px-8 md:px-12 relative z-10 lg:px-12 xl:px-12 2xl:px-12 bg-custom-blue min-h-screen overflow-hidden">
         <div className="flex flex-row items-center justify-between">
           {result && result.length > 0 ? (
             <div className="flex items-center justify-between gap-10">
@@ -317,7 +335,7 @@ const Camera = () => {
                 type="submit"
                 variant="outline"
                 className="text-white bg-custom-green-calm font-semibold rounded-xl px-5"
-                // onClick={handlePhotoClick} DOWNLOAD RESULTS
+                onClick={handleDownload}
               >
                 Download Results
               </Button>

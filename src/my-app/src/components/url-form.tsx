@@ -1,10 +1,8 @@
-"use client";
-
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import axios from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -23,6 +21,7 @@ const formSchema = z.object({
 const UrlForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -35,28 +34,39 @@ const UrlForm = () => {
     try {
       setLoading(true);
       setError(null);
-      
-      console.log('Encoded URL:', values.websiteUrl);
-      const response = await axios.post("http://127.0.0.1:5000/api/scrap", {
-        url: values.websiteUrl,
-      }, {
-        headers: {
-          'Content-Type': 'application/json',
+
+      console.log("Encoded URL:", values.websiteUrl);
+      const response = await axios.post<any, AxiosResponse<any>>(
+        "http://127.0.0.1:5000/api/scrap",
+        {
+          url: values.websiteUrl,
         },
-      });
-      
-      console.log('Response:', response);
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      console.log("Response:", response);
 
       if (response.status === 200) {
         const data = response.data;
         console.log(data.message);
+        // Set success state
+        setSuccess("Image scraping was successful!");
       } else {
         console.error("Image scraping failed");
         setError("Image scraping failed. Please try again.");
       }
     } catch (error) {
       console.error("An error occurred:", error);
-      setError(`An error occurred: ${error.message}`);
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError;
+        setError(`An error occurred: ${axiosError.message}`);
+      } else {
+        setError("An unexpected error occurred");
+      }
     } finally {
       setLoading(false);
     }
@@ -91,6 +101,11 @@ const UrlForm = () => {
         {error && (
           <p className="text-red-500 mt-2">
             <strong>Error:</strong> {error}
+          </p>
+        )}
+        {success && (
+          <p className="text-green-500 mt-2">
+            <strong>Success:</strong> {success}
           </p>
         )}
       </form>
