@@ -8,7 +8,7 @@ Angelica Kierra/13522048
 # Content Based Image Retrieval
 
 > Terdapat dua fitur CBIR yang dapat digunakan yaitu, CBIR dengan parameter Warna dan Teksur
-> Video Explanation [_here_](https://www.example.com).
+> Video Explanation [_here_](https://youtu.be/uX26bgjo2tw).
 
 ## Table of Contents
 
@@ -21,10 +21,8 @@ Angelica Kierra/13522048
 
 ## General Information
 
-- Provide general information about your project here.
-- What problem does it (intend to) solve?
-- What is the purpose of your project?
-- Why did you undertake it?
+- Ini adalah aplikasi dari Content Base Image Retrieval berbasis laman
+- Aplikasi ini dapat menampilkan hasil pencarian suatu gambar dari suatu dataset
 
 ## Technologies Used
 
