@@ -9,7 +9,6 @@ import cv2 as cv
 from multiprocessing import Pool
 from concurrent.futures import ProcessPoolExecutor
 from fpdf import FPDF
-
 from ImageProcessingLibrary import *
 from WebImageScraper import *
 from reportlab.pdfgen import canvas
@@ -176,8 +175,6 @@ def searchTexture():
 
 def writePDF(results):
     app.logger.debug('Writing PDF...')
-    if not os.path.isdir(DOWNLOAD_FOLDER):
-        os.mkdir(DOWNLOAD_FOLDER)
     pdf_path = os.path.join(DOWNLOAD_FOLDER, "results.pdf")
 
     pdf = canvas.Canvas(pdf_path)
@@ -276,9 +273,12 @@ def run():
     try:
         if request.method == 'POST':
             option = request.json.get('option')
+            if not os.path.isdir(DOWNLOAD_FOLDER):
+                os.mkdir(DOWNLOAD_FOLDER)
             down = os.listdir(DOWNLOAD_FOLDER)
             for file in down:
                 os.remove(os.path.join(DOWNLOAD_FOLDER,file))
+            
             if option == 'color':
                 app.logger.debug('Color method found in request')
                 start_time = time.time()
@@ -298,7 +298,6 @@ def run():
 
             end_time = time.time()
             delta_time = end_time - start_time
-            # writePDF(result)
             return jsonify({"result": result, "delta_time" : delta_time})
         return jsonify({"error": "No method provided"}, 400)
     except Exception as e:
