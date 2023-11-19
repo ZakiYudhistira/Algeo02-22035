@@ -1,12 +1,13 @@
 # Algeo02-22035
 Tugas besar Aljabar Linier dan Geomteri, dibuat oleh :
-Angelica Kierra
-Amalia Putri
-Zaki Yudhistira Candra
+Zaki Yudhistira Candra/13522031
+Amalia Putri/13522042
+Angelica Kierra/13522048
 
-# Project Name
-> Outline a brief description of your project.
-> Live demo [_here_](https://www.example.com). <!-- If you have the project hosted somewhere, include the link here. -->
+
+# Content Based Image Retrieval
+> Terdapat dua fitur CBIR yang dapat digunakan yaitu, CBIR dengan parameter Warna dan CBIR dengan parameter Tekstur
+> Video Explanation [_here_](https://www.example.com). 
 
 ## Table of Contents
 * [General Info](#general-information)
@@ -15,11 +16,6 @@ Zaki Yudhistira Candra
 * [Screenshots](#screenshots)
 * [Setup](#setup)
 * [Usage](#usage)
-* [Project Status](#project-status)
-* [Room for Improvement](#room-for-improvement)
-* [Acknowledgements](#acknowledgements)
-* [Contact](#contact)
-<!-- * [License](#license) -->
 
 
 ## General Information
@@ -31,21 +27,23 @@ Zaki Yudhistira Candra
 
 
 ## Technologies Used
-- Tech 1 - version 1.0
-- Tech 2 - version 2.0
-- Tech 3 - version 3.0
+- Python - version 3.10.5
+- NextJs - next@14.0.1
+- Flask - version 3.0.0
 
 
 ## Features
 List the ready features here:
-- Awesome feature 1
-- Awesome feature 2
-- Awesome feature 3
+- Content Based Image Retrieval dengan Parameter Texture (UTAMA)
+- Content Based Image Retrieval dengan Parameter Warna (UTAMA)
+- CBIR dengan menggunakan Kamera
+- Image Scraping
+- Caching
+- Download as PDF
 
 
 ## Screenshots
 ![Example screenshot](./img/screenshot.png)
-<!-- If you have screenshots you'd like to share, include them here. -->
 
 
 ## Setup
@@ -55,41 +53,21 @@ Proceed to describe how to install / setup one's local environment / get started
 
 
 ## Usage
-How does one go about using it?
-Provide various use cases and code examples here.
+### CBIR-WARNA
+1. Upload gambar query atau menggunakan kamera
+2. Upload dataset gambar atau masukan link URL sebagai dataset
+3. Pilih seleksi warna
+4. Tekan tombol 'Search'
+5. Tunggu hasil pencarian
+6. Mengunduh hasil pencarian (opsional)
 
-`write-your-code-here`
-
-
-## Project Status
-Project is: _in progress_ / _complete_ / _no longer being worked on_. If you are no longer working on it, provide reasons why.
-
-
-## Room for Improvement
-Include areas you believe need improvement / could be improved. Also add TODOs for future development.
-
-Room for improvement:
-- Improvement to be done 1
-- Improvement to be done 2
-
-To do:
-- Feature to be added 1
-- Feature to be added 2
+### CBIR-TEKSTUR
+1. Upload gambar query atau menggunakan kamera
+2. Upload dataset gambar atau masukan link URL sebagai dataset
+3. Pilih seleksi teksur
+4. Tekan tombol 'Search'
+5. Tunggu hasil pencarian
+6. Mengunduh hasil pencarian (opsional)
 
 
-## Acknowledgements
-Give credit here.
-- This project was inspired by...
-- This project was based on [this tutorial](https://www.example.com).
-- Many thanks to...
 
-
-## Contact
-Created by [@flynerdpl](https://www.flynerd.pl/) - feel free to contact me!
-
-
-<!-- Optional -->
-<!-- ## License -->
-<!-- This project is open source and available under the [... License](). -->
-
-<!-- You don't have to include all sections - just the one's relevant to your project -->
