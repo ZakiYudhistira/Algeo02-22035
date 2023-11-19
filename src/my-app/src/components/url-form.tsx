@@ -34,6 +34,7 @@ const UrlForm = () => {
     try {
       setLoading(true);
       setError(null);
+      setSuccess(null); // Clear success message
 
       console.log("Encoded URL:", values.websiteUrl);
       const response = await axios.post<any, AxiosResponse<any>>(

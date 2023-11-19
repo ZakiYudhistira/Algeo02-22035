@@ -212,57 +212,59 @@ const Search = () => {
           // receive image from input
           src={image ? URL.createObjectURL(image) : "/dummy.png"}
           alt="Image Input"
-          width={700}
-          height={350}
-          className="w-[500px]"
+          width={600}
+          height={300}
+          className="w-[600px]"
         ></Image>
 
         <div className="flex flex-col justify-between">
-          <h2 className="text-custom-green-dark font-montserrat text-[22px] font-extrabold">
-            Image Input
-          </h2>
-          <div className="flex flex-row gap-4 mb-10">
-            {/* Form to post an uploaded image */}
-            <form onSubmit={submitPhoto}>
-              <input
-                type="file"
-                className="hidden"
-                ref={inputRef}
-                onChange={handleImageUpload}
-                accept="image/*"
-                required
-                name="fileupload"
-              />
-              <Button
-                type="submit"
-                variant="outline"
-                className="text-white bg-custom-green-calm font-semibold rounded-xl px-5"
-                onClick={handlePhotoClick}
-              >
-                Upload Image
-              </Button>
-            </form>
-            <form onSubmit={submitDataset}>
-              <input
-                type="file"
-                webkitdirectory=""
-                multiple
-                className="hidden"
-                ref={inputRefFolder}
-                onChange={handleFolderUpload}
-                required
-                accept="image/*"
-                name="folderupload"
-              />
-              <Button
-                type="submit"
-                variant="outline"
-                className="text-white bg-custom-black font-semibold rounded-xl px-5"
-                onClick={handleFolderClick}
-              >
-                Upload Dataset
-              </Button>
-            </form>
+          <div className="flex flex-col justify-start">
+            <h2 className="text-custom-green-dark font-montserrat text-[22px] font-extrabold">
+              Image Input
+            </h2>
+            <div className="flex flex-row gap-4 mb-10">
+              {/* Form to post an uploaded image */}
+              <form onSubmit={submitPhoto}>
+                <input
+                  type="file"
+                  className="hidden"
+                  ref={inputRef}
+                  onChange={handleImageUpload}
+                  accept="image/*"
+                  required
+                  name="fileupload"
+                />
+                <Button
+                  type="submit"
+                  variant="outline"
+                  className="text-white bg-custom-green-calm font-semibold rounded-xl px-5"
+                  onClick={handlePhotoClick}
+                >
+                  Upload Image
+                </Button>
+              </form>
+              <form onSubmit={submitDataset}>
+                <input
+                  type="file"
+                  webkitdirectory=""
+                  multiple
+                  className="hidden"
+                  ref={inputRefFolder}
+                  onChange={handleFolderUpload}
+                  required
+                  accept="image/*"
+                  name="folderupload"
+                />
+                <Button
+                  type="submit"
+                  variant="outline"
+                  className="text-white bg-custom-black font-semibold rounded-xl px-5"
+                  onClick={handleFolderClick}
+                >
+                  Upload Dataset
+                </Button>
+              </form>
+            </div>
           </div>
 
           {/* INPUT FORM */}
