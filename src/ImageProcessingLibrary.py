@@ -1,8 +1,4 @@
-import os
-import time
 import numpy as np
-import cv2 as cv
-
 
 # ------- CONTENT BASED IMAGE RETRIEVAL : COLOR -------
 
@@ -164,7 +160,3 @@ def getDissimilarity(SymmetryMatrix : np.ndarray) -> float:
 def getVector(contrast : float, homogeneity : float, entropy : float, dissimilarity : float, asm : float, energy : float) -> np.ndarray:
     vektor = np.array([contrast,homogeneity,entropy,dissimilarity,asm,energy])
     return vektor
-
-
-
-

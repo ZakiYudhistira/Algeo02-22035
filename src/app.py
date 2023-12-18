@@ -1,18 +1,16 @@
-from flask import Flask,request,jsonify,send_file,Response
+from flask import Flask,request,jsonify,send_file
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 from ImageProcessingLibrary import *
-import logging,os,time,multiprocessing,ast
-import numpy as np
+import logging,os,time,ast
 import pandas as pd
 import cv2 as cv
 from multiprocessing import Pool
 from concurrent.futures import ProcessPoolExecutor
-from fpdf import FPDF
-
 from ImageProcessingLibrary import *
 from WebImageScraper import *
 from reportlab.pdfgen import canvas
+
 app = Flask(__name__)
 CORS(app)
 app.logger.setLevel(logging.DEBUG)
